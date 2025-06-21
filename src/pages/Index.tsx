@@ -1,9 +1,11 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Shield, Heart, Search, CheckCircle, Users, Star } from "lucide-react";
+import { ArrowRight, Shield, Heart, Search, CheckCircle, Users, Star, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
+import { AIPromptInterface } from "@/components/AIPromptInterface";
 
 const Index = () => {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
@@ -30,9 +32,12 @@ const Index = () => {
               <Link to="/trust" className="text-slate-gray-600 hover:text-french-blue-600 transition-colors">
                 Trust & Safety
               </Link>
-              <Button variant="outline" size="sm">
-                Sign In
-              </Button>
+              <Link to="/auth">
+                <Button className="bg-gradient-to-r from-french-blue-600 to-french-blue-700 hover:from-french-blue-700 hover:to-french-blue-800 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 px-6 py-2.5 font-semibold">
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Sign In
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -60,6 +65,11 @@ const Index = () => {
               <strong className="text-french-blue-600"> No commissions. No gatekeeping.</strong> 
               Just verified connections between serious buyers and trusted sellers.
             </p>
+          </div>
+
+          {/* AI Prompt Interface */}
+          <div className="max-w-4xl mx-auto mb-16">
+            <AIPromptInterface />
           </div>
 
           {/* CTA Cards */}
