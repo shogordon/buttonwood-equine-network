@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -269,9 +268,8 @@ const Index = () => {
               Get Started Today
             </Button>
             <Button 
-              variant="outline" 
               size="lg" 
-              className="border-white text-white hover:bg-white/10 px-8 py-4 text-lg"
+              className="bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white hover:bg-white/20 hover:border-white/50 px-8 py-4 text-lg font-semibold transition-all duration-300"
             >
               Learn More
             </Button>
