@@ -9,9 +9,13 @@ interface UserProfile {
   first_name?: string;
   last_name?: string;
   role: 'buyer' | 'seller' | 'both';
-  verification_status: 'unverified' | 'pending' | 'verified';
-  account_type: 'basic' | 'premium' | 'professional';
+  verification_status?: 'unverified' | 'pending' | 'verified';
+  account_type?: 'basic' | 'premium' | 'professional';
   onboarding_completed: boolean;
+  phone?: string;
+  location?: string;
+  bio?: string;
+  profile_image_url?: string;
 }
 
 interface AuthContextType {
@@ -44,7 +48,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return;
       }
 
-      setProfile(data);
+      if (data) {
+        setProfile({
+          user_id: data.user_id,
+          email: data.email,
+          first_name: data.first_name,
+          last_name: data.last_name,
+          role: data.role,
+          verification_status: data.verification_status || 'unverified',
+          account_type: data.account_type || 'basic',
+          onboarding_completed: data.onboarding_completed || false,
+          phone: data.phone,
+          location: data.location,
+          bio: data.bio,
+          profile_image_url: data.profile_image_url,
+        });
+      }
     } catch (error) {
       console.error('Error fetching profile:', error);
     }

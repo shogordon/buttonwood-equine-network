@@ -63,26 +63,26 @@ const Onboarding = () => {
           first_name: user.user_metadata.first_name,
           last_name: user.user_metadata.last_name,
           phone: user.user_metadata.phone,
+          verification_status: 'unverified',
+          account_type: 'basic',
         });
 
       if (profileError) throw profileError;
 
-      // Track onboarding completion
+      // Track onboarding completion using onboarding_responses table
       const { error: stepError } = await supabase
-        .from('onboarding_steps')
+        .from('onboarding_responses')
         .insert({
           user_id: user.id,
-          step_name: 'onboarding_complete',
-          completed: true,
-          completed_at: new Date().toISOString(),
-          data: {
-            role: selectedRole,
-            initial_prompt: state?.prompt || '',
-            user_type: state?.userType || 'buying'
-          }
+          question: 'What brings you to Buttonwood Bluebook?',
+          answer: selectedRole,
+          step_number: 1,
         });
 
-      if (stepError) throw stepError;
+      if (stepError) {
+        console.warn('Error tracking onboarding step:', stepError);
+        // Don't throw error here as the main profile update succeeded
+      }
 
       await refreshProfile();
 
@@ -277,6 +277,127 @@ const Onboarding = () => {
       </div>
     </div>
   );
+
+  function renderStep() {
+    switch (currentStep) {
+      case 1:
+        return (
+          <div className="space-y-6">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold mb-2">What brings you to Buttonwood Bluebook?</h2>
+              <p className="text-slate-gray-600">Tell us your primary interest to personalize your experience</p>
+            </div>
+            
+            <div className="grid gap-4">
+              <Card 
+                className={`cursor-pointer transition-all duration-200 ${selectedRole === 'buyer' ? 'ring-2 ring-french-blue-500 bg-french-blue-50' : 'hover:shadow-md'}`}
+                onClick={() => setSelectedRole('buyer')}
+              >
+                <CardContent className="p-6 flex items-center space-x-4">
+                  <ShoppingCart className="h-8 w-8 text-french-blue-600" />
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-lg">I'm looking to buy horses</h3>
+                    <p className="text-slate-gray-600">Find the perfect horse for your needs</p>
+                  </div>
+                  {selectedRole === 'buyer' && <CheckCircle className="h-6 w-6 text-french-blue-600" />}
+                </CardContent>
+              </Card>
+
+              <Card 
+                className={`cursor-pointer transition-all duration-200 ${selectedRole === 'seller' ? 'ring-2 ring-burnt-orange-500 bg-burnt-orange-50' : 'hover:shadow-md'}`}
+                onClick={() => setSelectedRole('seller')}
+              >
+                <CardContent className="p-6 flex items-center space-x-4">
+                  <User className="h-8 w-8 text-burnt-orange-600" />
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-lg">I want to sell horses</h3>
+                    <p className="text-slate-gray-600">List your horses and find qualified buyers</p>
+                  </div>
+                  {selectedRole === 'seller' && <CheckCircle className="h-6 w-6 text-burnt-orange-600" />}
+                </CardContent>
+              </Card>
+
+              <Card 
+                className={`cursor-pointer transition-all duration-200 ${selectedRole === 'both' ? 'ring-2 ring-green-500 bg-green-50' : 'hover:shadow-md'}`}
+                onClick={() => setSelectedRole('both')}
+              >
+                <CardContent className="p-6 flex items-center space-x-4">
+                  <Users className="h-8 w-8 text-green-600" />
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-lg">Both buying and selling</h3>
+                    <p className="text-slate-gray-600">Full access to all platform features</p>
+                  </div>
+                  {selectedRole === 'both' && <CheckCircle className="h-6 w-6 text-green-600" />}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        );
+
+      case 2:
+        return (
+          <div className="space-y-6 text-center">
+            <h2 className="text-2xl font-bold mb-2">Verification unlocks premium features</h2>
+            <p className="text-slate-gray-600 mb-6">
+              Verified members get access to pricing, contact information, and medical records
+            </p>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              <Card className="border-slate-200">
+                <CardContent className="p-6">
+                  <h3 className="font-semibold text-lg mb-3">Basic Access</h3>
+                  <Badge variant="secondary" className="mb-4">Current Status</Badge>
+                  <ul className="text-left space-y-2 text-sm">
+                    <li>• View horse photos</li>
+                    <li>• Basic descriptions</li>
+                    <li>• General location</li>
+                    <li className="text-slate-400">• No pricing information</li>
+                    <li className="text-slate-400">• No contact details</li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              <Card className="border-french-blue-200 bg-french-blue-50">
+                <CardContent className="p-6">
+                  <h3 className="font-semibold text-lg mb-3">Verified Access</h3>
+                  <Badge className="mb-4 bg-french-blue-600">Verification Required</Badge>
+                  <ul className="text-left space-y-2 text-sm">
+                    <li>• Full horse profiles</li>
+                    <li>• Pricing information</li>
+                    <li>• Seller contact details</li>
+                    <li>• Medical records access</li>
+                    <li>• Priority support</li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        );
+
+      case 3:
+        return (
+          <div className="space-y-6 text-center">
+            <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
+            <h2 className="text-2xl font-bold mb-2">You're all set!</h2>
+            <p className="text-slate-gray-600 mb-6">
+              Your account is ready. You can start browsing horses right away and upgrade to verified status anytime.
+            </p>
+            
+            {state?.prompt && (
+              <Card className="bg-soft-ivory-50 border-french-blue-200">
+                <CardContent className="p-4">
+                  <p className="text-sm text-slate-gray-600 mb-2">Your initial search:</p>
+                  <p className="italic">"{state.prompt}"</p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  }
 };
 
 export default Onboarding;

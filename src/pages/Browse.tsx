@@ -20,11 +20,15 @@ interface Horse {
   description?: string;
   images?: string[];
   disciplines?: string[];
-  visibility_level: string;
-  show_price_to: string;
-  show_contact_to: string;
+  visibility_level?: string;
+  show_price_to?: string;
+  show_contact_to?: string;
   featured: boolean;
   is_available: boolean;
+  color?: string;
+  gender?: string;
+  training_level?: string;
+  experience_level?: string;
 }
 
 const Browse = () => {
@@ -58,7 +62,31 @@ const Browse = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setHorses(data || []);
+      
+      // Map the data to match our interface
+      const mappedHorses = (data || []).map(horse => ({
+        id: horse.id,
+        horse_name: horse.horse_name,
+        age: horse.age,
+        breed: horse.breed,
+        height: horse.height,
+        location: horse.location,
+        price: horse.price,
+        description: horse.description,
+        images: horse.images,
+        disciplines: horse.disciplines,
+        visibility_level: horse.visibility_level || 'public',
+        show_price_to: horse.show_price_to || 'verified',
+        show_contact_to: horse.show_contact_to || 'verified',
+        featured: horse.featured || false,
+        is_available: horse.is_available,
+        color: horse.color,
+        gender: horse.gender,
+        training_level: horse.training_level,
+        experience_level: horse.experience_level,
+      }));
+      
+      setHorses(mappedHorses);
     } catch (error: any) {
       toast({
         title: "Error loading horses",
