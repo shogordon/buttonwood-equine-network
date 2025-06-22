@@ -1,6 +1,6 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, Shield, CreditCard, Horse, Search, Bell, BarChart3 } from "lucide-react";
+import { User, Shield, CreditCard, Heart, Search, Bell, BarChart3 } from "lucide-react";
 import PersonalInfoSection from "./PersonalInfoSection";
 import VerificationSection from "./VerificationSection";
 import SubscriptionSection from "./SubscriptionSection";
@@ -27,7 +27,7 @@ const SettingsDashboard = () => {
             <span className="hidden md:inline">Billing</span>
           </TabsTrigger>
           <TabsTrigger value="sales" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-500/20">
-            <Horse className="h-4 w-4" />
+            <Heart className="h-4 w-4" />
             <span className="hidden md:inline">Sales</span>
           </TabsTrigger>
           <TabsTrigger value="iso" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-500/20">

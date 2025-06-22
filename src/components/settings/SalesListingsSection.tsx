@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Horse, Plus, Eye, Edit, Trash2 } from "lucide-react";
+import { Heart, Plus, Eye, Edit, Trash2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -52,7 +52,7 @@ const SalesListingsSection = () => {
         <CardHeader>
           <CardTitle className="text-white flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Horse className="h-5 w-5" />
+              <Heart className="h-5 w-5" />
               Sales Listings
             </div>
             <Button 
@@ -67,7 +67,7 @@ const SalesListingsSection = () => {
         <CardContent>
           {listings.length === 0 ? (
             <div className="text-center py-8">
-              <Horse className="h-12 w-12 text-white/30 mx-auto mb-4" />
+              <Heart className="h-12 w-12 text-white/30 mx-auto mb-4" />
               <h3 className="text-white font-medium mb-2">No listings yet</h3>
               <p className="text-white/70 text-sm mb-4">Create your first horse listing to get started</p>
               <Button 
@@ -85,7 +85,7 @@ const SalesListingsSection = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div className="w-16 h-16 bg-white/10 rounded-lg flex items-center justify-center">
-                        <Horse className="h-8 w-8 text-white/50" />
+                        <Heart className="h-8 w-8 text-white/50" />
                       </div>
                       <div>
                         <h3 className="text-white font-medium">{listing.horse_name}</h3>
