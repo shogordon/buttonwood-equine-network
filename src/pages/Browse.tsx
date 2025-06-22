@@ -118,7 +118,10 @@ const Browse = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center" style={{
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #312e81 50%, #1e3a8a 75%, #0f172a 100%)',
+        backgroundAttachment: 'fixed'
+      }}>
         <div className="text-center">
           <Shield className="h-12 w-12 text-blue-400 mx-auto mb-4 animate-spin" />
           <p className="text-white/70">Loading horses...</p>
@@ -128,7 +131,17 @@ const Browse = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-slate-900" style={{
+      background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #312e81 50%, #1e3a8a 75%, #0f172a 100%)',
+      backgroundAttachment: 'fixed'
+    }}>
+      {/* Background overlay */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div style={{
+          background: 'radial-gradient(ellipse at top left, rgba(59, 130, 246, 0.3) 0%, transparent 50%), radial-gradient(ellipse at top right, rgba(139, 92, 246, 0.3) 0%, transparent 50%), radial-gradient(ellipse at bottom center, rgba(59, 130, 246, 0.2) 0%, transparent 70%)'
+        }} className="absolute inset-0" />
+      </div>
+
       {/* Floating Elements */}
       <div className="floating-element w-96 h-96 -top-48 -left-48 animate-float" />
       <div className="floating-element w-64 h-64 top-1/4 -right-32 animate-float" style={{ animationDelay: '2s' }} />
@@ -167,7 +180,7 @@ const Browse = () => {
       </nav>
 
       {/* Main Content */}
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto px-6 py-8 relative z-10">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">
             Premium Sport Horses
