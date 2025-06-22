@@ -65,8 +65,8 @@ const Index = () => {
             </h1>
             
             <p className="text-xl md:text-2xl text-white/80 mb-12 max-w-xl mx-auto leading-relaxed">
-              The exclusive matchmaking platform for hunter/jumper enthusiasts. 
-              <strong className="text-blue-400"> No commissions. No gatekeeping.</strong>
+              The curated marketplace built to eliminate the noise. 
+              <strong className="text-blue-400"> No gatekeeping. No commissions. No hidden fees—just real horses and real connections.</strong>
             </p>
           </div>
 
