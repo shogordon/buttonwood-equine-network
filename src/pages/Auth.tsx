@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -164,13 +163,23 @@ const Auth = () => {
             )}
           </div>
 
-          <Card className="glass-card shadow-2xl border-white/10">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold text-white">
+          {/* Custom Glass Card - Replacing shadcn Card component */}
+          <div 
+            className="rounded-lg shadow-2xl border border-white/10 backdrop-blur-2xl overflow-hidden"
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1px 0 rgba(255, 255, 255, 0.05)'
+            }}
+          >
+            {/* Header */}
+            <div className="flex flex-col space-y-1.5 p-6 text-center">
+              <h3 className="text-2xl font-bold text-white">
                 {isSignUp ? 'Create Account' : 'Welcome Back'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+              </h3>
+            </div>
+            
+            {/* Content */}
+            <div className="p-6 pt-0">
               <form onSubmit={handleSubmit} className="space-y-4">
                 {isSignUp && (
                   <div className="grid grid-cols-2 gap-4">
@@ -182,7 +191,7 @@ const Auth = () => {
                         value={formData.firstName}
                         onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
                         required
-                        className="bg-white/5 border-white/20 text-white placeholder:text-white/50"
+                        className="bg-white/5 border-white/20 text-white placeholder:text-white/50 focus:border-blue-400 focus:ring-blue-400/20"
                       />
                     </div>
                     <div>
@@ -193,7 +202,7 @@ const Auth = () => {
                         value={formData.lastName}
                         onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
                         required
-                        className="bg-white/5 border-white/20 text-white placeholder:text-white/50"
+                        className="bg-white/5 border-white/20 text-white placeholder:text-white/50 focus:border-blue-400 focus:ring-blue-400/20"
                       />
                     </div>
                   </div>
@@ -207,7 +216,7 @@ const Auth = () => {
                     value={formData.email}
                     onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                     required
-                    className="bg-white/5 border-white/20 text-white placeholder:text-white/50"
+                    className="bg-white/5 border-white/20 text-white placeholder:text-white/50 focus:border-blue-400 focus:ring-blue-400/20"
                   />
                 </div>
 
@@ -219,7 +228,7 @@ const Auth = () => {
                       type="tel"
                       value={formData.phone}
                       onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                      className="bg-white/5 border-white/20 text-white placeholder:text-white/50"
+                      className="bg-white/5 border-white/20 text-white placeholder:text-white/50 focus:border-blue-400 focus:ring-blue-400/20"
                     />
                   </div>
                 )}
@@ -234,7 +243,7 @@ const Auth = () => {
                       onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                       required
                       minLength={6}
-                      className="bg-white/5 border-white/20 text-white placeholder:text-white/50"
+                      className="bg-white/5 border-white/20 text-white placeholder:text-white/50 focus:border-blue-400 focus:ring-blue-400/20"
                     />
                     <Button
                       type="button"
@@ -250,7 +259,7 @@ const Auth = () => {
 
                 <Button
                   type="submit"
-                  className="w-full glass-button text-white font-medium"
+                  className="w-full bg-blue-600/80 hover:bg-blue-600 text-white font-medium backdrop-blur-xl border border-blue-400/30 shadow-lg transition-all duration-300 hover:shadow-blue-500/25"
                   disabled={loading}
                 >
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -267,8 +276,8 @@ const Auth = () => {
                   {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
                 </Button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
     </div>
