@@ -43,7 +43,7 @@ const Index = () => {
                 Trust & Safety
               </Link>
               <Link to="/auth">
-                <Button className="glass-button text-blue-300 hover:text-blue-200 border-blue-400/30 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 px-6 py-2.5 font-semibold">
+                <Button className="glass-strong text-white hover:text-blue-100 border-white/30 hover:border-blue-300/50 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 px-6 py-2.5 font-semibold">
                   <Sparkles className="h-4 w-4 mr-2" />
                   Sign In
                 </Button>
@@ -86,7 +86,7 @@ const Index = () => {
           {/* CTA Cards */}
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto animate-fade-in">
             <Card 
-              className="group cursor-pointer transform transition-all duration-500 hover:scale-105 glass-card hover:glass-strong border-0"
+              className="group cursor-pointer transform transition-all duration-500 hover:scale-105 glass-strong hover:glass-strong border-0 shadow-2xl"
               onMouseEnter={() => setHoveredCard('buyer')}
               onMouseLeave={() => setHoveredCard(null)}
             >
@@ -129,7 +129,7 @@ const Index = () => {
             </Card>
 
             <Card 
-              className="group cursor-pointer transform transition-all duration-500 hover:scale-105 glass-card hover:glass-strong border-0"
+              className="group cursor-pointer transform transition-all duration-500 hover:scale-105 glass-strong hover:glass-strong border-0 shadow-2xl"
               onMouseEnter={() => setHoveredCard('seller')}
               onMouseLeave={() => setHoveredCard(null)}
             >

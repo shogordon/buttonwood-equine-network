@@ -39,13 +39,13 @@ export const AIPromptInterface = () => {
   };
 
   return (
-    <Card className="glass-card p-8 max-w-4xl mx-auto">
+    <Card className="glass-strong border-white/20 p-8 max-w-4xl mx-auto">
       <div className="space-y-6">
         <div className="text-center mb-6">
-          <h3 className="text-2xl font-semibold text-slate-gray-800 mb-2">
+          <h3 className="text-2xl font-semibold text-white mb-2 text-shadow">
             Tell us what you're looking for
           </h3>
-          <p className="text-slate-gray-600">
+          <p className="text-slate-300">
             Our AI will help match you with the perfect horses or buyers
           </p>
         </div>
@@ -55,19 +55,19 @@ export const AIPromptInterface = () => {
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder={placeholders[currentPlaceholder]}
-            className="w-full min-h-[120px] p-4 rounded-lg border-2 border-french-blue-200 focus:border-french-blue-500 focus:ring-2 focus:ring-french-blue-200 resize-none text-lg placeholder:text-slate-gray-400 bg-white/80 backdrop-blur-sm transition-all duration-300"
+            className="w-full min-h-[120px] p-4 rounded-lg glass-medium border border-white/15 focus:border-blue-400/50 focus:ring-2 focus:ring-blue-400/20 resize-none text-lg placeholder:text-slate-400 text-white bg-white/5 backdrop-blur-xl transition-all duration-300"
             onFocus={() => setIsTyping(true)}
             onBlur={() => setIsTyping(false)}
           />
           {showCursor && isTyping && (
-            <div className="absolute bottom-4 right-4 w-0.5 h-6 bg-french-blue-600 animate-pulse" />
+            <div className="absolute bottom-4 right-4 w-0.5 h-6 bg-blue-400 animate-pulse" />
           )}
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button
             onClick={() => handleQuickAction('buying')}
-            className="bg-french-blue-600 hover:bg-french-blue-700 text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+            className="glass-button text-blue-300 hover:text-blue-200 border-blue-400/30 px-6 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
           >
             <ShoppingCart className="h-5 w-5 mr-2" />
             I'm Buying
@@ -76,7 +76,7 @@ export const AIPromptInterface = () => {
           
           <Button
             onClick={() => handleQuickAction('selling')}
-            className="bg-burnt-orange-500 hover:bg-burnt-orange-600 text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+            className="glass-button text-purple-300 hover:text-purple-200 border-purple-400/30 px-6 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
           >
             <Store className="h-5 w-5 mr-2" />
             I'm Selling
@@ -85,8 +85,7 @@ export const AIPromptInterface = () => {
           
           <Button
             onClick={() => handleQuickAction('browsing')}
-            variant="outline"
-            className="border-2 border-slate-gray-300 hover:border-slate-gray-400 text-slate-gray-700 hover:text-slate-gray-800 px-6 py-3 rounded-lg font-semibold bg-white/50 backdrop-blur-sm hover:bg-white/70 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+            className="glass-button text-slate-300 hover:text-white border-white/20 hover:border-white/30 px-6 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
           >
             <Eye className="h-5 w-5 mr-2" />
             Just Browsing
@@ -98,7 +97,7 @@ export const AIPromptInterface = () => {
           <div className="text-center">
             <Button
               onClick={() => navigate('/auth', { state: { prompt } })}
-              className="bg-gradient-to-r from-french-blue-600 to-burnt-orange-500 hover:from-french-blue-700 hover:to-burnt-orange-600 text-white px-8 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+              className="glass-strong text-blue-300 hover:text-blue-200 border-blue-400/40 hover:border-blue-300/60 px-8 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
             >
               Get Started
               <ArrowRight className="h-5 w-5 ml-2" />
