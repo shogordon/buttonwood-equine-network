@@ -1,14 +1,10 @@
 
 import { useState, useEffect } from "react";
-import { Shield, ArrowLeft, ArrowRight, Save } from "lucide-react";
+import { Shield, ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import type { Database } from "@/integrations/supabase/types";
+import { useListingForm } from "@/hooks/useListingForm";
 
 // Import step components
 import SellerInfoStep from "@/components/listing/SellerInfoStep";
@@ -21,6 +17,10 @@ import MediaUploadStep from "@/components/listing/MediaUploadStep";
 import DescriptionStep from "@/components/listing/DescriptionStep";
 import VerificationStep from "@/components/listing/VerificationStep";
 import PreviewStep from "@/components/listing/PreviewStep";
+
+// Import new components
+import { ListingProgressHeader } from "@/components/listing/ListingProgressHeader";
+import { ListingNavigationFooter } from "@/components/listing/ListingNavigationFooter";
 
 const STEPS = [
   { id: 1, title: "Seller Info", component: SellerInfoStep },
@@ -35,66 +35,12 @@ const STEPS = [
   { id: 10, title: "Preview & Publish", component: PreviewStep },
 ];
 
-type HorseDiscipline = Database['public']['Enums']['horse_discipline'];
-type HorseExperienceLevel = Database['public']['Enums']['horse_experience_level'];
-
-interface ListingData {
-  // Seller info
-  sellerName: string;
-  sellerRole: string;
-  commissionType: string;
-  commissionAmount: number;
-  
-  // Basic horse info
-  horseName: string;
-  sex: string;
-  breed: string;
-  color: string;
-  height: number;
-  yearOfBirth: number;
-  location: string;
-  
-  // Sale info
-  price: number;
-  saleType: string;
-  trialAvailable: boolean;
-  xraysAvailable: boolean;
-  
-  // Pros & cons
-  pros: string[];
-  cons: string[];
-  
-  // Tags & filters
-  disciplines: string[];
-  experienceLevel: string;
-  temperament: string[];
-  rideability: string[];
-  
-  // Program & maintenance
-  programDetails: string[];
-  maintenanceDetails: string[];
-  
-  // Media
-  images: string[];
-  videos: string[];
-  
-  // Description
-  description: string;
-  
-  // Verification
-  showRecord: string;
-  pedigree: string;
-  healthRecords: string;
-}
-
 const NewListing = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
-  const [listingData, setListingData] = useState<Partial<ListingData>>({});
-  const [saving, setSaving] = useState(false);
+  const { listingData, updateListingData, saveDraft, saving } = useListingForm();
 
-  const progress = (currentStep / STEPS.length) * 100;
   const CurrentStepComponent = STEPS.find(step => step.id === currentStep)?.component;
 
   useEffect(() => {
@@ -102,76 +48,6 @@ const NewListing = () => {
       navigate('/auth');
     }
   }, [user, loading, navigate]);
-
-  const updateListingData = (stepData: Partial<ListingData>) => {
-    setListingData(prev => ({ ...prev, ...stepData }));
-  };
-
-  const saveDraft = async () => {
-    if (!user) return;
-    
-    setSaving(true);
-    try {
-      // Calculate age from year of birth
-      const age = listingData.yearOfBirth ? new Date().getFullYear() - listingData.yearOfBirth : 0;
-      
-      // Convert disciplines to proper enum values
-      const validDisciplines = (listingData.disciplines || [])
-        .filter((discipline): discipline is HorseDiscipline => 
-          ['dressage', 'jumping', 'eventing', 'western', 'racing', 'trail', 'other'].includes(discipline)
-        );
-
-      // Convert experience level to proper enum
-      const validExperienceLevel = ['beginner', 'intermediate', 'advanced', 'professional'].includes(listingData.experienceLevel || '') 
-        ? listingData.experienceLevel as HorseExperienceLevel 
-        : undefined;
-
-      const horseData = {
-        user_id: user.id,
-        horse_name: listingData.horseName || 'Untitled Horse',
-        sex: listingData.sex,
-        breed: listingData.breed,
-        color: listingData.color,
-        height: listingData.height,
-        year_of_birth: listingData.yearOfBirth,
-        age: age,
-        location: listingData.location,
-        price: listingData.price,
-        sale_type: listingData.saleType || 'for_sale',
-        trial_available: listingData.trialAvailable || false,
-        xrays_available: listingData.xraysAvailable || false,
-        pros: listingData.pros || [],
-        cons: listingData.cons || [],
-        disciplines: validDisciplines,
-        experience_level: validExperienceLevel,
-        temperament: listingData.temperament || [],
-        rideability: listingData.rideability || [],
-        program_details: listingData.programDetails || [],
-        maintenance_details: listingData.maintenanceDetails || [],
-        images: listingData.images || [],
-        videos: listingData.videos || [],
-        description: listingData.description,
-        show_record: listingData.showRecord,
-        pedigree: listingData.pedigree,
-        health_records: listingData.healthRecords,
-        listing_status: 'draft',
-        is_available: true,
-      };
-
-      const { error } = await supabase
-        .from('horse_profiles')
-        .insert(horseData);
-
-      if (error) throw error;
-      
-      toast.success('Draft saved successfully!');
-    } catch (error) {
-      console.error('Error saving draft:', error);
-      toast.error('Failed to save draft');
-    } finally {
-      setSaving(false);
-    }
-  };
 
   const nextStep = () => {
     if (currentStep < STEPS.length) {
@@ -218,59 +94,12 @@ const NewListing = () => {
       <div className="pt-32 pb-20">
         <div className="container mx-auto px-6 max-w-4xl">
           {/* Progress Header */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h1 className="text-3xl font-bold text-white">Create New Listing</h1>
-              <Button 
-                onClick={saveDraft} 
-                disabled={saving}
-                variant="outline" 
-                className="bg-white/5 border-white/20 text-white hover:bg-white/10"
-              >
-                <Save className="h-4 w-4 mr-2" />
-                {saving ? 'Saving...' : 'Save Draft'}
-              </Button>
-            </div>
-            
-            <div className="mb-4">
-              <div className="flex items-center justify-between text-sm text-white/60 mb-2">
-                <span>Step {currentStep} of {STEPS.length}</span>
-                <span>{Math.round(progress)}% Complete</span>
-              </div>
-              <Progress value={progress} className="h-2" />
-            </div>
-            
-            <div className="flex items-center space-x-2 overflow-x-auto pb-2">
-              {STEPS.map((step, index) => (
-                <div
-                  key={step.id}
-                  className={`flex items-center space-x-2 whitespace-nowrap ${
-                    step.id === currentStep 
-                      ? 'text-blue-400 font-semibold' 
-                      : step.id < currentStep 
-                        ? 'text-green-400' 
-                        : 'text-white/40'
-                  }`}
-                >
-                  <div 
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
-                      step.id === currentStep 
-                        ? 'bg-blue-500' 
-                        : step.id < currentStep 
-                          ? 'bg-green-500' 
-                          : 'bg-white/10'
-                    }`}
-                  >
-                    {step.id}
-                  </div>
-                  <span className="text-sm">{step.title}</span>
-                  {index < STEPS.length - 1 && (
-                    <ArrowRight className="h-4 w-4 text-white/20" />
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+          <ListingProgressHeader 
+            currentStep={currentStep}
+            steps={STEPS}
+            onSaveDraft={saveDraft}
+            saving={saving}
+          />
 
           {/* Step Content */}
           <Card className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8">
@@ -287,26 +116,12 @@ const NewListing = () => {
           </Card>
 
           {/* Navigation Footer */}
-          <div className="flex justify-between mt-8">
-            <Button 
-              onClick={prevStep}
-              disabled={currentStep === 1}
-              variant="outline"
-              className="bg-white/5 border-white/20 text-white hover:bg-white/10 disabled:opacity-50"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Previous
-            </Button>
-            
-            <Button 
-              onClick={nextStep}
-              disabled={currentStep === STEPS.length}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 text-white"
-            >
-              Next
-              <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
-          </div>
+          <ListingNavigationFooter 
+            currentStep={currentStep}
+            totalSteps={STEPS.length}
+            onPrevStep={prevStep}
+            onNextStep={nextStep}
+          />
         </div>
       </div>
     </div>

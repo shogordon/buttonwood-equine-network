@@ -1,0 +1,81 @@
+
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Save, ArrowRight } from "lucide-react";
+
+interface Step {
+  id: number;
+  title: string;
+}
+
+interface ListingProgressHeaderProps {
+  currentStep: number;
+  steps: Step[];
+  onSaveDraft: () => void;
+  saving: boolean;
+}
+
+export const ListingProgressHeader = ({ 
+  currentStep, 
+  steps, 
+  onSaveDraft, 
+  saving 
+}: ListingProgressHeaderProps) => {
+  const progress = (currentStep / steps.length) * 100;
+
+  return (
+    <div className="mb-8">
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-3xl font-bold text-white">Create New Listing</h1>
+        <Button 
+          onClick={onSaveDraft} 
+          disabled={saving}
+          variant="outline" 
+          className="bg-white/5 border-white/20 text-white hover:bg-white/10"
+        >
+          <Save className="h-4 w-4 mr-2" />
+          {saving ? 'Saving...' : 'Save Draft'}
+        </Button>
+      </div>
+      
+      <div className="mb-4">
+        <div className="flex items-center justify-between text-sm text-white/60 mb-2">
+          <span>Step {currentStep} of {steps.length}</span>
+          <span>{Math.round(progress)}% Complete</span>
+        </div>
+        <Progress value={progress} className="h-2" />
+      </div>
+      
+      <div className="flex items-center space-x-2 overflow-x-auto pb-2">
+        {steps.map((step, index) => (
+          <div
+            key={step.id}
+            className={`flex items-center space-x-2 whitespace-nowrap ${
+              step.id === currentStep 
+                ? 'text-blue-400 font-semibold' 
+                : step.id < currentStep 
+                  ? 'text-green-400' 
+                  : 'text-white/40'
+            }`}
+          >
+            <div 
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
+                step.id === currentStep 
+                  ? 'bg-blue-500' 
+                  : step.id < currentStep 
+                    ? 'bg-green-500' 
+                    : 'bg-white/10'
+              }`}
+            >
+              {step.id}
+            </div>
+            <span className="text-sm">{step.title}</span>
+            {index < steps.length - 1 && (
+              <ArrowRight className="h-4 w-4 text-white/20" />
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
