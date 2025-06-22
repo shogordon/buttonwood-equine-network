@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Calendar, Ruler, Eye, EyeOff } from "lucide-react";
 import { useHorsePermissions } from "@/hooks/useHorsePermissions";
+import { useNavigate } from "react-router-dom";
 
 interface Horse {
   id: string;
@@ -30,9 +31,24 @@ interface HorseCardProps {
 
 export const HorseCard = ({ horse, profile }: HorseCardProps) => {
   const { canViewPrice, canViewContact } = useHorsePermissions(profile);
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/horse/${horse.id}`);
+  };
+
+  const handleContactClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click when clicking contact button
+    if (canViewContact(horse)) {
+      navigate(`/horse/${horse.id}#contact`);
+    }
+  };
 
   return (
-    <Card className="group bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 hover:scale-105">
+    <Card 
+      className="group bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 hover:scale-105 cursor-pointer"
+      onClick={handleCardClick}
+    >
       {/* Image */}
       <div className="aspect-video bg-gradient-to-br from-blue-500/20 to-purple-500/20 overflow-hidden">
         {horse.images && horse.images.length > 0 ? (
@@ -105,6 +121,7 @@ export const HorseCard = ({ horse, profile }: HorseCardProps) => {
 
         {/* Contact Button */}
         <Button 
+          onClick={handleContactClick}
           className={`w-full ${
             canViewContact(horse) 
               ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700' 

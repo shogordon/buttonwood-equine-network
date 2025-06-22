@@ -20,6 +20,7 @@ import Trust from "./pages/Trust";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Contact from "./pages/Contact";
+import HorseProfile from "./pages/HorseProfile";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/browse" element={<Browse />} />
+            <Route path="/horse/:id" element={<HorseProfile />} />
             <Route path="/sell" element={<Sell />} />
             <Route path="/sell/new" element={<NewListing />} />
             <Route path="/verification" element={<Verification />} />
