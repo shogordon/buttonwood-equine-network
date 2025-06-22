@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import type { Database } from "@/integrations/supabase/types";
 
 // Import step components
 import SellerInfoStep from "@/components/listing/SellerInfoStep";
@@ -34,6 +35,9 @@ const STEPS = [
   { id: 10, title: "Preview & Publish", component: PreviewStep },
 ];
 
+type HorseDiscipline = Database['public']['Enums']['horse_discipline'];
+type HorseExperienceLevel = Database['public']['Enums']['horse_experience_level'];
+
 interface ListingData {
   // Seller info
   sellerName: string;
@@ -45,6 +49,7 @@ interface ListingData {
   horseName: string;
   sex: string;
   breed: string;
+  color: string;
   height: number;
   yearOfBirth: number;
   location: string;
@@ -110,11 +115,23 @@ const NewListing = () => {
       // Calculate age from year of birth
       const age = listingData.yearOfBirth ? new Date().getFullYear() - listingData.yearOfBirth : 0;
       
+      // Convert disciplines to proper enum values
+      const validDisciplines = (listingData.disciplines || [])
+        .filter((discipline): discipline is HorseDiscipline => 
+          ['dressage', 'jumping', 'eventing', 'western', 'racing', 'trail', 'other'].includes(discipline)
+        );
+
+      // Convert experience level to proper enum
+      const validExperienceLevel = ['beginner', 'intermediate', 'advanced', 'professional'].includes(listingData.experienceLevel || '') 
+        ? listingData.experienceLevel as HorseExperienceLevel 
+        : undefined;
+
       const horseData = {
         user_id: user.id,
         horse_name: listingData.horseName || 'Untitled Horse',
         sex: listingData.sex,
         breed: listingData.breed,
+        color: listingData.color,
         height: listingData.height,
         year_of_birth: listingData.yearOfBirth,
         age: age,
@@ -125,8 +142,8 @@ const NewListing = () => {
         xrays_available: listingData.xraysAvailable || false,
         pros: listingData.pros || [],
         cons: listingData.cons || [],
-        disciplines: listingData.disciplines || [],
-        experience_level: listingData.experienceLevel,
+        disciplines: validDisciplines,
+        experience_level: validExperienceLevel,
         temperament: listingData.temperament || [],
         rideability: listingData.rideability || [],
         program_details: listingData.programDetails || [],
@@ -143,7 +160,7 @@ const NewListing = () => {
 
       const { error } = await supabase
         .from('horse_profiles')
-        .insert([horseData]);
+        .insert(horseData);
 
       if (error) throw error;
       
