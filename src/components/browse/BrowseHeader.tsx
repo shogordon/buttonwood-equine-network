@@ -1,6 +1,5 @@
 
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Shield } from "lucide-react";
 
 interface BrowseHeaderProps {
@@ -21,7 +20,7 @@ const BrowseHeader = ({ profile, onGetVerified }: BrowseHeaderProps) => {
         </p>
 
         {profile?.verification_status !== 'verified' && (
-          <Card className="max-w-2xl mx-auto bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 p-6 mb-12">
+          <div className="max-w-2xl mx-auto glass-card p-6 mb-12 rounded-2xl">
             <div className="flex items-center justify-center gap-4">
               <Shield className="h-8 w-8 text-blue-400" />
               <div className="text-left">
@@ -35,7 +34,7 @@ const BrowseHeader = ({ profile, onGetVerified }: BrowseHeaderProps) => {
                 Get Verified
               </Button>
             </div>
-          </Card>
+          </div>
         )}
       </div>
     </section>
