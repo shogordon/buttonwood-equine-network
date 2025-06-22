@@ -9,6 +9,8 @@ import { useBrowseData } from "@/hooks/useBrowseData";
 const Browse = () => {
   const { user, profile, horses, loading, handleSignOut, handleGetVerified } = useBrowseData();
 
+  console.log('Browse component render', { user: !!user, profile: !!profile, horses: horses?.length, loading });
+
   if (loading) {
     return <LoadingState />;
   }
@@ -32,7 +34,7 @@ const Browse = () => {
       />
       
       <HorseGrid 
-        horses={horses}
+        horses={horses || []}
         profile={profile}
       />
     </div>

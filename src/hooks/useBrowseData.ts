@@ -9,8 +9,11 @@ export const useBrowseData = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
+  console.log('useBrowseData hook called', { user: !!user });
+
   useEffect(() => {
     if (!user) {
+      console.log('No user found, redirecting to auth');
       navigate('/auth');
     }
   }, [user, navigate]);
@@ -18,6 +21,7 @@ export const useBrowseData = () => {
   const { data: horses = [], isLoading: horsesLoading } = useQuery({
     queryKey: ['horses'],
     queryFn: async () => {
+      console.log('Fetching horses');
       const { data, error } = await supabase
         .from('horse_profiles')
         .select(`
@@ -32,7 +36,11 @@ export const useBrowseData = () => {
         .eq('is_available', true)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching horses:', error);
+        throw error;
+      }
+      console.log('Horses fetched:', data?.length);
       return data || [];
     },
     enabled: !!user,
@@ -43,24 +51,31 @@ export const useBrowseData = () => {
     queryFn: async () => {
       if (!user) return null;
       
+      console.log('Fetching profile for user:', user.id);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching profile:', error);
+        throw error;
+      }
+      console.log('Profile fetched:', data);
       return data;
     },
     enabled: !!user,
   });
 
   const handleSignOut = async () => {
+    console.log('Signing out');
     await signOut();
     navigate('/');
   };
 
   const handleGetVerified = () => {
+    console.log('Navigating to verification');
     navigate('/verification');
   };
 

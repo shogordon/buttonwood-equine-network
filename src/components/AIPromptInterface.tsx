@@ -22,7 +22,7 @@ export const AIPromptInterface = () => {
       setCurrentPlaceholder(prev => (prev + 1) % placeholders.length);
     }, 4000);
     return () => clearInterval(interval);
-  }, []);
+  }, [placeholders.length]);
 
   const handleQuickAction = (action: 'buying' | 'selling' | 'browsing') => {
     navigate('/auth', { state: { userType: action } });
