@@ -1,4 +1,3 @@
-
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,14 +23,7 @@ export const useBrowseData = () => {
       console.log('Fetching horses');
       const { data, error } = await supabase
         .from('horse_profiles')
-        .select(`
-          *,
-          user_profiles!horse_profiles_user_id_fkey(
-            first_name,
-            last_name,
-            location
-          )
-        `)
+        .select('*')
         .eq('listing_status', 'published')
         .eq('is_available', true)
         .order('created_at', { ascending: false });
