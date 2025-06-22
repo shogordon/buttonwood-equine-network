@@ -1,44 +1,64 @@
 
-import { Shield } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-
-interface UserProfile {
-  first_name?: string;
-  verification_status?: string;
-}
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Shield, LogOut } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface BrowseNavigationProps {
-  profile: UserProfile | null;
+  user: any;
+  profile: any;
   onSignOut: () => void;
 }
 
-const BrowseNavigation = ({ profile, onSignOut }: BrowseNavigationProps) => {
+const BrowseNavigation = ({ user, profile, onSignOut }: BrowseNavigationProps) => {
   return (
-    <nav className="glass-nav sticky top-0 z-50">
+    <nav className="fixed top-0 w-full z-50 bg-white/5 backdrop-blur-md shadow-md">
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Shield className="h-8 w-8 text-blue-400" />
+          <Link to="/" className="flex items-center space-x-2">
+            <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center">
+              <Shield className="h-6 w-6 text-blue-400" />
+            </div>
             <span className="text-xl font-semibold text-white">
               Buttonwood Bluebook
             </span>
-          </div>
+          </Link>
+          
           <div className="flex items-center space-x-4">
             {profile && (
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-white/70">
-                  Welcome, {profile.first_name || 'User'}
-                </span>
-                <Badge 
-                  variant={profile.verification_status === 'verified' ? 'default' : 'secondary'}
-                  className={profile.verification_status === 'verified' ? 'bg-green-500 text-white' : 'bg-white/20 text-white'}
-                >
-                  {profile.verification_status === 'verified' ? '✓ Verified' : 'Unverified'}
-                </Badge>
+              <div className="flex items-center space-x-3">
+                <div className="text-right">
+                  <p className="text-white font-medium">
+                    Welcome, {profile.display_name || profile.full_name || 'User'}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    {profile.verification_status === 'verified' ? (
+                      <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
+                        ✓ Verified
+                      </Badge>
+                    ) : (
+                      <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
+                        Pending Verification
+                      </Badge>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
-            <Button variant="outline" size="sm" onClick={onSignOut} className="glass-button text-white border-white/20">
+            
+            <Link to="/sell">
+              <Button className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-xl hover:scale-105 transition-all duration-300">
+                List Your Horse
+              </Button>
+            </Link>
+            
+            <Button
+              onClick={onSignOut}
+              variant="outline"
+              size="sm"
+              className="bg-white/5 border-white/20 text-white hover:bg-white/10"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
               Sign Out
             </Button>
           </div>

@@ -1,119 +1,120 @@
 
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Star, Calendar, Ruler, Eye, MapPin, Lock, Heart } from 'lucide-react';
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { MapPin, Calendar, Ruler, Eye, EyeOff } from "lucide-react";
+import { useHorsePermissions } from "@/hooks/useHorsePermissions";
 
 interface Horse {
   id: string;
   horse_name: string;
-  age: number;
   breed?: string;
-  height?: number;
+  sex?: string;
+  age?: number;
   location?: string;
   price?: number;
-  description?: string;
   images?: string[];
   disciplines?: string[];
-  featured: boolean;
+  show_price_to?: string;
+  show_contact_to?: string;
+  profiles?: {
+    display_name?: string;
+    verification_status?: string;
+  };
 }
 
 interface HorseCardProps {
   horse: Horse;
-  canViewPrice: boolean;
-  canViewContact: boolean;
+  profile: any;
 }
 
-const HorseCard = ({ horse, canViewPrice, canViewContact }: HorseCardProps) => {
+export const HorseCard = ({ horse, profile }: HorseCardProps) => {
+  const { canViewPrice, canViewContact } = useHorsePermissions(profile);
+
   return (
-    <Card className="glass-card hover:glass-medium transition-all duration-300 overflow-hidden">
-      <div className="relative">
+    <Card className="group bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 hover:scale-105">
+      {/* Image */}
+      <div className="aspect-video bg-gradient-to-br from-blue-500/20 to-purple-500/20 overflow-hidden">
         {horse.images && horse.images.length > 0 ? (
-          <img
-            src={horse.images[0]}
+          <img 
+            src={horse.images[0]} 
             alt={horse.horse_name}
-            className="w-full h-48 object-cover"
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           />
         ) : (
-          <div className="w-full h-48 bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center">
-            <Heart className="h-12 w-12 text-white/40" />
+          <div className="w-full h-full flex items-center justify-center">
+            <Eye className="h-12 w-12 text-white/30" />
           </div>
         )}
-        {horse.featured && (
-          <Badge className="absolute top-3 left-3 bg-orange-500 text-white">
-            <Star className="h-3 w-3 mr-1" />
-            Featured
-          </Badge>
-        )}
       </div>
-      
-      <CardContent className="p-6">
-        <div className="mb-4">
-          <h3 className="text-xl font-semibold text-white mb-2">
+
+      <div className="p-6 space-y-4">
+        {/* Header */}
+        <div>
+          <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">
             {horse.horse_name}
           </h3>
-          
-          <div className="flex flex-wrap gap-2 mb-3">
-            {horse.disciplines?.map((discipline) => (
-              <Badge key={discipline} variant="secondary" className="text-xs bg-white/20 text-white">
+          <div className="flex items-center gap-4 text-sm text-white/60">
+            {horse.breed && (
+              <span>{horse.breed}</span>
+            )}
+            {horse.sex && (
+              <span>{horse.sex}</span>
+            )}
+            {horse.age && (
+              <div className="flex items-center gap-1">
+                <Calendar className="h-4 w-4" />
+                <span>{horse.age} years</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Location */}
+        {horse.location && (
+          <div className="flex items-center gap-2 text-white/60">
+            <MapPin className="h-4 w-4" />
+            <span className="text-sm">{horse.location}</span>
+          </div>
+        )}
+
+        {/* Disciplines */}
+        {horse.disciplines && horse.disciplines.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {horse.disciplines.slice(0, 3).map((discipline) => (
+              <Badge key={discipline} className="bg-blue-500/20 text-blue-400 border-blue-500/30">
                 {discipline}
               </Badge>
             ))}
           </div>
-          
-          <div className="space-y-2 text-sm text-white/70">
-            <div className="flex items-center">
-              <Calendar className="h-4 w-4 mr-2" />
-              {horse.age} years old
-            </div>
-            {horse.height && (
-              <div className="flex items-center">
-                <Ruler className="h-4 w-4 mr-2" />
-                {horse.height}" hands
-              </div>
-            )}
-            {horse.breed && (
-              <div className="flex items-center">
-                <Eye className="h-4 w-4 mr-2" />
-                {horse.breed}
-              </div>
-            )}
-            {horse.location && (
-              <div className="flex items-center">
-                <MapPin className="h-4 w-4 mr-2" />
-                {horse.location}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {horse.description && (
-          <p className="text-sm text-white/70 mb-4 line-clamp-3">
-            {horse.description}
-          </p>
         )}
 
-        <div className="flex items-center justify-between">
-          {canViewPrice && horse.price ? (
-            <span className="text-lg font-semibold text-blue-400">
-              ${horse.price.toLocaleString()}
-            </span>
+        {/* Price */}
+        <div className="flex items-center justify-between pt-2">
+          {canViewPrice(horse) ? (
+            <div className="text-2xl font-bold text-white">
+              {horse.price ? `$${horse.price.toLocaleString()}` : 'Price on request'}
+            </div>
           ) : (
-            <div className="flex items-center text-white/40">
-              <Lock className="h-4 w-4 mr-1" />
-              <span className="text-sm">Price hidden</span>
+            <div className="flex items-center gap-2 text-white/60">
+              <EyeOff className="h-4 w-4" />
+              <span>Price restricted</span>
             </div>
           )}
-          
-          <Button
-            size="sm"
-            className="glass-button text-white"
-            disabled={!canViewContact}
-          >
-            {canViewContact ? 'Contact Seller' : 'Verify to Contact'}
-          </Button>
         </div>
-      </CardContent>
+
+        {/* Contact Button */}
+        <Button 
+          className={`w-full ${
+            canViewContact(horse) 
+              ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700' 
+              : 'bg-gray-600 cursor-not-allowed'
+          } text-white font-semibold py-3 rounded-xl transition-all duration-300`}
+          disabled={!canViewContact(horse)}
+        >
+          {canViewContact(horse) ? 'Contact Seller' : 'Upgrade to Contact'}
+        </Button>
+      </div>
     </Card>
   );
 };

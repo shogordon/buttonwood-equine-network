@@ -1,47 +1,44 @@
 
-import { Lock } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Shield } from "lucide-react";
 
 interface BrowseHeaderProps {
-  isVerified: boolean;
-  onUpgradePrompt: () => void;
+  profile: any;
+  onGetVerified: () => void;
 }
 
-const BrowseHeader = ({ isVerified, onUpgradePrompt }: BrowseHeaderProps) => {
+const BrowseHeader = ({ profile, onGetVerified }: BrowseHeaderProps) => {
   return (
-    <div className="mb-8">
-      <h1 className="text-4xl font-bold text-white mb-2">
-        Premium Sport Horses
-      </h1>
-      <p className="text-xl text-white/70">
-        Discover exceptional hunter/jumper prospects from verified sellers
-      </p>
-      
-      {!isVerified && (
-        <Card className="mt-6 glass-card border-blue-400/30">
-          <CardContent className="p-4 flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Lock className="h-5 w-5 text-blue-400" />
-              <div>
-                <p className="font-medium text-white">
-                  Unlock full access with verification
-                </p>
-                <p className="text-sm text-white/70">
-                  View pricing, contact info, and medical records
-                </p>
+    <section className="pt-32 pb-16 px-6 relative">
+      <div className="container mx-auto text-center relative z-10">
+        <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white text-shadow">
+          Premium <span className="gradient-text">Sporthorses</span>
+        </h1>
+        <p className="text-xl text-white/80 mb-12 max-w-2xl mx-auto">
+          Discover exceptional hunter/jumper horses from verified sellers. 
+          No commissions, no confusion.
+        </p>
+
+        {profile?.verification_status !== 'verified' && (
+          <Card className="max-w-2xl mx-auto bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 p-6 mb-12">
+            <div className="flex items-center justify-center gap-4">
+              <Shield className="h-8 w-8 text-blue-400" />
+              <div className="text-left">
+                <h3 className="text-white font-semibold mb-1">Get Verified for Full Access</h3>
+                <p className="text-white/70 text-sm">Unlock contact details and exclusive listings</p>
               </div>
+              <Button 
+                onClick={onGetVerified}
+                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-xl hover:scale-105 transition-all duration-300"
+              >
+                Get Verified
+              </Button>
             </div>
-            <Button 
-              onClick={onUpgradePrompt}
-              className="glass-button text-white"
-            >
-              Get Verified
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+          </Card>
+        )}
+      </div>
+    </section>
   );
 };
 

@@ -1,54 +1,39 @@
 
-import { Heart } from 'lucide-react';
-import { Card } from '@/components/ui/card';
-import HorseCard from './HorseCard';
-
-interface Horse {
-  id: string;
-  horse_name: string;
-  age: number;
-  breed?: string;
-  height?: number;
-  location?: string;
-  price?: number;
-  description?: string;
-  images?: string[];
-  disciplines?: string[];
-  featured: boolean;
-}
+import { HorseCard } from "./HorseCard";
 
 interface HorseGridProps {
-  horses: Horse[];
-  canViewPrice: (horse: Horse) => boolean;
-  canViewContact: (horse: Horse) => boolean;
+  horses: any[];
+  profile: any;
 }
 
-const HorseGrid = ({ horses, canViewPrice, canViewContact }: HorseGridProps) => {
+export const HorseGrid = ({ horses, profile }: HorseGridProps) => {
   if (horses.length === 0) {
     return (
-      <Card className="text-center p-12 glass-card">
-        <Heart className="h-16 w-16 text-white/40 mx-auto mb-4" />
-        <h3 className="text-xl font-semibold text-white mb-2">
-          No horses available yet
-        </h3>
-        <p className="text-white/70">
-          Check back soon for new listings from our verified sellers.
-        </p>
-      </Card>
+      <section className="py-20 px-6 relative">
+        <div className="container mx-auto text-center">
+          <div className="bg-white/5 backdrop-blur-md rounded-2xl p-12 border border-white/10">
+            <h3 className="text-2xl font-bold text-white mb-4">No horses available yet</h3>
+            <p className="text-white/60 mb-6">Be the first to list your horse on our platform!</p>
+          </div>
+        </div>
+      </section>
     );
   }
 
   return (
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {horses.map((horse) => (
-        <HorseCard
-          key={horse.id}
-          horse={horse}
-          canViewPrice={canViewPrice(horse)}
-          canViewContact={canViewContact(horse)}
-        />
-      ))}
-    </div>
+    <section className="py-20 px-6 relative">
+      <div className="container mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {horses.map((horse) => (
+            <HorseCard 
+              key={horse.id} 
+              horse={horse} 
+              profile={profile}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
   );
 };
 
