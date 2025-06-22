@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Shield, LogOut } from "lucide-react";
+import { Shield, LogOut, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface BrowseNavigationProps {
@@ -45,6 +45,17 @@ const BrowseNavigation = ({ user, profile, onSignOut }: BrowseNavigationProps) =
                 </div>
               </div>
             )}
+            
+            <Link to="/settings">
+              <Button
+                variant="outline"
+                size="sm"
+                className="bg-white/5 border-white/20 text-white hover:bg-white/10 hover:scale-105 transition-all duration-300"
+              >
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
+              </Button>
+            </Link>
             
             <Link to="/sell">
               <Button className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-xl hover:scale-105 transition-all duration-300">
