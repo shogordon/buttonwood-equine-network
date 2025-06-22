@@ -11,6 +11,12 @@ interface UserProfile {
   role: 'buyer' | 'seller' | 'both';
   verification_status?: 'unverified' | 'pending' | 'verified';
   account_type?: 'basic' | 'premium' | 'professional';
+  subscription_status?: 'inactive' | 'active' | 'cancelled' | 'past_due';
+  subscription_plan?: 'free' | 'basic' | 'premium' | 'professional';
+  subscription_start_date?: string;
+  subscription_end_date?: string;
+  billing_email?: string;
+  notification_preferences?: any;
   onboarding_completed: boolean;
   phone?: string;
   location?: string;
@@ -24,6 +30,7 @@ interface AuthContextType {
   profile: UserProfile | null;
   loading: boolean;
   signOut: () => Promise<void>;
+  handleSignOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
 
@@ -55,8 +62,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           first_name: data.first_name,
           last_name: data.last_name,
           role: data.role,
-          verification_status: (data as any).verification_status || 'unverified',
-          account_type: (data as any).account_type || 'basic',
+          verification_status: data.verification_status || 'unverified',
+          account_type: data.account_type || 'basic',
+          subscription_status: data.subscription_status || 'inactive',
+          subscription_plan: data.subscription_plan || 'free',
+          subscription_start_date: data.subscription_start_date,
+          subscription_end_date: data.subscription_end_date,
+          billing_email: data.billing_email,
+          notification_preferences: data.notification_preferences,
           onboarding_completed: data.onboarding_completed || false,
           phone: data.phone,
           location: data.location,
@@ -116,6 +129,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const handleSignOut = async () => {
+    await signOut();
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -123,6 +140,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       profile,
       loading,
       signOut,
+      handleSignOut,
       refreshProfile
     }}>
       {children}

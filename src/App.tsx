@@ -12,6 +12,7 @@ import Browse from "./pages/Browse";
 import Sell from "./pages/Sell";
 import NewListing from "./pages/NewListing";
 import Verification from "./pages/Verification";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import About from "./pages/About";
 import Pricing from "./pages/Pricing";
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/sell" element={<Sell />} />
             <Route path="/sell/new" element={<NewListing />} />
             <Route path="/verification" element={<Verification />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="/about" element={<About />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/trust" element={<Trust />} />

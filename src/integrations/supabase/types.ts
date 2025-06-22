@@ -454,6 +454,65 @@ export type Database = {
         }
         Relationships: []
       }
+      subscriptions: {
+        Row: {
+          billing_cycle: string | null
+          cancel_at_period_end: boolean | null
+          created_at: string | null
+          current_period_end: string | null
+          current_period_start: string | null
+          id: string
+          plan_name: string
+          plan_price: number | null
+          status: string | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          trial_end: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          billing_cycle?: string | null
+          cancel_at_period_end?: boolean | null
+          created_at?: string | null
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          plan_name: string
+          plan_price?: number | null
+          status?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          trial_end?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          billing_cycle?: string | null
+          cancel_at_period_end?: boolean | null
+          created_at?: string | null
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          plan_name?: string
+          plan_price?: number | null
+          status?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          trial_end?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       trial_requests: {
         Row: {
           buyer_id: string | null
@@ -507,6 +566,8 @@ export type Database = {
       }
       user_profiles: {
         Row: {
+          account_type: string | null
+          billing_email: string | null
           bio: string | null
           created_at: string | null
           email: string
@@ -514,14 +575,22 @@ export type Database = {
           id: string
           last_name: string | null
           location: string | null
+          notification_preferences: Json | null
           onboarding_completed: boolean | null
           phone: string | null
           profile_image_url: string | null
           role: Database["public"]["Enums"]["user_role"]
+          subscription_end_date: string | null
+          subscription_plan: string | null
+          subscription_start_date: string | null
+          subscription_status: string | null
           updated_at: string | null
           user_id: string
+          verification_status: string | null
         }
         Insert: {
+          account_type?: string | null
+          billing_email?: string | null
           bio?: string | null
           created_at?: string | null
           email: string
@@ -529,14 +598,22 @@ export type Database = {
           id?: string
           last_name?: string | null
           location?: string | null
+          notification_preferences?: Json | null
           onboarding_completed?: boolean | null
           phone?: string | null
           profile_image_url?: string | null
           role?: Database["public"]["Enums"]["user_role"]
+          subscription_end_date?: string | null
+          subscription_plan?: string | null
+          subscription_start_date?: string | null
+          subscription_status?: string | null
           updated_at?: string | null
           user_id: string
+          verification_status?: string | null
         }
         Update: {
+          account_type?: string | null
+          billing_email?: string | null
           bio?: string | null
           created_at?: string | null
           email?: string
@@ -544,14 +621,64 @@ export type Database = {
           id?: string
           last_name?: string | null
           location?: string | null
+          notification_preferences?: Json | null
           onboarding_completed?: boolean | null
           phone?: string | null
           profile_image_url?: string | null
           role?: Database["public"]["Enums"]["user_role"]
+          subscription_end_date?: string | null
+          subscription_plan?: string | null
+          subscription_start_date?: string | null
+          subscription_status?: string | null
           updated_at?: string | null
           user_id?: string
+          verification_status?: string | null
         }
         Relationships: []
+      }
+      verification_documents: {
+        Row: {
+          document_type: string
+          file_name: string
+          file_url: string
+          id: string
+          reviewed_at: string | null
+          reviewer_notes: string | null
+          status: string | null
+          uploaded_at: string | null
+          user_id: string
+        }
+        Insert: {
+          document_type: string
+          file_name: string
+          file_url: string
+          id?: string
+          reviewed_at?: string | null
+          reviewer_notes?: string | null
+          status?: string | null
+          uploaded_at?: string | null
+          user_id: string
+        }
+        Update: {
+          document_type?: string
+          file_name?: string
+          file_url?: string
+          id?: string
+          reviewed_at?: string | null
+          reviewer_notes?: string | null
+          status?: string | null
+          uploaded_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verification_documents_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       waitlist: {
         Row: {
