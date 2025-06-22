@@ -11,13 +11,23 @@ const Index = () => {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Background Elements */}
+      <div className="fixed inset-0 -z-10">
+        <div className="floating-element top-20 left-20 w-64 h-64 animate-float opacity-30" />
+        <div className="floating-element top-40 right-32 w-32 h-32 animate-float opacity-20" style={{ animationDelay: '2s' }} />
+        <div className="floating-element bottom-32 left-40 w-48 h-48 animate-float opacity-25" style={{ animationDelay: '4s' }} />
+        <div className="floating-element bottom-20 right-20 w-40 h-40 animate-float opacity-15" style={{ animationDelay: '6s' }} />
+      </div>
+
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 backdrop-glass bg-white/80 border-b border-white/20">
+      <nav className="fixed top-0 w-full z-50 glass-nav">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Shield className="h-8 w-8 text-french-blue-600" />
+              <div className="w-10 h-10 rounded-xl glass-light flex items-center justify-center">
+                <Shield className="h-6 w-6 text-french-blue-600" />
+              </div>
               <span className="text-xl font-semibold text-slate-gray-800">
                 Buttonwood Bluebook
               </span>
@@ -33,7 +43,7 @@ const Index = () => {
                 Trust & Safety
               </Link>
               <Link to="/auth">
-                <Button className="bg-gradient-to-r from-french-blue-600 to-french-blue-700 hover:from-french-blue-700 hover:to-french-blue-800 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 px-6 py-2.5 font-semibold">
+                <Button className="glass-button text-french-blue-700 hover:text-french-blue-800 border-french-blue-200 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 px-6 py-2.5 font-semibold">
                   <Sparkles className="h-4 w-4 mr-2" />
                   Sign In
                 </Button>
@@ -44,12 +54,11 @@ const Index = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="hero-gradient animate-gradient-flow pt-24 pb-16 px-6 relative overflow-hidden">
+      <section className="hero-gradient pt-32 pb-20 px-6 relative">
         <div className="container mx-auto text-center relative z-10">
           <div className="animate-fade-in-up">
             <Badge 
-              variant="secondary" 
-              className="mb-6 bg-white/20 backdrop-blur-sm text-french-blue-700 border-french-blue-200"
+              className="mb-6 glass-light text-french-blue-700 border-french-blue-200/50 hover:glass-medium transition-all duration-300"
             >
               ✨ Verified Equestrian Connections
             </Badge>
@@ -69,20 +78,22 @@ const Index = () => {
 
           {/* AI Prompt Interface */}
           <div className="max-w-4xl mx-auto mb-16">
-            <AIPromptInterface />
+            <div className="glass-medium rounded-2xl p-1">
+              <AIPromptInterface />
+            </div>
           </div>
 
           {/* CTA Cards */}
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto animate-fade-in">
             <Card 
-              className="group cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl glass-card"
+              className="group cursor-pointer transform transition-all duration-500 hover:scale-105 glass-card hover:glass-strong border-0"
               onMouseEnter={() => setHoveredCard('buyer')}
               onMouseLeave={() => setHoveredCard(null)}
             >
               <CardContent className="p-8 text-center">
                 <div className="mb-6">
-                  <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-french-blue-500 to-french-blue-600 rounded-full flex items-center justify-center">
-                    <Search className="h-8 w-8 text-white" />
+                  <div className="w-16 h-16 mx-auto mb-4 glass-medium rounded-2xl flex items-center justify-center group-hover:glass-strong transition-all duration-300">
+                    <Search className="h-8 w-8 text-french-blue-600" />
                   </div>
                   <h3 className="text-2xl font-semibold text-slate-gray-800 mb-2">
                     I'm a Buyer
@@ -108,7 +119,7 @@ const Index = () => {
                 </div>
 
                 <Button 
-                  className="w-full bg-french-blue-600 hover:bg-french-blue-700 text-white group-hover:bg-french-blue-700 transition-all duration-300"
+                  className="w-full glass-button text-french-blue-700 hover:text-french-blue-800 border-french-blue-200 group-hover:border-french-blue-300 transition-all duration-300"
                   size="lg"
                 >
                   Start Browsing Horses
@@ -118,14 +129,14 @@ const Index = () => {
             </Card>
 
             <Card 
-              className="group cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl glass-card"
+              className="group cursor-pointer transform transition-all duration-500 hover:scale-105 glass-card hover:glass-strong border-0"
               onMouseEnter={() => setHoveredCard('seller')}
               onMouseLeave={() => setHoveredCard(null)}
             >
               <CardContent className="p-8 text-center">
                 <div className="mb-6">
-                  <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-burnt-orange-500 to-burnt-orange-600 rounded-full flex items-center justify-center">
-                    <Heart className="h-8 w-8 text-white" />
+                  <div className="w-16 h-16 mx-auto mb-4 glass-medium rounded-2xl flex items-center justify-center group-hover:glass-strong transition-all duration-300">
+                    <Heart className="h-8 w-8 text-burnt-orange-500" />
                   </div>
                   <h3 className="text-2xl font-semibold text-slate-gray-800 mb-2">
                     I'm a Seller
@@ -151,7 +162,7 @@ const Index = () => {
                 </div>
 
                 <Button 
-                  className="w-full bg-burnt-orange-500 hover:bg-burnt-orange-600 text-white group-hover:bg-burnt-orange-600 transition-all duration-300"
+                  className="w-full glass-button text-burnt-orange-600 hover:text-burnt-orange-700 border-burnt-orange-200 group-hover:border-burnt-orange-300 transition-all duration-300"
                   size="lg"
                 >
                   List Your Horses
@@ -161,15 +172,12 @@ const Index = () => {
             </Card>
           </div>
         </div>
-        
-        {/* Floating Elements */}
-        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-french-blue-200/30 rounded-full blur-xl animate-float" />
-        <div className="absolute top-1/3 right-1/4 w-24 h-24 bg-burnt-orange-200/30 rounded-full blur-xl animate-float" style={{ animationDelay: '1s' }} />
       </section>
 
       {/* Problem/Solution Section */}
-      <section className="py-20 px-6 bg-gradient-to-b from-soft-ivory-50 to-white">
-        <div className="container mx-auto">
+      <section className="py-20 px-6 relative">
+        <div className="absolute inset-0 glass-light"></div>
+        <div className="container mx-auto relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-slate-gray-800">
               The Equestrian Market <span className="gradient-text">Reimagined</span>
@@ -181,8 +189,8 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <Card className="text-center p-8 border-2 border-red-200 bg-red-50/50">
-              <div className="w-16 h-16 mx-auto mb-4 bg-red-500/10 rounded-full flex items-center justify-center">
+            <Card className="text-center p-8 glass-card border-red-200/30 hover:glass-medium transition-all duration-300">
+              <div className="w-16 h-16 mx-auto mb-4 glass-light rounded-2xl flex items-center justify-center">
                 <span className="text-2xl">❌</span>
               </div>
               <h3 className="text-xl font-semibold mb-4 text-red-700">Traditional Market</h3>
@@ -195,8 +203,8 @@ const Index = () => {
               </ul>
             </Card>
 
-            <Card className="text-center p-8 border-2 border-french-blue-200 bg-french-blue-50/50 transform scale-105 shadow-lg">
-              <div className="w-16 h-16 mx-auto mb-4 bg-french-blue-500/10 rounded-full flex items-center justify-center">
+            <Card className="text-center p-8 glass-strong border-french-blue-200/50 transform scale-105 shadow-2xl">
+              <div className="w-16 h-16 mx-auto mb-4 glass-medium rounded-2xl flex items-center justify-center">
                 <Shield className="h-8 w-8 text-french-blue-600" />
               </div>
               <h3 className="text-xl font-semibold mb-4 text-french-blue-700">Buttonwood Bluebook</h3>
@@ -209,8 +217,8 @@ const Index = () => {
               </ul>
             </Card>
 
-            <Card className="text-center p-8 border-2 border-green-200 bg-green-50/50">
-              <div className="w-16 h-16 mx-auto mb-4 bg-green-500/10 rounded-full flex items-center justify-center">
+            <Card className="text-center p-8 glass-card border-green-200/30 hover:glass-medium transition-all duration-300">
+              <div className="w-16 h-16 mx-auto mb-4 glass-light rounded-2xl flex items-center justify-center">
                 <span className="text-2xl">✨</span>
               </div>
               <h3 className="text-xl font-semibold mb-4 text-green-700">Your Result</h3>
@@ -227,34 +235,35 @@ const Index = () => {
       </section>
 
       {/* Trust Indicators */}
-      <section className="py-20 px-6 bg-white">
-        <div className="container mx-auto text-center">
+      <section className="py-20 px-6 relative">
+        <div className="absolute inset-0 glass-medium"></div>
+        <div className="container mx-auto text-center relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold mb-12 text-slate-gray-800">
             Trusted by the <span className="gradient-text">Equestrian Community</span>
           </h2>
           
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 mb-4 bg-french-blue-100 rounded-full flex items-center justify-center">
-                <Users className="h-8 w-8 text-french-blue-600" />
+            <div className="flex flex-col items-center group">
+              <div className="w-20 h-20 mb-4 glass-card rounded-2xl flex items-center justify-center group-hover:glass-strong transition-all duration-300">
+                <Users className="h-10 w-10 text-french-blue-600" />
               </div>
-              <h3 className="text-2xl font-bold text-slate-gray-800 mb-2">500+</h3>
+              <h3 className="text-3xl font-bold text-slate-gray-800 mb-2">500+</h3>
               <p className="text-slate-gray-600">Verified Members</p>
             </div>
             
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 mb-4 bg-burnt-orange-100 rounded-full flex items-center justify-center">
-                <Heart className="h-8 w-8 text-burnt-orange-600" />
+            <div className="flex flex-col items-center group">
+              <div className="w-20 h-20 mb-4 glass-card rounded-2xl flex items-center justify-center group-hover:glass-strong transition-all duration-300">
+                <Heart className="h-10 w-10 text-burnt-orange-600" />
               </div>
-              <h3 className="text-2xl font-bold text-slate-gray-800 mb-2">150+</h3>
+              <h3 className="text-3xl font-bold text-slate-gray-800 mb-2">150+</h3>
               <p className="text-slate-gray-600">Successful Matches</p>
             </div>
             
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 mb-4 bg-green-100 rounded-full flex items-center justify-center">
-                <Star className="h-8 w-8 text-green-600" />
+            <div className="flex flex-col items-center group">
+              <div className="w-20 h-20 mb-4 glass-card rounded-2xl flex items-center justify-center group-hover:glass-strong transition-all duration-300">
+                <Star className="h-10 w-10 text-green-600" />
               </div>
-              <h3 className="text-2xl font-bold text-slate-gray-800 mb-2">4.9/5</h3>
+              <h3 className="text-3xl font-bold text-slate-gray-800 mb-2">4.9/5</h3>
               <p className="text-slate-gray-600">Member Satisfaction</p>
             </div>
           </div>
@@ -262,24 +271,26 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-6 bg-gradient-to-r from-french-blue-600 to-burnt-orange-500 text-white">
-        <div className="container mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+      <section className="py-20 px-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-french-blue-600/90 to-burnt-orange-500/90 backdrop-blur-sm"></div>
+        <div className="absolute inset-0 glass-strong opacity-30"></div>
+        <div className="container mx-auto text-center relative z-10">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
             Ready to Transform Your Equestrian Experience?
           </h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+          <p className="text-xl mb-8 text-white/90 max-w-2xl mx-auto">
             Join the exclusive network of verified buyers and sellers who demand excellence.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button 
               size="lg" 
-              className="bg-white text-french-blue-600 hover:bg-soft-ivory-100 px-8 py-4 text-lg font-semibold"
+              className="glass-strong text-french-blue-700 hover:text-french-blue-800 border-white/30 px-8 py-4 text-lg font-semibold hover:scale-105 transition-all duration-300"
             >
               Get Started Today
             </Button>
             <Button 
               size="lg" 
-              className="bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white hover:bg-white/20 hover:border-white/50 px-8 py-4 text-lg font-semibold transition-all duration-300"
+              className="glass-medium border-white/30 text-white hover:text-white hover:glass-strong px-8 py-4 text-lg font-semibold transition-all duration-300"
             >
               Learn More
             </Button>
@@ -288,26 +299,29 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 bg-slate-gray-900 text-white">
-        <div className="container mx-auto">
+      <footer className="py-12 px-6 relative">
+        <div className="absolute inset-0 glass-strong bg-slate-gray-900/20"></div>
+        <div className="container mx-auto relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <Shield className="h-6 w-6 text-french-blue-400" />
-              <span className="text-lg font-semibold">Buttonwood Bluebook</span>
+              <div className="w-8 h-8 glass-light rounded-lg flex items-center justify-center">
+                <Shield className="h-5 w-5 text-french-blue-400" />
+              </div>
+              <span className="text-lg font-semibold text-slate-gray-800">Buttonwood Bluebook</span>
             </div>
             <div className="flex space-x-6">
-              <Link to="/privacy" className="text-slate-gray-400 hover:text-white transition-colors">
+              <Link to="/privacy" className="text-slate-gray-600 hover:text-french-blue-600 transition-colors">
                 Privacy
               </Link>
-              <Link to="/terms" className="text-slate-gray-400 hover:text-white transition-colors">
+              <Link to="/terms" className="text-slate-gray-600 hover:text-french-blue-600 transition-colors">
                 Terms
               </Link>
-              <Link to="/contact" className="text-slate-gray-400 hover:text-white transition-colors">
+              <Link to="/contact" className="text-slate-gray-600 hover:text-french-blue-600 transition-colors">
                 Contact
               </Link>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-slate-gray-700 text-center text-slate-gray-400">
+          <div className="mt-8 pt-8 border-t border-white/20 text-center text-slate-gray-600">
             <p>&copy; 2024 Buttonwood Bluebook. Premium equestrian connections, reimagined.</p>
           </div>
         </div>
