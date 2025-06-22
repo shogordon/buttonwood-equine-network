@@ -69,11 +69,158 @@ export type Database = {
         }
         Relationships: []
       }
+      commission_disclosures: {
+        Row: {
+          acknowledged_at: string | null
+          commission_amount: number | null
+          commission_type: string | null
+          created_at: string | null
+          disclosure_text: string | null
+          horse_profile_id: string | null
+          id: string
+          seller_id: string | null
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          commission_amount?: number | null
+          commission_type?: string | null
+          created_at?: string | null
+          disclosure_text?: string | null
+          horse_profile_id?: string | null
+          id?: string
+          seller_id?: string | null
+        }
+        Update: {
+          acknowledged_at?: string | null
+          commission_amount?: number | null
+          commission_type?: string | null
+          created_at?: string | null
+          disclosure_text?: string | null
+          horse_profile_id?: string | null
+          id?: string
+          seller_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commission_disclosures_horse_profile_id_fkey"
+            columns: ["horse_profile_id"]
+            isOneToOne: false
+            referencedRelation: "horse_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_disclosures_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      horse_inquiries: {
+        Row: {
+          buyer_email: string
+          buyer_id: string | null
+          buyer_name: string
+          buyer_phone: string | null
+          created_at: string | null
+          horse_profile_id: string | null
+          id: string
+          message: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          buyer_email: string
+          buyer_id?: string | null
+          buyer_name: string
+          buyer_phone?: string | null
+          created_at?: string | null
+          horse_profile_id?: string | null
+          id?: string
+          message: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          buyer_email?: string
+          buyer_id?: string | null
+          buyer_name?: string
+          buyer_phone?: string | null
+          created_at?: string | null
+          horse_profile_id?: string | null
+          id?: string
+          message?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "horse_inquiries_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "horse_inquiries_horse_profile_id_fkey"
+            columns: ["horse_profile_id"]
+            isOneToOne: false
+            referencedRelation: "horse_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      horse_media: {
+        Row: {
+          caption: string | null
+          created_at: string | null
+          display_order: number | null
+          horse_profile_id: string | null
+          id: string
+          is_primary: boolean | null
+          media_type: string
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string | null
+          display_order?: number | null
+          horse_profile_id?: string | null
+          id?: string
+          is_primary?: boolean | null
+          media_type: string
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string | null
+          display_order?: number | null
+          horse_profile_id?: string | null
+          id?: string
+          is_primary?: boolean | null
+          media_type?: string
+          updated_at?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "horse_media_horse_profile_id_fkey"
+            columns: ["horse_profile_id"]
+            isOneToOne: false
+            referencedRelation: "horse_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       horse_profiles: {
         Row: {
           age: number
           breed: string | null
           color: string | null
+          cons: string[] | null
           created_at: string | null
           description: string | null
           disciplines: Database["public"]["Enums"]["horse_discipline"][] | null
@@ -88,17 +235,32 @@ export type Database = {
           id: string
           images: string[] | null
           is_available: boolean | null
+          listing_status: string | null
           location: string | null
+          maintenance_details: string[] | null
+          pedigree: string | null
           price: number | null
+          program_details: string[] | null
+          pros: string[] | null
+          rideability: string[] | null
+          sale_type: string | null
+          sex: string | null
+          show_record: string | null
+          temperament: string[] | null
           training_level: string | null
+          trial_available: boolean | null
           updated_at: string | null
           user_id: string
+          verification_status: string | null
           videos: string[] | null
+          xrays_available: boolean | null
+          year_of_birth: number | null
         }
         Insert: {
           age: number
           breed?: string | null
           color?: string | null
+          cons?: string[] | null
           created_at?: string | null
           description?: string | null
           disciplines?: Database["public"]["Enums"]["horse_discipline"][] | null
@@ -113,17 +275,32 @@ export type Database = {
           id?: string
           images?: string[] | null
           is_available?: boolean | null
+          listing_status?: string | null
           location?: string | null
+          maintenance_details?: string[] | null
+          pedigree?: string | null
           price?: number | null
+          program_details?: string[] | null
+          pros?: string[] | null
+          rideability?: string[] | null
+          sale_type?: string | null
+          sex?: string | null
+          show_record?: string | null
+          temperament?: string[] | null
           training_level?: string | null
+          trial_available?: boolean | null
           updated_at?: string | null
           user_id: string
+          verification_status?: string | null
           videos?: string[] | null
+          xrays_available?: boolean | null
+          year_of_birth?: number | null
         }
         Update: {
           age?: number
           breed?: string | null
           color?: string | null
+          cons?: string[] | null
           created_at?: string | null
           description?: string | null
           disciplines?: Database["public"]["Enums"]["horse_discipline"][] | null
@@ -138,12 +315,26 @@ export type Database = {
           id?: string
           images?: string[] | null
           is_available?: boolean | null
+          listing_status?: string | null
           location?: string | null
+          maintenance_details?: string[] | null
+          pedigree?: string | null
           price?: number | null
+          program_details?: string[] | null
+          pros?: string[] | null
+          rideability?: string[] | null
+          sale_type?: string | null
+          sex?: string | null
+          show_record?: string | null
+          temperament?: string[] | null
           training_level?: string | null
+          trial_available?: boolean | null
           updated_at?: string | null
           user_id?: string
+          verification_status?: string | null
           videos?: string[] | null
+          xrays_available?: boolean | null
+          year_of_birth?: number | null
         }
         Relationships: []
       }
@@ -262,6 +453,57 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      trial_requests: {
+        Row: {
+          buyer_id: string | null
+          created_at: string | null
+          horse_profile_id: string | null
+          id: string
+          message: string | null
+          requested_date: string | null
+          seller_response: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          buyer_id?: string | null
+          created_at?: string | null
+          horse_profile_id?: string | null
+          id?: string
+          message?: string | null
+          requested_date?: string | null
+          seller_response?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          buyer_id?: string | null
+          created_at?: string | null
+          horse_profile_id?: string | null
+          id?: string
+          message?: string | null
+          requested_date?: string | null
+          seller_response?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trial_requests_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "trial_requests_horse_profile_id_fkey"
+            columns: ["horse_profile_id"]
+            isOneToOne: false
+            referencedRelation: "horse_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_profiles: {
         Row: {

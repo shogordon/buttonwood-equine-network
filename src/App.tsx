@@ -9,6 +9,8 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
 import Browse from "./pages/Browse";
+import Sell from "./pages/Sell";
+import NewListing from "./pages/NewListing";
 import Verification from "./pages/Verification";
 import NotFound from "./pages/NotFound";
 import About from "./pages/About";
@@ -32,6 +34,8 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/browse" element={<Browse />} />
+            <Route path="/sell" element={<Sell />} />
+            <Route path="/sell/new" element={<NewListing />} />
             <Route path="/verification" element={<Verification />} />
             <Route path="/about" element={<About />} />
             <Route path="/pricing" element={<Pricing />} />
