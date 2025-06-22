@@ -11,6 +11,12 @@ import Onboarding from "./pages/Onboarding";
 import Browse from "./pages/Browse";
 import Verification from "./pages/Verification";
 import NotFound from "./pages/NotFound";
+import About from "./pages/About";
+import Pricing from "./pages/Pricing";
+import Trust from "./pages/Trust";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import Contact from "./pages/Contact";
 
 const queryClient = new QueryClient();
 
@@ -27,13 +33,12 @@ const App = () => (
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/browse" element={<Browse />} />
             <Route path="/verification" element={<Verification />} />
-            {/* Placeholder routes for navigation links */}
-            <Route path="/about" element={<div className="min-h-screen flex items-center justify-center"><h1 className="text-4xl font-bold">About Page - Coming Soon</h1></div>} />
-            <Route path="/pricing" element={<div className="min-h-screen flex items-center justify-center"><h1 className="text-4xl font-bold">Pricing Page - Coming Soon</h1></div>} />
-            <Route path="/trust" element={<div className="min-h-screen flex items-center justify-center"><h1 className="text-4xl font-bold">Trust & Safety - Coming Soon</h1></div>} />
-            <Route path="/privacy" element={<div className="min-h-screen flex items-center justify-center"><h1 className="text-4xl font-bold">Privacy Policy - Coming Soon</h1></div>} />
-            <Route path="/terms" element={<div className="min-h-screen flex items-center justify-center"><h1 className="text-4xl font-bold">Terms of Service - Coming Soon</h1></div>} />
-            <Route path="/contact" element={<div className="min-h-screen flex items-center justify-center"><h1 className="text-4xl font-bold">Contact Us - Coming Soon</h1></div>} />
+            <Route path="/about" element={<About />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/trust" element={<Trust />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
