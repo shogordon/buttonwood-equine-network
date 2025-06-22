@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Heart, Search, CheckCircle, Users, Star } from "lucide-react";
+import { ArrowRight, Heart, Search, CheckCircle, Users, Star, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AIPromptInterface } from "@/components/AIPromptInterface";
 
