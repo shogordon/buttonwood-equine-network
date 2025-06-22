@@ -167,7 +167,7 @@ const Index = () => {
             </Card>
 
             <Card className="p-8 bg-green-900/20 text-green-200 rounded-xl shadow-md">
-              <h3 className="text-2xl font-bold mb-6 text-green-400">Buttonwood Approach</h3>
+              <h3 className="text-2xl font-bold mb-6 text-green-400">Bluebook Approach</h3>
               <ul className="space-y-3">
                 <li className="flex items-center">
                   <span className="text-green-400 mr-3">✅</span>
