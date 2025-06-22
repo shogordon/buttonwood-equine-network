@@ -26,9 +26,9 @@ export const useBrowseData = () => {
         .from('horse_profiles')
         .select(`
           *,
-          profiles!horse_profiles_user_id_fkey(
-            display_name,
-            verification_status,
+          user_profiles!horse_profiles_user_id_fkey(
+            first_name,
+            last_name,
             location
           )
         `)
@@ -53,9 +53,9 @@ export const useBrowseData = () => {
       
       console.log('Fetching profile for user:', user.id);
       const { data, error } = await supabase
-        .from('profiles')
+        .from('user_profiles')
         .select('*')
-        .eq('id', user.id)
+        .eq('user_id', user.id)
         .single();
 
       if (error) {
