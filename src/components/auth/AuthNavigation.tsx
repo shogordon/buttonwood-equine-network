@@ -1,5 +1,4 @@
 
-import { Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const AuthNavigation = () => {
@@ -9,10 +8,10 @@ const AuthNavigation = () => {
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
             <div className="w-10 h-10 rounded-xl glass-light flex items-center justify-center">
-              <Shield className="h-6 w-6 text-blue-400" />
+              <img src="/lovable-uploads/the-aisle-logo.png" alt="The Aisle" className="h-6 w-6" />
             </div>
             <span className="text-xl font-semibold text-white">
-              Buttonwood Bluebook
+              The Aisle
             </span>
           </Link>
           <div className="hidden md:flex items-center space-x-8">

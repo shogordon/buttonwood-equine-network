@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Shield, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
@@ -77,10 +77,10 @@ const NewListing = () => {
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center space-x-2">
               <div className="w-10 h-10 rounded-xl bg-white/5 backdrop-blur-md flex items-center justify-center">
-                <Shield className="h-6 w-6 text-blue-400" />
+                <img src="/lovable-uploads/the-aisle-logo.png" alt="The Aisle" className="h-6 w-6" />
               </div>
               <span className="text-xl font-semibold text-white">
-                Buttonwood Bluebook
+                The Aisle
               </span>
             </Link>
             <Link to="/sell" className="text-white/80 hover:text-white transition-colors">

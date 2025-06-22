@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Shield, Upload, CheckCircle, Clock, ArrowLeft } from 'lucide-react';
+import { Upload, CheckCircle, Clock, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
@@ -63,9 +63,9 @@ const Verification = () => {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Shield className="h-8 w-8 text-blue-400" />
+              <img src="/lovable-uploads/the-aisle-logo.png" alt="The Aisle" className="h-8 w-8" />
               <span className="text-xl font-semibold text-white">
-                Buttonwood Bluebook
+                The Aisle
               </span>
             </div>
             <Link to="/browse" className="flex items-center text-blue-400 hover:text-blue-300">

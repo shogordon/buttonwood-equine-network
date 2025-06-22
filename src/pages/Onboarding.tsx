@@ -1,10 +1,11 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Shield, CheckCircle, ArrowRight, User, Users, ShoppingCart } from 'lucide-react';
+import { CheckCircle, ArrowRight, User, Users, ShoppingCart } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -242,10 +243,10 @@ const Onboarding = () => {
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center space-x-2">
               <div className="w-10 h-10 rounded-xl bg-white/5 backdrop-blur-md flex items-center justify-center">
-                <Shield className="h-6 w-6 text-blue-400" />
+                <img src="/lovable-uploads/the-aisle-logo.png" alt="The Aisle" className="h-6 w-6" />
               </div>
               <span className="text-xl font-semibold text-slate-gray-800">
-                Buttonwood Bluebook
+                The Aisle
               </span>
             </Link>
             <div className="hidden md:flex items-center space-x-8">

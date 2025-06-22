@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Shield, Heart, Search, CheckCircle, Users, Star } from "lucide-react";
+import { ArrowRight, Heart, Search, CheckCircle, Users, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AIPromptInterface } from "@/components/AIPromptInterface";
 
@@ -25,10 +25,10 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <div className="w-10 h-10 rounded-xl bg-white/5 backdrop-blur-md flex items-center justify-center">
-                <Shield className="h-6 w-6 text-blue-400" />
+                <img src="/lovable-uploads/the-aisle-logo.png" alt="The Aisle" className="h-6 w-6" />
               </div>
               <span className="text-xl font-semibold text-white">
-                Buttonwood Bluebook
+                The Aisle
               </span>
             </div>
             <div className="hidden md:flex items-center space-x-8">
@@ -233,9 +233,9 @@ const Index = () => {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
               <div className="w-8 h-8 bg-white/5 rounded-lg flex items-center justify-center">
-                <Shield className="h-5 w-5 text-blue-400" />
+                <img src="/lovable-uploads/the-aisle-logo.png" alt="The Aisle" className="h-5 w-5" />
               </div>
-              <span className="text-lg font-semibold text-white">Buttonwood Bluebook</span>
+              <span className="text-lg font-semibold text-white">The Aisle</span>
             </div>
             <div className="flex space-x-6 mb-4 md:mb-0">
               <Link to="/about" className="hover:text-white transition-colors">About</Link>
@@ -245,7 +245,7 @@ const Index = () => {
             </div>
           </div>
           <div className="mt-6 pt-6 border-t border-white/10 text-center">
-            <p>&copy; 2025 Buttonwood Bluebook — The trusted way to buy and sell premium sporthorses.</p>
+            <p>&copy; 2025 The Aisle — The trusted way to buy and sell premium sporthorses.</p>
           </div>
         </div>
       </footer>
