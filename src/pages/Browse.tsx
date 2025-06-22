@@ -118,42 +118,47 @@ const Browse = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-soft-ivory-50 to-french-blue-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <Shield className="h-12 w-12 text-french-blue-600 mx-auto mb-4 animate-spin" />
-          <p className="text-slate-gray-600">Loading horses...</p>
+          <Shield className="h-12 w-12 text-blue-400 mx-auto mb-4 animate-spin" />
+          <p className="text-white/70">Loading horses...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-soft-ivory-50 to-french-blue-50">
+    <div className="min-h-screen bg-background">
+      {/* Floating Elements */}
+      <div className="floating-element w-96 h-96 -top-48 -left-48 animate-float" />
+      <div className="floating-element w-64 h-64 top-1/4 -right-32 animate-float" style={{ animationDelay: '2s' }} />
+      <div className="floating-element w-48 h-48 bottom-1/4 left-1/4 animate-float" style={{ animationDelay: '4s' }} />
+
       {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-50">
+      <nav className="glass-nav sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Shield className="h-8 w-8 text-french-blue-600" />
-              <span className="text-xl font-semibold text-slate-gray-800">
+              <Shield className="h-8 w-8 text-blue-400" />
+              <span className="text-xl font-semibold text-white">
                 Buttonwood Bluebook
               </span>
             </div>
             <div className="flex items-center space-x-4">
               {profile && (
                 <div className="flex items-center space-x-2">
-                  <span className="text-sm text-slate-gray-600">
+                  <span className="text-sm text-white/70">
                     Welcome, {profile.first_name || 'User'}
                   </span>
                   <Badge 
                     variant={profile.verification_status === 'verified' ? 'default' : 'secondary'}
-                    className={profile.verification_status === 'verified' ? 'bg-green-500' : ''}
+                    className={profile.verification_status === 'verified' ? 'bg-green-500 text-white' : 'bg-white/20 text-white'}
                   >
                     {profile.verification_status === 'verified' ? '✓ Verified' : 'Unverified'}
                   </Badge>
                 </div>
               )}
-              <Button variant="outline" size="sm" onClick={signOut}>
+              <Button variant="outline" size="sm" onClick={signOut} className="glass-button text-white border-white/20">
                 Sign Out
               </Button>
             </div>
@@ -164,30 +169,30 @@ const Browse = () => {
       {/* Main Content */}
       <div className="container mx-auto px-6 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-gray-800 mb-2">
+          <h1 className="text-4xl font-bold text-white mb-2">
             Premium Sport Horses
           </h1>
-          <p className="text-xl text-slate-gray-600">
+          <p className="text-xl text-white/70">
             Discover exceptional hunter/jumper prospects from verified sellers
           </p>
           
           {profile?.verification_status !== 'verified' && (
-            <Card className="mt-6 border-french-blue-200 bg-french-blue-50">
+            <Card className="mt-6 glass-card border-blue-400/30">
               <CardContent className="p-4 flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <Lock className="h-5 w-5 text-french-blue-600" />
+                  <Lock className="h-5 w-5 text-blue-400" />
                   <div>
-                    <p className="font-medium text-french-blue-800">
+                    <p className="font-medium text-white">
                       Unlock full access with verification
                     </p>
-                    <p className="text-sm text-french-blue-600">
+                    <p className="text-sm text-white/70">
                       View pricing, contact info, and medical records
                     </p>
                   </div>
                 </div>
                 <Button 
                   onClick={handleUpgradePrompt}
-                  className="bg-french-blue-600 hover:bg-french-blue-700"
+                  className="glass-button text-white"
                 >
                   Get Verified
                 </Button>
@@ -198,7 +203,7 @@ const Browse = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {horses.map((horse) => (
-            <Card key={horse.id} className="glass-card hover:shadow-xl transition-all duration-300 overflow-hidden">
+            <Card key={horse.id} className="glass-card hover:glass-medium transition-all duration-300 overflow-hidden">
               <div className="relative">
                 {horse.images && horse.images.length > 0 ? (
                   <img
@@ -207,12 +212,12 @@ const Browse = () => {
                     className="w-full h-48 object-cover"
                   />
                 ) : (
-                  <div className="w-full h-48 bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
-                    <Heart className="h-12 w-12 text-slate-400" />
+                  <div className="w-full h-48 bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center">
+                    <Heart className="h-12 w-12 text-white/40" />
                   </div>
                 )}
                 {horse.featured && (
-                  <Badge className="absolute top-3 left-3 bg-burnt-orange-500">
+                  <Badge className="absolute top-3 left-3 bg-orange-500 text-white">
                     <Star className="h-3 w-3 mr-1" />
                     Featured
                   </Badge>
@@ -221,19 +226,19 @@ const Browse = () => {
               
               <CardContent className="p-6">
                 <div className="mb-4">
-                  <h3 className="text-xl font-semibold text-slate-gray-800 mb-2">
+                  <h3 className="text-xl font-semibold text-white mb-2">
                     {horse.horse_name}
                   </h3>
                   
                   <div className="flex flex-wrap gap-2 mb-3">
                     {horse.disciplines?.map((discipline) => (
-                      <Badge key={discipline} variant="secondary" className="text-xs">
+                      <Badge key={discipline} variant="secondary" className="text-xs bg-white/20 text-white">
                         {discipline}
                       </Badge>
                     ))}
                   </div>
                   
-                  <div className="space-y-2 text-sm text-slate-gray-600">
+                  <div className="space-y-2 text-sm text-white/70">
                     <div className="flex items-center">
                       <Calendar className="h-4 w-4 mr-2" />
                       {horse.age} years old
@@ -260,18 +265,18 @@ const Browse = () => {
                 </div>
 
                 {horse.description && (
-                  <p className="text-sm text-slate-gray-600 mb-4 line-clamp-3">
+                  <p className="text-sm text-white/70 mb-4 line-clamp-3">
                     {horse.description}
                   </p>
                 )}
 
                 <div className="flex items-center justify-between">
                   {canViewPrice(horse) && horse.price ? (
-                    <span className="text-lg font-semibold text-french-blue-600">
+                    <span className="text-lg font-semibold text-blue-400">
                       ${horse.price.toLocaleString()}
                     </span>
                   ) : (
-                    <div className="flex items-center text-slate-400">
+                    <div className="flex items-center text-white/40">
                       <Lock className="h-4 w-4 mr-1" />
                       <span className="text-sm">Price hidden</span>
                     </div>
@@ -279,7 +284,7 @@ const Browse = () => {
                   
                   <Button
                     size="sm"
-                    className="bg-french-blue-600 hover:bg-french-blue-700"
+                    className="glass-button text-white"
                     disabled={!canViewContact(horse)}
                   >
                     {canViewContact(horse) ? 'Contact Seller' : 'Verify to Contact'}
@@ -291,12 +296,12 @@ const Browse = () => {
         </div>
 
         {horses.length === 0 && (
-          <Card className="text-center p-12">
-            <Heart className="h-16 w-16 text-slate-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-slate-gray-800 mb-2">
+          <Card className="text-center p-12 glass-card">
+            <Heart className="h-16 w-16 text-white/40 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-white mb-2">
               No horses available yet
             </h3>
-            <p className="text-slate-gray-600">
+            <p className="text-white/70">
               Check back soon for new listings from our verified sellers.
             </p>
           </Card>
