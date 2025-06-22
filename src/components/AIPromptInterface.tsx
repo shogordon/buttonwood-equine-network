@@ -70,7 +70,7 @@ export const AIPromptInterface = () => {
           
           <Button
             onClick={() => handleQuickAction('browsing')}
-            className="bg-neutral-700 text-white rounded-xl font-semibold hover:scale-105 transition-all duration-300 px-6 py-3"
+            className="bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-500 hover:to-slate-600 text-white rounded-xl font-semibold hover:scale-105 transition-all duration-300 px-6 py-3"
           >
             <Eye className="h-5 w-5 mr-2" />
             Just Browsing
