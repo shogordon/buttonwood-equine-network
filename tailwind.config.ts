@@ -66,18 +66,18 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Buttonwood Brand Colors
+				// Buttonwood Brand Colors - Updated to match theme
 				'french-blue': {
 					50: '#eff8ff',
 					100: '#dbeefe',
 					200: '#bfddfe',
 					300: '#93c5fd',
 					400: '#60a5fa',
-					500: '#2E86AB',
-					600: '#2563eb',
-					700: '#1d4ed8',
-					800: '#1e40af',
-					900: '#1e3a8a',
+					500: '#4F46E5',
+					600: '#4338ca',
+					700: '#3730a3',
+					800: '#312e81',
+					900: '#1e1b4b',
 				},
 				'burnt-orange': {
 					50: '#fef2f2',
@@ -184,6 +184,10 @@ export default {
 						'background-position': '100% 50%',
 					},
 				},
+				'progress-fill': {
+					'0%': { transform: 'translateX(-100%)' },
+					'100%': { transform: 'translateX(0%)' }
+				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -193,10 +197,13 @@ export default {
 				'slide-in-right': 'slide-in-right 0.8s ease-out',
 				'float': 'float 3s ease-in-out infinite',
 				'gradient-flow': 'gradient-flow 3s ease infinite',
+				'progress-fill': 'progress-fill 1s ease-out',
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 				'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+				'gradient-primary': 'linear-gradient(to right, #4F46E5, #8B5CF6)',
+				'gradient-progress': 'linear-gradient(to right, #3B82F6, #8B5CF6)',
 			},
 		}
 	},

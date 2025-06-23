@@ -54,17 +54,17 @@ export const ListingProgressHeader = ({
               step.id === currentStep 
                 ? 'text-blue-400 font-semibold' 
                 : step.id < currentStep 
-                  ? 'text-green-400' 
+                  ? 'text-purple-400' 
                   : 'text-white/40'
             }`}
           >
             <div 
               className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
                 step.id === currentStep 
-                  ? 'bg-blue-500' 
+                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 shadow-lg shadow-blue-500/30' 
                   : step.id < currentStep 
-                    ? 'bg-green-500' 
-                    : 'bg-white/10'
+                    ? 'bg-gradient-to-r from-purple-500 to-purple-600 shadow-lg shadow-purple-500/30' 
+                    : 'bg-white/10 border border-white/20'
               }`}
             >
               {step.id}
