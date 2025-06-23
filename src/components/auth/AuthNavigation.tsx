@@ -1,5 +1,6 @@
 
 import { Link } from 'react-router-dom';
+import Logo from '@/components/ui/Logo';
 
 const AuthNavigation = () => {
   return (
@@ -8,7 +9,7 @@ const AuthNavigation = () => {
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
             <div className="w-10 h-10 rounded-xl glass-light flex items-center justify-center">
-              <img src="/lovable-uploads/the-aisle-logo.png" alt="The Aisle" className="h-6 w-6" />
+              <Logo />
             </div>
             <span className="text-xl font-semibold text-white">
               The Aisle

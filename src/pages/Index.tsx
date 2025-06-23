@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Heart, Search, CheckCircle, Users, Star, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AIPromptInterface } from "@/components/AIPromptInterface";
+import Logo from "@/components/ui/Logo";
 
 const Index = () => {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
@@ -25,7 +26,7 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <div className="w-10 h-10 rounded-xl bg-white/5 backdrop-blur-md flex items-center justify-center">
-                <img src="/lovable-uploads/the-aisle-logo.png" alt="The Aisle" className="h-6 w-6" />
+                <Logo />
               </div>
               <span className="text-xl font-semibold text-white">
                 The Aisle
@@ -233,7 +234,7 @@ const Index = () => {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
               <div className="w-8 h-8 bg-white/5 rounded-lg flex items-center justify-center">
-                <img src="/lovable-uploads/the-aisle-logo.png" alt="The Aisle" className="h-5 w-5" />
+                <Logo size="sm" />
               </div>
               <span className="text-lg font-semibold text-white">The Aisle</span>
             </div>

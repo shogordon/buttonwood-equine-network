@@ -7,6 +7,7 @@ import { Upload, CheckCircle, Clock, ArrowLeft, Shield } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import Logo from '@/components/ui/Logo';
 
 const Verification = () => {
   const [uploading, setUploading] = useState(false);
@@ -63,7 +64,7 @@ const Verification = () => {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <img src="/lovable-uploads/the-aisle-logo.png" alt="The Aisle" className="h-8 w-8" />
+              <Logo size="lg" />
               <span className="text-xl font-semibold text-white">
                 The Aisle
               </span>
