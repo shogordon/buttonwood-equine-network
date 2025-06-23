@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,11 +20,11 @@ interface ListingData {
   ownerZip: string;
   displayOwnerName: boolean;
   businessName: string;
-  businessType: string;
   businessEmail: string;
   businessPhone: string;
   authorizedAgentName: string;
-  authorizedAgentRole: string;
+  authorizedAgentEmail: string;
+  authorizedAgentPhone: string;
   displayBusinessName: boolean;
   
   // Agent/Rep info
@@ -141,6 +140,8 @@ export const useListingForm = () => {
     displayOwnerName: false,
     displayBusinessName: false,
     hasPermissionToList: false,
+    authorizedAgentEmail: '',
+    authorizedAgentPhone: '',
     papersStatus: '',
     facilityType: [],
     trialOptions: [],
