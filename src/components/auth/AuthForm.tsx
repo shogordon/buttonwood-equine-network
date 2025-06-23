@@ -61,6 +61,7 @@ const AuthForm = ({ isSignUp, setIsSignUp }: AuthFormProps) => {
           toast({
             title: "Account created successfully!",
             description: "Please check your email to verify your account.",
+            variant: "success",
           });
           navigate('/onboarding', { 
             state: { 
@@ -81,6 +82,7 @@ const AuthForm = ({ isSignUp, setIsSignUp }: AuthFormProps) => {
           toast({
             title: "Welcome back!",
             description: "You've been signed in successfully.",
+            variant: "success",
           });
           navigate('/browse');
         }
