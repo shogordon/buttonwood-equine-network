@@ -52,7 +52,7 @@ export const AIPromptInterface = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button
             onClick={() => handleQuickAction('buying')}
-            className="bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-xl font-semibold hover:scale-105 transition-all duration-300 px-6 py-3"
+            className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 text-white rounded-xl font-semibold hover:scale-105 transition-all duration-300 px-6 py-3"
           >
             <ShoppingCart className="h-5 w-5 mr-2" />
             I'm Buying
@@ -61,7 +61,7 @@ export const AIPromptInterface = () => {
           
           <Button
             onClick={() => handleQuickAction('selling')}
-            className="bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-semibold hover:scale-105 transition-all duration-300 px-6 py-3"
+            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white rounded-xl font-semibold hover:scale-105 transition-all duration-300 px-6 py-3"
           >
             <Store className="h-5 w-5 mr-2" />
             I'm Selling
@@ -70,7 +70,7 @@ export const AIPromptInterface = () => {
           
           <Button
             onClick={() => handleQuickAction('browsing')}
-            className="bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-500 hover:to-slate-600 text-white rounded-xl font-semibold hover:scale-105 transition-all duration-300 px-6 py-3"
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white rounded-xl font-semibold hover:scale-105 transition-all duration-300 px-6 py-3"
           >
             <Eye className="h-5 w-5 mr-2" />
             Just Browsing
