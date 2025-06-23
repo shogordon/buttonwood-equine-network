@@ -70,11 +70,12 @@ const WhoFillingOutStep = ({ data, onUpdate }: StepProps) => {
         
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {[
-            'For Sale',
-            'For Lease', 
-            'Lease-to-Own',
-            'Trade Considered',
-            'Open to Offers'
+            'For sale',
+            'For lease', 
+            'Lease-to-purchase',
+            'Payment plan',
+            'Trade considered',
+            'Special situation'
           ].map((type) => (
             <div key={type} className="flex items-center space-x-3">
               <Checkbox
