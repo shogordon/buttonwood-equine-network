@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface StepProps {
   data: any;
@@ -44,37 +45,29 @@ const WhoFillingOutStep = ({ data, onUpdate }: StepProps) => {
       </div>
 
       <Card className="bg-white/5 border-white/10 p-6">
-        <h3 className="text-lg font-semibold text-white mb-4">What's your role?</h3>
-        <div className="space-y-3">
-          <div className="flex items-center space-x-2">
-            <input
-              type="radio"
-              id="owner"
-              name="userRole"
-              value="owner"
-              checked={formData.userRole === 'owner'}
-              onChange={() => handleRoleChange('owner')}
-              className="text-blue-400"
-            />
-            <Label htmlFor="owner" className="text-white">I'm the owner</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <input
-              type="radio"
-              id="agent"
-              name="userRole"
-              value="agent"
-              checked={formData.userRole === 'agent'}
-              onChange={() => handleRoleChange('agent')}
-              className="text-blue-400"
-            />
-            <Label htmlFor="agent" className="text-white">I'm an agent / trainer / rep</Label>
-          </div>
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold text-white mb-2">What's your role?</h3>
+          <p className="text-sm text-white/60 mb-4">Choose one:</p>
         </div>
+        
+        <RadioGroup value={formData.userRole} onValueChange={handleRoleChange} className="space-y-3">
+          <div className="flex items-center space-x-3">
+            <RadioGroupItem value="owner" id="owner" className="border-white/30 text-blue-400" />
+            <Label htmlFor="owner" className="text-white cursor-pointer">I'm the owner</Label>
+          </div>
+          <div className="flex items-center space-x-3">
+            <RadioGroupItem value="agent" id="agent" className="border-white/30 text-blue-400" />
+            <Label htmlFor="agent" className="text-white cursor-pointer">I'm an agent / trainer / rep</Label>
+          </div>
+        </RadioGroup>
       </Card>
 
       <Card className="bg-white/5 border-white/10 p-6">
-        <h3 className="text-lg font-semibold text-white mb-4">Listing type:</h3>
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold text-white mb-2">Listing type:</h3>
+          <p className="text-sm text-white/60 mb-4">Select all that apply:</p>
+        </div>
+        
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {[
             'For Sale',
@@ -83,13 +76,14 @@ const WhoFillingOutStep = ({ data, onUpdate }: StepProps) => {
             'Trade Considered',
             'Open to Offers'
           ].map((type) => (
-            <div key={type} className="flex items-center space-x-2">
+            <div key={type} className="flex items-center space-x-3">
               <Checkbox
                 id={type}
                 checked={formData.listingType.includes(type)}
                 onCheckedChange={(checked) => handleListingTypeChange(type, checked as boolean)}
+                className="border-white/30"
               />
-              <Label htmlFor={type} className="text-white text-sm">
+              <Label htmlFor={type} className="text-white text-sm cursor-pointer">
                 {type}
               </Label>
             </div>

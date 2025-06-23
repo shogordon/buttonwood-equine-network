@@ -53,7 +53,7 @@ const AgentInfoStep = ({ data, onUpdate }: StepProps) => {
                 value={formData.agentName}
                 onChange={(e) => handleChange('agentName', e.target.value)}
                 placeholder="Your full name"
-                className="bg-white/5 border-white/20 text-white placeholder:text-white/40"
+                className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-10"
               />
             </div>
             <div>
@@ -63,7 +63,7 @@ const AgentInfoStep = ({ data, onUpdate }: StepProps) => {
                 value={formData.agentBusinessName}
                 onChange={(e) => handleChange('agentBusinessName', e.target.value)}
                 placeholder="Business or farm name"
-                className="bg-white/5 border-white/20 text-white placeholder:text-white/40"
+                className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-10"
               />
             </div>
             <div>
@@ -73,7 +73,7 @@ const AgentInfoStep = ({ data, onUpdate }: StepProps) => {
                 value={formData.agentPhone}
                 onChange={(e) => handleChange('agentPhone', e.target.value)}
                 placeholder="Your phone number"
-                className="bg-white/5 border-white/20 text-white placeholder:text-white/40"
+                className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-10"
               />
             </div>
             <div>
@@ -84,7 +84,7 @@ const AgentInfoStep = ({ data, onUpdate }: StepProps) => {
                 value={formData.agentEmail}
                 onChange={(e) => handleChange('agentEmail', e.target.value)}
                 placeholder="Your email address"
-                className="bg-white/5 border-white/20 text-white placeholder:text-white/40"
+                className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-10"
               />
             </div>
             <div>
@@ -94,7 +94,7 @@ const AgentInfoStep = ({ data, onUpdate }: StepProps) => {
                 value={formData.agentWebsite}
                 onChange={(e) => handleChange('agentWebsite', e.target.value)}
                 placeholder="Your website URL"
-                className="bg-white/5 border-white/20 text-white placeholder:text-white/40"
+                className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-10"
               />
             </div>
             <div>
@@ -104,19 +104,20 @@ const AgentInfoStep = ({ data, onUpdate }: StepProps) => {
                 value={formData.agentSocials}
                 onChange={(e) => handleChange('agentSocials', e.target.value)}
                 placeholder="Instagram, Facebook, etc."
-                className="bg-white/5 border-white/20 text-white placeholder:text-white/40"
+                className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-10"
               />
             </div>
           </div>
 
-          <div className="mt-6">
-            <div className="flex items-center space-x-2">
+          <div className="mt-6 p-4 bg-white/5 rounded-lg border border-white/10">
+            <div className="flex items-center space-x-3">
               <Checkbox
                 id="hasPermissionToList"
                 checked={formData.hasPermissionToList}
                 onCheckedChange={(checked) => handleChange('hasPermissionToList', checked)}
+                className="border-white/30"
               />
-              <Label htmlFor="hasPermissionToList" className="text-white">
+              <Label htmlFor="hasPermissionToList" className="text-white cursor-pointer">
                 I have permission to list this horse
               </Label>
             </div>

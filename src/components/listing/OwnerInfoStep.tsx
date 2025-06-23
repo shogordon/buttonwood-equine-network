@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface StepProps {
   data: any;
@@ -52,35 +53,23 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
 
       <Card className="bg-white/5 border-white/10 p-6">
         <div className="space-y-4">
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <input
-                type="radio"
-                id="person"
-                name="ownerType"
-                value="person"
-                checked={formData.ownerType === 'person'}
-                onChange={() => handleOwnerTypeChange('person')}
-                className="text-blue-400"
-              />
-              <Label htmlFor="person" className="text-white">A person owns the horse</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <input
-                type="radio"
-                id="business"
-                name="ownerType"
-                value="business"
-                checked={formData.ownerType === 'business'}
-                onChange={() => handleOwnerTypeChange('business')}
-                className="text-blue-400"
-              />
-              <Label htmlFor="business" className="text-white">A business or syndicate owns it</Label>
-            </div>
+          <div className="mb-4">
+            <p className="text-sm text-white/60 mb-4">Choose one:</p>
           </div>
+          
+          <RadioGroup value={formData.ownerType} onValueChange={handleOwnerTypeChange} className="space-y-3">
+            <div className="flex items-center space-x-3">
+              <RadioGroupItem value="person" id="person" className="border-white/30 text-blue-400" />
+              <Label htmlFor="person" className="text-white cursor-pointer">A person owns the horse</Label>
+            </div>
+            <div className="flex items-center space-x-3">
+              <RadioGroupItem value="business" id="business" className="border-white/30 text-blue-400" />
+              <Label htmlFor="business" className="text-white cursor-pointer">A business or syndicate owns it</Label>
+            </div>
+          </RadioGroup>
 
           {formData.ownerType === 'person' && (
-            <div className="space-y-4 mt-6">
+            <div className="space-y-4 mt-6 p-4 bg-white/5 rounded-lg border border-white/10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="ownerName" className="text-white mb-2 block">Name</Label>
@@ -89,7 +78,7 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
                     value={formData.ownerName}
                     onChange={(e) => handleChange('ownerName', e.target.value)}
                     placeholder="Full name"
-                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40"
+                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-10"
                   />
                 </div>
                 <div>
@@ -100,7 +89,7 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
                     value={formData.ownerEmail}
                     onChange={(e) => handleChange('ownerEmail', e.target.value)}
                     placeholder="Email address"
-                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40"
+                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-10"
                   />
                 </div>
                 <div>
@@ -110,7 +99,7 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
                     value={formData.ownerPhone}
                     onChange={(e) => handleChange('ownerPhone', e.target.value)}
                     placeholder="Phone number"
-                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40"
+                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-10"
                   />
                 </div>
                 <div>
@@ -120,17 +109,18 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
                     value={formData.ownerZip}
                     onChange={(e) => handleChange('ownerZip', e.target.value)}
                     placeholder="Zip code"
-                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40"
+                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-10"
                   />
                 </div>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3 mt-4">
                 <Checkbox
                   id="displayOwnerName"
                   checked={formData.displayOwnerName}
                   onCheckedChange={(checked) => handleChange('displayOwnerName', checked)}
+                  className="border-white/30"
                 />
-                <Label htmlFor="displayOwnerName" className="text-white text-sm">
+                <Label htmlFor="displayOwnerName" className="text-white text-sm cursor-pointer">
                   Okay to display name
                 </Label>
               </div>
@@ -138,7 +128,7 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
           )}
 
           {formData.ownerType === 'business' && (
-            <div className="space-y-4 mt-6">
+            <div className="space-y-4 mt-6 p-4 bg-white/5 rounded-lg border border-white/10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="businessName" className="text-white mb-2 block">Business name</Label>
@@ -147,7 +137,7 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
                     value={formData.businessName}
                     onChange={(e) => handleChange('businessName', e.target.value)}
                     placeholder="Business or syndicate name"
-                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40"
+                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-10"
                   />
                 </div>
                 <div>
@@ -157,7 +147,7 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
                     value={formData.businessType}
                     onChange={(e) => handleChange('businessType', e.target.value)}
                     placeholder="LLC, Partnership, Syndicate, etc."
-                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40"
+                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-10"
                   />
                 </div>
                 <div>
@@ -168,7 +158,7 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
                     value={formData.businessEmail}
                     onChange={(e) => handleChange('businessEmail', e.target.value)}
                     placeholder="Contact email"
-                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40"
+                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-10"
                   />
                 </div>
                 <div>
@@ -178,7 +168,7 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
                     value={formData.businessPhone}
                     onChange={(e) => handleChange('businessPhone', e.target.value)}
                     placeholder="Contact phone"
-                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40"
+                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-10"
                   />
                 </div>
                 <div>
@@ -188,7 +178,7 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
                     value={formData.authorizedAgentName}
                     onChange={(e) => handleChange('authorizedAgentName', e.target.value)}
                     placeholder="Name of authorized representative"
-                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40"
+                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-10"
                   />
                 </div>
                 <div>
@@ -198,17 +188,18 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
                     value={formData.authorizedAgentRole}
                     onChange={(e) => handleChange('authorizedAgentRole', e.target.value)}
                     placeholder="Title or role"
-                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40"
+                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40 h-10"
                   />
                 </div>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3 mt-4">
                 <Checkbox
                   id="displayBusinessName"
                   checked={formData.displayBusinessName}
                   onCheckedChange={(checked) => handleChange('displayBusinessName', checked)}
+                  className="border-white/30"
                 />
-                <Label htmlFor="displayBusinessName" className="text-white text-sm">
+                <Label htmlFor="displayBusinessName" className="text-white text-sm cursor-pointer">
                   Okay to display business name
                 </Label>
               </div>
