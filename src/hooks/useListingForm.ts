@@ -9,49 +9,124 @@ type HorseDiscipline = Database['public']['Enums']['horse_discipline'];
 type HorseExperienceLevel = Database['public']['Enums']['horse_experience_level'];
 
 interface ListingData {
-  // Seller info
-  sellerName: string;
-  sellerRole: string;
-  commissionType: string;
-  commissionAmount: number;
+  // Who's filling this out
+  userRole: 'owner' | 'agent' | '';
+  listingType: string[];
   
-  // Basic horse info
-  horseName: string;
-  sex: string;
+  // Owner info
+  ownerType: 'person' | 'business' | '';
+  ownerName: string;
+  ownerEmail: string;
+  ownerPhone: string;
+  ownerZip: string;
+  displayOwnerName: boolean;
+  businessName: string;
+  businessType: string;
+  businessEmail: string;
+  businessPhone: string;
+  authorizedAgentName: string;
+  authorizedAgentRole: string;
+  displayBusinessName: boolean;
+  
+  // Agent/Rep info
+  agentName: string;
+  agentBusinessName: string;
+  agentPhone: string;
+  agentEmail: string;
+  agentWebsite: string;
+  agentSocials: string;
+  hasPermissionToList: boolean;
+  
+  // Horse details
+  registeredName: string;
+  barnName: string;
   breed: string;
-  color: string;
+  sex: string;
   height: number;
+  color: string;
+  age: number;
   yearOfBirth: number;
-  location: string;
+  sire: string;
+  dam: string;
+  damsire: string;
+  papersStatus: 'yes' | 'no' | 'pending' | '';
   
-  // Sale info
+  // Location & availability
+  currentLocation: string;
+  facilityType: string[];
+  trialOptions: string[];
+  travelLimits: string;
+  workStatus: string[];
+  
+  // Price & buyer match
   price: number;
+  priceInquire: boolean;
+  priceNegotiable: boolean;
+  leaseConsidered: boolean;
+  trialConsidered: boolean;
+  depositTerms: string;
+  bestFor: string[];
+  
+  // Commission
+  hasCommission: boolean;
+  commissionAmount: number;
+  commissionType: 'flat' | 'percentage' | '';
+  commissionPaidBy: 'buyer' | 'seller' | 'shared' | '';
+  coBrokers: Array<{ name: string; email: string; }>;
+  
+  // Description & highlights
+  headline: string;
+  description: string;
+  keyStrengths: string[];
+  
+  // Show & training info
+  highestShowLevel: string;
+  highestSchoolingLevel: string;
+  showHighlights: string;
+  currentTrainer: string;
+  currentProgram: string;
+  trainingSchedule: string;
+  trainingApproach: string;
+  
+  // Temperament & suitability
+  riderMatch: string[];
+  quirksNotes: string;
+  groundManners: string;
+  
+  // Vet & health info
+  maintenance: string;
+  soundnessConcerns: string;
+  xraysStatus: 'full' | 'partial' | 'on_request' | 'none' | '';
+  recentPPE: string;
+  vetDocuments: string[];
+  
+  // Media
+  coverPhoto: string;
+  images: string[];
+  videos: string[];
+  videoCategories: { [key: string]: string[] };
+  socialLinks: string[];
+  
+  // Contact info display
+  useDefaultContact: boolean;
+  customContactPerson: string;
+  contactVisibility: 'registered' | 'verified' | 'on_request' | '';
+  contactNotes: string;
+  
+  // Legacy fields for compatibility
+  horseName: string;
+  location: string;
   saleType: string;
   trialAvailable: boolean;
   xraysAvailable: boolean;
-  
-  // Pros & cons
   pros: string[];
   cons: string[];
-  
-  // Tags & filters
   disciplines: string[];
   experienceLevel: string;
   temperament: string[];
   rideability: string[];
-  
-  // Program & maintenance
   programDetails: string[];
   maintenanceDetails: string[];
-  
-  // Media
-  images: string[];
-  videos: string[];
-  
-  // Description
-  description: string;
-  
-  // Verification
   showRecord: string;
   pedigree: string;
   healthRecords: string;
@@ -59,7 +134,37 @@ interface ListingData {
 
 export const useListingForm = () => {
   const { user } = useAuth();
-  const [listingData, setListingData] = useState<Partial<ListingData>>({});
+  const [listingData, setListingData] = useState<Partial<ListingData>>({
+    userRole: '',
+    listingType: [],
+    ownerType: '',
+    displayOwnerName: false,
+    displayBusinessName: false,
+    hasPermissionToList: false,
+    papersStatus: '',
+    facilityType: [],
+    trialOptions: [],
+    workStatus: [],
+    priceInquire: false,
+    priceNegotiable: false,
+    leaseConsidered: false,
+    trialConsidered: false,
+    bestFor: [],
+    hasCommission: false,
+    commissionType: '',
+    commissionPaidBy: '',
+    coBrokers: [],
+    keyStrengths: [],
+    riderMatch: [],
+    xraysStatus: '',
+    vetDocuments: [],
+    images: [],
+    videos: [],
+    videoCategories: {},
+    socialLinks: [],
+    useDefaultContact: true,
+    contactVisibility: 'registered',
+  });
   const [saving, setSaving] = useState(false);
 
   const updateListingData = (stepData: Partial<ListingData>) => {
@@ -84,18 +189,18 @@ export const useListingForm = () => {
 
       const horseData = {
         user_id: user.id,
-        horse_name: listingData.horseName || 'Untitled Horse',
+        horse_name: listingData.barnName || listingData.horseName || 'Untitled Horse',
         sex: listingData.sex,
         breed: listingData.breed,
         color: listingData.color,
         height: listingData.height,
         year_of_birth: listingData.yearOfBirth,
         age: age,
-        location: listingData.location,
+        location: listingData.currentLocation || listingData.location,
         price: listingData.price,
         sale_type: listingData.saleType || 'for_sale',
-        trial_available: listingData.trialAvailable || false,
-        xrays_available: listingData.xraysAvailable || false,
+        trial_available: listingData.trialAvailable || listingData.trialConsidered || false,
+        xrays_available: listingData.xraysAvailable || listingData.xraysStatus === 'full' || false,
         pros: listingData.pros || [],
         cons: listingData.cons || [],
         disciplines: validDisciplines,

@@ -6,9 +6,11 @@ import { Card } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { useListingForm } from "@/hooks/useListingForm";
 
-// Import step components
-import SellerInfoStep from "@/components/listing/SellerInfoStep";
-import BasicHorseInfoStep from "@/components/listing/BasicHorseInfoStep";
+// Import new step components
+import WhoFillingOutStep from "@/components/listing/WhoFillingOutStep";
+import OwnerInfoStep from "@/components/listing/OwnerInfoStep";
+import AgentInfoStep from "@/components/listing/AgentInfoStep";
+import EnhancedHorseDetailsStep from "@/components/listing/EnhancedHorseDetailsStep";
 import SaleInfoStep from "@/components/listing/SaleInfoStep";
 import ProsConsStep from "@/components/listing/ProsConsStep";
 import TagsFiltersStep from "@/components/listing/TagsFiltersStep";
@@ -18,21 +20,23 @@ import DescriptionStep from "@/components/listing/DescriptionStep";
 import VerificationStep from "@/components/listing/VerificationStep";
 import PreviewStep from "@/components/listing/PreviewStep";
 
-// Import new components
+// Import navigation components
 import { ListingProgressHeader } from "@/components/listing/ListingProgressHeader";
 import { ListingNavigationFooter } from "@/components/listing/ListingNavigationFooter";
 
 const STEPS = [
-  { id: 1, title: "Seller Info", component: SellerInfoStep },
-  { id: 2, title: "Basic Horse Info", component: BasicHorseInfoStep },
-  { id: 3, title: "Sale Info", component: SaleInfoStep },
-  { id: 4, title: "Pros & Cons", component: ProsConsStep },
-  { id: 5, title: "Tags & Filters", component: TagsFiltersStep },
-  { id: 6, title: "Program & Maintenance", component: ProgramMaintenanceStep },
-  { id: 7, title: "Media Upload", component: MediaUploadStep },
-  { id: 8, title: "Description", component: DescriptionStep },
-  { id: 9, title: "Verification", component: VerificationStep },
-  { id: 10, title: "Preview & Publish", component: PreviewStep },
+  { id: 1, title: "Who's Filling This Out?", component: WhoFillingOutStep },
+  { id: 2, title: "Owner Info", component: OwnerInfoStep },
+  { id: 3, title: "Agent Info", component: AgentInfoStep },
+  { id: 4, title: "Horse Details", component: EnhancedHorseDetailsStep },
+  { id: 5, title: "Sale Info", component: SaleInfoStep },
+  { id: 6, title: "Pros & Cons", component: ProsConsStep },
+  { id: 7, title: "Tags & Filters", component: TagsFiltersStep },
+  { id: 8, title: "Program & Maintenance", component: ProgramMaintenanceStep },
+  { id: 9, title: "Media Upload", component: MediaUploadStep },
+  { id: 10, title: "Description", component: DescriptionStep },
+  { id: 11, title: "Verification", component: VerificationStep },
+  { id: 12, title: "Preview & Publish", component: PreviewStep },
 ];
 
 const NewListing = () => {
@@ -41,7 +45,19 @@ const NewListing = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const { listingData, updateListingData, saveDraft, saving } = useListingForm();
 
-  const CurrentStepComponent = STEPS.find(step => step.id === currentStep)?.component;
+  const getCurrentStepComponent = () => {
+    const step = STEPS.find(step => step.id === currentStep);
+    if (!step) return null;
+
+    // Skip agent info step if user is not an agent
+    if (step.id === 3 && listingData.userRole !== 'agent') {
+      return null;
+    }
+
+    return step.component;
+  };
+
+  const CurrentStepComponent = getCurrentStepComponent();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -50,14 +66,28 @@ const NewListing = () => {
   }, [user, loading, navigate]);
 
   const nextStep = () => {
-    if (currentStep < STEPS.length) {
-      setCurrentStep(prev => prev + 1);
+    let nextStepId = currentStep + 1;
+    
+    // Skip agent info step if user is not an agent
+    if (nextStepId === 3 && listingData.userRole !== 'agent') {
+      nextStepId = 4;
+    }
+
+    if (nextStepId <= STEPS.length) {
+      setCurrentStep(nextStepId);
     }
   };
 
   const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(prev => prev - 1);
+    let prevStepId = currentStep - 1;
+    
+    // Skip agent info step if user is not an agent
+    if (prevStepId === 3 && listingData.userRole !== 'agent') {
+      prevStepId = 2;
+    }
+
+    if (prevStepId >= 1) {
+      setCurrentStep(prevStepId);
     }
   };
 
