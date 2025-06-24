@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { Shield, Copy } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 
@@ -20,6 +21,7 @@ interface StepProps {
 }
 
 const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
+  const { user, profile } = useAuth();
   const [formData, setFormData] = useState({
     ownerType: data.ownerType || '',
     ownerName: data.ownerName || '',
@@ -37,6 +39,23 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
   });
 
   const [validationErrors, setValidationErrors] = useState<{[key: string]: string}>({});
+
+  // Auto-populate owner data when user role is "owner"
+  useEffect(() => {
+    if (data.userRole === 'owner' && user && profile) {
+      const autoPopulatedData = {
+        ...formData,
+        ownerName: profile.first_name && profile.last_name 
+          ? `${profile.first_name} ${profile.last_name}` 
+          : formData.ownerName,
+        ownerEmail: user.email || formData.ownerEmail,
+        ownerPhone: profile.phone || formData.ownerPhone,
+      };
+      
+      setFormData(autoPopulatedData);
+      onUpdate(autoPopulatedData);
+    }
+  }, [data.userRole, user, profile]);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -99,14 +118,22 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
             <p className="text-sm text-white/60 mb-4">Choose one:</p>
           </div>
           
-          <RadioGroup value={formData.ownerType} onValueChange={handleOwnerTypeChange} className="space-y-3">
-            <div className="flex items-center space-x-3">
-              <RadioGroupItem value="person" id="person" className="border-white/30 text-blue-400" />
-              <Label htmlFor="person" className="text-white cursor-pointer">A person owns the horse</Label>
+          <RadioGroup value={formData.ownerType} onValueChange={handleOwnerTypeChange} className="space-y-4">
+            <div className="flex items-center space-x-4">
+              <RadioGroupItem 
+                value="person" 
+                id="person" 
+                className="h-5 w-5 border-2 border-white/50 text-blue-400 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500" 
+              />
+              <Label htmlFor="person" className="text-white cursor-pointer text-base">A person owns the horse</Label>
             </div>
-            <div className="flex items-center space-x-3">
-              <RadioGroupItem value="business" id="business" className="border-white/30 text-blue-400" />
-              <Label htmlFor="business" className="text-white cursor-pointer">A business or syndicate owns it</Label>
+            <div className="flex items-center space-x-4">
+              <RadioGroupItem 
+                value="business" 
+                id="business" 
+                className="h-5 w-5 border-2 border-white/50 text-blue-400 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500" 
+              />
+              <Label htmlFor="business" className="text-white cursor-pointer text-base">A business or syndicate owns it</Label>
             </div>
           </RadioGroup>
 
@@ -146,14 +173,20 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
                   <Label htmlFor="ownerPhone" className="text-white mb-2 block">
                     Phone <span className="text-red-400">*</span>
                   </Label>
-                  <PhoneInput
-                    placeholder="Phone number"
-                    value={formData.ownerPhone}
-                    onChange={(value) => handleChange('ownerPhone', value || '')}
-                    className="bg-white/5 border border-white/20 rounded-md text-white h-10 px-3"
-                    international
-                    defaultCountry="US"
-                  />
+                  <div className="phone-input-container">
+                    <PhoneInput
+                      placeholder="Phone number"
+                      value={formData.ownerPhone}
+                      onChange={(value) => handleChange('ownerPhone', value || '')}
+                      international
+                      defaultCountry="US"
+                      style={{
+                        '--PhoneInputCountryFlag-height': '1em',
+                        '--PhoneInputCountrySelectArrow-color': 'rgba(255, 255, 255, 0.4)',
+                      } as any}
+                      className="phone-input"
+                    />
+                  </div>
                 </div>
                 <div>
                   <Label htmlFor="ownerZip" className="text-white mb-2 block">Zip</Label>
@@ -171,7 +204,7 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
                   id="displayOwnerName"
                   checked={formData.displayOwnerName}
                   onCheckedChange={(checked) => handleChange('displayOwnerName', checked)}
-                  className="border-white/30"
+                  className="h-5 w-5 border-2 border-white/50 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
                 />
                 <Label htmlFor="displayOwnerName" className="text-white text-sm cursor-pointer">
                   Authorize display of name publicly
@@ -212,14 +245,20 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
                 </div>
                 <div>
                   <Label htmlFor="businessPhone" className="text-white mb-2 block">Business contact phone</Label>
-                  <PhoneInput
-                    placeholder="Business phone (optional)"
-                    value={formData.businessPhone}
-                    onChange={(value) => handleChange('businessPhone', value || '')}
-                    className="bg-white/5 border border-white/20 rounded-md text-white h-10 px-3"
-                    international
-                    defaultCountry="US"
-                  />
+                  <div className="phone-input-container">
+                    <PhoneInput
+                      placeholder="Business phone (optional)"
+                      value={formData.businessPhone}
+                      onChange={(value) => handleChange('businessPhone', value || '')}
+                      international
+                      defaultCountry="US"
+                      style={{
+                        '--PhoneInputCountryFlag-height': '1em',
+                        '--PhoneInputCountrySelectArrow-color': 'rgba(255, 255, 255, 0.4)',
+                      } as any}
+                      className="phone-input"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -232,7 +271,7 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
                       variant="outline"
                       size="sm"
                       onClick={copyBusinessToAgent}
-                      className="text-white border-white/30 hover:bg-white/10"
+                      className="text-white border-white/30 bg-white/5 hover:bg-white/10 hover:border-white/50 transition-colors"
                     >
                       <Copy className="h-3 w-3 mr-1" />
                       Copy from business info
@@ -274,14 +313,20 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
                     <Label htmlFor="authorizedAgentPhone" className="text-white mb-2 block">
                       Agent phone <span className="text-red-400">*</span>
                     </Label>
-                    <PhoneInput
-                      placeholder="Agent phone number"
-                      value={formData.authorizedAgentPhone}
-                      onChange={(value) => handleChange('authorizedAgentPhone', value || '')}
-                      className="bg-white/5 border border-white/20 rounded-md text-white h-10 px-3"
-                      international
-                      defaultCountry="US"
-                    />
+                    <div className="phone-input-container">
+                      <PhoneInput
+                        placeholder="Agent phone number"
+                        value={formData.authorizedAgentPhone}
+                        onChange={(value) => handleChange('authorizedAgentPhone', value || '')}
+                        international
+                        defaultCountry="US"
+                        style={{
+                          '--PhoneInputCountryFlag-height': '1em',
+                          '--PhoneInputCountrySelectArrow-color': 'rgba(255, 255, 255, 0.4)',
+                        } as any}
+                        className="phone-input"
+                      />
+                    </div>
                   </div>
                 </div>
                 
@@ -295,7 +340,7 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
                   id="displayBusinessName"
                   checked={formData.displayBusinessName}
                   onCheckedChange={(checked) => handleChange('displayBusinessName', checked)}
-                  className="border-white/30"
+                  className="h-5 w-5 border-2 border-white/50 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
                 />
                 <Label htmlFor="displayBusinessName" className="text-white text-sm cursor-pointer">
                   Authorize display of business name publicly
@@ -305,6 +350,61 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
           )}
         </div>
       </Card>
+
+      <style jsx>{`
+        .phone-input-container .phone-input {
+          --PhoneInput-color--focus: rgba(255, 255, 255, 0.8);
+          --PhoneInputInternationalIconPhone-opacity: 0.8;
+          --PhoneInputInternationalIconGlobe-opacity: 0.65;
+          --PhoneInputCountrySelect-marginRight: 0.35em;
+          --PhoneInputCountrySelectArrow-width: 0.3em;
+          --PhoneInputCountrySelectArrow-marginLeft: var(--PhoneInputCountrySelect-marginRight);
+          --PhoneInputCountryFlag-aspectRatio: 1.5;
+          --PhoneInputCountryFlag-height: 1em;
+          --PhoneInputCountryFlag-borderWidth: 1px;
+          --PhoneInputCountryFlag-borderColor: rgba(255, 255, 255, 0.5);
+          --PhoneInputCountryFlag-borderColor--focus: rgba(255, 255, 255, 0.8);
+          --PhoneInputCountryFlag-backgroundColor--focus: rgba(255, 255, 255, 0.03);
+        }
+        
+        .phone-input-container .PhoneInput {
+          height: 40px;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 6px;
+          color: white;
+          display: flex;
+          align-items: center;
+          padding: 0 12px;
+        }
+        
+        .phone-input-container .PhoneInputInput {
+          background: transparent;
+          border: none;
+          color: white;
+          flex: 1;
+          font-size: 14px;
+          height: 100%;
+          outline: none;
+          padding: 0;
+          margin-left: 8px;
+        }
+        
+        .phone-input-container .PhoneInputInput::placeholder {
+          color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .phone-input-container .PhoneInputCountrySelect {
+          background: transparent;
+          border: none;
+          color: rgba(255, 255, 255, 0.8);
+          outline: none;
+        }
+        
+        .phone-input-container .PhoneInputCountrySelectArrow {
+          border-top-color: rgba(255, 255, 255, 0.4);
+        }
+      `}</style>
     </div>
   );
 };

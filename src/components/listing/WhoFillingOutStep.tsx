@@ -50,14 +50,22 @@ const WhoFillingOutStep = ({ data, onUpdate }: StepProps) => {
           <p className="text-sm text-white/60 mb-4">Choose one:</p>
         </div>
         
-        <RadioGroup value={formData.userRole} onValueChange={handleRoleChange} className="space-y-3">
-          <div className="flex items-center space-x-3">
-            <RadioGroupItem value="owner" id="owner" className="border-white/30 text-blue-400" />
-            <Label htmlFor="owner" className="text-white cursor-pointer">I'm the owner</Label>
+        <RadioGroup value={formData.userRole} onValueChange={handleRoleChange} className="space-y-4">
+          <div className="flex items-center space-x-4">
+            <RadioGroupItem 
+              value="owner" 
+              id="owner" 
+              className="h-5 w-5 border-2 border-white/50 text-blue-400 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500" 
+            />
+            <Label htmlFor="owner" className="text-white cursor-pointer text-base">I'm the owner</Label>
           </div>
-          <div className="flex items-center space-x-3">
-            <RadioGroupItem value="agent" id="agent" className="border-white/30 text-blue-400" />
-            <Label htmlFor="agent" className="text-white cursor-pointer">I'm an agent / trainer / rep</Label>
+          <div className="flex items-center space-x-4">
+            <RadioGroupItem 
+              value="agent" 
+              id="agent" 
+              className="h-5 w-5 border-2 border-white/50 text-blue-400 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500" 
+            />
+            <Label htmlFor="agent" className="text-white cursor-pointer text-base">I'm an agent / trainer / rep</Label>
           </div>
         </RadioGroup>
       </Card>
@@ -68,7 +76,7 @@ const WhoFillingOutStep = ({ data, onUpdate }: StepProps) => {
           <p className="text-sm text-white/60 mb-4">Select all that apply:</p>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {[
             'For sale',
             'For lease', 
@@ -82,7 +90,7 @@ const WhoFillingOutStep = ({ data, onUpdate }: StepProps) => {
                 id={type}
                 checked={formData.listingType.includes(type)}
                 onCheckedChange={(checked) => handleListingTypeChange(type, checked as boolean)}
-                className="border-white/30"
+                className="h-5 w-5 border-2 border-white/50 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
               />
               <Label htmlFor={type} className="text-white text-sm cursor-pointer">
                 {type}
