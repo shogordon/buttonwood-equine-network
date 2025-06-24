@@ -97,6 +97,22 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
     onUpdate(updated);
   };
 
+  // CSS styles for phone input
+  const phoneInputStyles = {
+    '--PhoneInput-color--focus': 'rgba(255, 255, 255, 0.8)',
+    '--PhoneInputInternationalIconPhone-opacity': '0.8',
+    '--PhoneInputInternationalIconGlobe-opacity': '0.65',
+    '--PhoneInputCountrySelect-marginRight': '0.35em',
+    '--PhoneInputCountrySelectArrow-width': '0.3em',
+    '--PhoneInputCountrySelectArrow-marginLeft': 'var(--PhoneInputCountrySelect-marginRight)',
+    '--PhoneInputCountryFlag-aspectRatio': '1.5',
+    '--PhoneInputCountryFlag-height': '1em',
+    '--PhoneInputCountryFlag-borderWidth': '1px',
+    '--PhoneInputCountryFlag-borderColor': 'rgba(255, 255, 255, 0.5)',
+    '--PhoneInputCountryFlag-borderColor--focus': 'rgba(255, 255, 255, 0.8)',
+    '--PhoneInputCountryFlag-backgroundColor--focus': 'rgba(255, 255, 255, 0.03)',
+  } as React.CSSProperties;
+
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
@@ -123,7 +139,7 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
               <RadioGroupItem 
                 value="person" 
                 id="person" 
-                className="h-5 w-5 border-2 border-white/50 text-blue-400 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500" 
+                className="h-6 w-6 border-2 border-white/50 text-blue-400 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500" 
               />
               <Label htmlFor="person" className="text-white cursor-pointer text-base">A person owns the horse</Label>
             </div>
@@ -131,7 +147,7 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
               <RadioGroupItem 
                 value="business" 
                 id="business" 
-                className="h-5 w-5 border-2 border-white/50 text-blue-400 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500" 
+                className="h-6 w-6 border-2 border-white/50 text-blue-400 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500" 
               />
               <Label htmlFor="business" className="text-white cursor-pointer text-base">A business or syndicate owns it</Label>
             </div>
@@ -173,17 +189,13 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
                   <Label htmlFor="ownerPhone" className="text-white mb-2 block">
                     Phone <span className="text-red-400">*</span>
                   </Label>
-                  <div className="phone-input-container">
+                  <div className="phone-input-container" style={phoneInputStyles}>
                     <PhoneInput
                       placeholder="Phone number"
                       value={formData.ownerPhone}
                       onChange={(value) => handleChange('ownerPhone', value || '')}
                       international
                       defaultCountry="US"
-                      style={{
-                        '--PhoneInputCountryFlag-height': '1em',
-                        '--PhoneInputCountrySelectArrow-color': 'rgba(255, 255, 255, 0.4)',
-                      } as any}
                       className="phone-input"
                     />
                   </div>
@@ -245,17 +257,13 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
                 </div>
                 <div>
                   <Label htmlFor="businessPhone" className="text-white mb-2 block">Business contact phone</Label>
-                  <div className="phone-input-container">
+                  <div className="phone-input-container" style={phoneInputStyles}>
                     <PhoneInput
                       placeholder="Business phone (optional)"
                       value={formData.businessPhone}
                       onChange={(value) => handleChange('businessPhone', value || '')}
                       international
                       defaultCountry="US"
-                      style={{
-                        '--PhoneInputCountryFlag-height': '1em',
-                        '--PhoneInputCountrySelectArrow-color': 'rgba(255, 255, 255, 0.4)',
-                      } as any}
                       className="phone-input"
                     />
                   </div>
@@ -271,7 +279,7 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
                       variant="outline"
                       size="sm"
                       onClick={copyBusinessToAgent}
-                      className="text-white border-white/30 bg-white/5 hover:bg-white/10 hover:border-white/50 transition-colors"
+                      className="text-blue-400 border-blue-400/50 bg-blue-500/10 hover:bg-blue-500/20 hover:border-blue-400 transition-colors"
                     >
                       <Copy className="h-3 w-3 mr-1" />
                       Copy from business info
@@ -313,17 +321,13 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
                     <Label htmlFor="authorizedAgentPhone" className="text-white mb-2 block">
                       Agent phone <span className="text-red-400">*</span>
                     </Label>
-                    <div className="phone-input-container">
+                    <div className="phone-input-container" style={phoneInputStyles}>
                       <PhoneInput
                         placeholder="Agent phone number"
                         value={formData.authorizedAgentPhone}
                         onChange={(value) => handleChange('authorizedAgentPhone', value || '')}
                         international
                         defaultCountry="US"
-                        style={{
-                          '--PhoneInputCountryFlag-height': '1em',
-                          '--PhoneInputCountrySelectArrow-color': 'rgba(255, 255, 255, 0.4)',
-                        } as any}
                         className="phone-input"
                       />
                     </div>
@@ -351,22 +355,7 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
         </div>
       </Card>
 
-      <style jsx>{`
-        .phone-input-container .phone-input {
-          --PhoneInput-color--focus: rgba(255, 255, 255, 0.8);
-          --PhoneInputInternationalIconPhone-opacity: 0.8;
-          --PhoneInputInternationalIconGlobe-opacity: 0.65;
-          --PhoneInputCountrySelect-marginRight: 0.35em;
-          --PhoneInputCountrySelectArrow-width: 0.3em;
-          --PhoneInputCountrySelectArrow-marginLeft: var(--PhoneInputCountrySelect-marginRight);
-          --PhoneInputCountryFlag-aspectRatio: 1.5;
-          --PhoneInputCountryFlag-height: 1em;
-          --PhoneInputCountryFlag-borderWidth: 1px;
-          --PhoneInputCountryFlag-borderColor: rgba(255, 255, 255, 0.5);
-          --PhoneInputCountryFlag-borderColor--focus: rgba(255, 255, 255, 0.8);
-          --PhoneInputCountryFlag-backgroundColor--focus: rgba(255, 255, 255, 0.03);
-        }
-        
+      <style>{`
         .phone-input-container .PhoneInput {
           height: 40px;
           background: rgba(255, 255, 255, 0.05);
