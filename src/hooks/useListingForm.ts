@@ -35,6 +35,7 @@ interface ListingData {
   agentWebsite: string;
   agentSocials: string;
   hasPermissionToList: boolean;
+  agentContactVisibility: 'registered_users' | 'verified_buyers' | 'on_request' | '';
   
   // Horse details
   registeredName: string;
@@ -142,6 +143,7 @@ export const useListingForm = () => {
     hasPermissionToList: false,
     authorizedAgentEmail: '',
     authorizedAgentPhone: '',
+    agentContactVisibility: '',
     papersStatus: '',
     facilityType: [],
     trialOptions: [],
