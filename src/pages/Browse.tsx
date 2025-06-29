@@ -1,9 +1,9 @@
 
 import BrowseBackground from "@/components/browse/BrowseBackground";
-import BrowseNavigation from "@/components/browse/BrowseNavigation";
 import BrowseHeader from "@/components/browse/BrowseHeader";
 import HorseGrid from "@/components/browse/HorseGrid";
 import LoadingState from "@/components/browse/LoadingState";
+import AppNavigation from "@/components/navigation/AppNavigation";
 import { useBrowseData } from "@/hooks/useBrowseData";
 
 const Browse = () => {
@@ -22,11 +22,7 @@ const Browse = () => {
     }}>
       <BrowseBackground />
       
-      <BrowseNavigation 
-        user={user}
-        profile={profile}
-        onSignOut={handleSignOut}
-      />
+      <AppNavigation onSignOut={handleSignOut} />
       
       <BrowseHeader 
         profile={profile}

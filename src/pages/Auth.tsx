@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
 import AuthBackground from '@/components/auth/AuthBackground';
-import AuthNavigation from '@/components/auth/AuthNavigation';
+import AppNavigation from '@/components/navigation/AppNavigation';
 import AuthCard from '@/components/auth/AuthCard';
 import AuthForm from '@/components/auth/AuthForm';
 
@@ -59,7 +59,7 @@ const Auth = () => {
       backgroundAttachment: 'fixed'
     }}>
       <AuthBackground />
-      <AuthNavigation />
+      <AppNavigation />
 
       <div className="flex items-center justify-center p-6 pt-32 relative z-10">
         <div className="w-full max-w-md">

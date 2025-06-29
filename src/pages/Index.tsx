@@ -1,16 +1,15 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Heart, Search, CheckCircle, Users, Star, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AIPromptInterface } from "@/components/AIPromptInterface";
-import Logo from "@/components/ui/Logo";
+import AppNavigation from "@/components/navigation/AppNavigation";
 import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -22,53 +21,8 @@ const Index = () => {
         <div className="floating-element bottom-20 right-20 w-40 h-40 animate-float opacity-12" style={{ animationDelay: '6s' }} />
       </div>
 
-      {/* Simplified Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-white/5 backdrop-blur-md shadow-md">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 rounded-xl bg-white/5 backdrop-blur-md flex items-center justify-center">
-                <Logo />
-              </div>
-              <span className="text-xl font-semibold text-white">
-                The Aisle
-              </span>
-            </div>
-            <div className="hidden md:flex items-center space-x-8">
-              <Link to="/about" className="text-white/80 hover:text-white transition-colors">
-                About
-              </Link>
-              <Link to="/pricing" className="text-white/80 hover:text-white transition-colors">
-                Pricing
-              </Link>
-              <Link to="/how-it-works" className="text-white/80 hover:text-white transition-colors">
-                How It Works
-              </Link>
-              <Link to="/trust" className="text-white/80 hover:text-white transition-colors">
-                Trust & Safety
-              </Link>
-              <Link to="/blog" className="text-white/80 hover:text-white transition-colors">
-                Blog
-              </Link>
-              {!loading && (
-                user ? (
-                  <Link to="/browse">
-                    <Button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:scale-105 transition-all duration-300 px-6 py-2.5 font-semibold">
-                      Browse Horses
-                    </Button>
-                  </Link>
-                ) : (
-                  <Link to="/auth">
-                    <Button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:scale-105 transition-all duration-300 px-6 py-2.5 font-semibold">
-                      Sign In
-                    </Button>
-                  </Link>
-                )
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
+      {/* Unified Navigation */}
+      <AppNavigation />
 
       {/* Hero Section */}
       <section className="hero-gradient pt-32 pb-20 px-6 relative">
