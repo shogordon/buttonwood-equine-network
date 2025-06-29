@@ -6,9 +6,11 @@ import { ArrowRight, Heart, Search, CheckCircle, Users, Star, Shield } from "luc
 import { Link } from "react-router-dom";
 import { AIPromptInterface } from "@/components/AIPromptInterface";
 import Logo from "@/components/ui/Logo";
+import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const { user, loading } = useAuth();
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -48,11 +50,21 @@ const Index = () => {
               <Link to="/blog" className="text-white/80 hover:text-white transition-colors">
                 Blog
               </Link>
-              <Link to="/auth">
-                <Button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:scale-105 transition-all duration-300 px-6 py-2.5 font-semibold">
-                  Sign In
-                </Button>
-              </Link>
+              {!loading && (
+                user ? (
+                  <Link to="/browse">
+                    <Button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:scale-105 transition-all duration-300 px-6 py-2.5 font-semibold">
+                      Browse Horses
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link to="/auth">
+                    <Button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:scale-105 transition-all duration-300 px-6 py-2.5 font-semibold">
+                      Sign In
+                    </Button>
+                  </Link>
+                )
+              )}
             </div>
           </div>
         </div>
