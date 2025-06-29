@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -66,7 +65,7 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Buttonwood Brand Colors - Updated to match theme
+				// Clean Brand Colors - Pure cool tones
 				'french-blue': {
 					50: '#eff8ff',
 					100: '#dbeefe',
@@ -79,37 +78,37 @@ export default {
 					800: '#312e81',
 					900: '#1e1b4b',
 				},
-				'burnt-orange': {
-					50: '#fef2f2',
-					100: '#fee2e2',
-					200: '#fecaca',
-					300: '#fca5a5',
-					400: '#f87171',
-					500: '#F24236',
-					600: '#dc2626',
-					700: '#b91c1c',
-					800: '#991b1b',
-					900: '#7f1d1d',
+				'purple-accent': {
+					50: '#faf5ff',
+					100: '#f3e8ff',
+					200: '#e9d5ff',
+					300: '#d8b4fe',
+					400: '#c084fc',
+					500: '#8B5CF6',
+					600: '#9333ea',
+					700: '#7c3aed',
+					800: '#6b21a8',
+					900: '#581c87',
 				},
-				'soft-ivory': {
-					50: '#F8F4E6',
-					100: '#f5f5dc',
-					200: '#f0f0dc',
-					300: '#e8e8dc',
-					400: '#ddddc8',
-					500: '#d0d0b4',
-					600: '#b8b89f',
-					700: '#9d9d8a',
-					800: '#828275',
-					900: '#686860',
+				'pure-white': {
+					50: '#ffffff',
+					100: '#fefefe',
+					200: '#fdfdfd',
+					300: '#fbfbfb',
+					400: '#f9f9f9',
+					500: '#f7f7f7',
+					600: '#e5e5e5',
+					700: '#d3d3d3',
+					800: '#c1c1c1',
+					900: '#afafaf',
 				},
-				'slate-gray': {
+				'cool-gray': {
 					50: '#f8fafc',
 					100: '#f1f5f9',
 					200: '#e2e8f0',
 					300: '#cbd5e1',
 					400: '#94a3b8',
-					500: '#708090',
+					500: '#64748b',
 					600: '#475569',
 					700: '#334155',
 					800: '#1e293b',
