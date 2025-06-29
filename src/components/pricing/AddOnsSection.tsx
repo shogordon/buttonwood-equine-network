@@ -49,7 +49,7 @@ const AddOnsSection = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-white/80 text-center mb-6">{addon.description}</p>
-                <Button className="w-full glass-button text-white font-semibold">
+                <Button variant="outline" className="w-full text-white font-semibold">
                   Add to Cart
                 </Button>
               </CardContent>

@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,7 +8,7 @@
     --background: 15 23 42;
     --foreground: 248 250 252;
 
-    --card: 15 23 42;
+    --card: 255 255 255 / 0.02;
     --card-foreground: 248 250 252;
 
     --popover: 15 23 42;
@@ -16,10 +17,10 @@
     --primary: 79 70 229;
     --primary-foreground: 248 250 252;
 
-    --secondary: 30 41 59;
+    --secondary: 255 255 255 / 0.05;
     --secondary-foreground: 248 250 252;
 
-    --muted: 30 41 59;
+    --muted: 71 85 105;
     --muted-foreground: 148 163 184;
 
     --accent: 139 92 246;

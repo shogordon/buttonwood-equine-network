@@ -96,7 +96,7 @@ const PricingTiers = () => {
                     </li>
                   ))}
                 </ul>
-                <Button className={`w-full ${tier.popular ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700' : 'glass-button'} text-white font-semibold py-3`}>
+                <Button className={`w-full ${tier.popular ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700' : 'variant-outline'} text-white font-semibold py-3`}>
                   {tier.cta}
                 </Button>
               </CardContent>
