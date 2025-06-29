@@ -43,6 +43,17 @@ const AppNavigation = ({ onSignOut }: AppNavigationProps) => {
     { to: "/pricing", label: "Pricing" },
   ];
 
+  // Get display name from profile
+  const getDisplayName = () => {
+    if (profile?.first_name && profile?.last_name) {
+      return `${profile.first_name} ${profile.last_name}`;
+    }
+    if (profile?.first_name) {
+      return profile.first_name;
+    }
+    return 'User';
+  };
+
   return (
     <nav className="fixed top-0 w-full z-50 bg-white/5 backdrop-blur-md border-b border-white/10">
       <div className="container mx-auto px-6 py-4">
@@ -128,7 +139,7 @@ const AppNavigation = ({ onSignOut }: AppNavigationProps) => {
                         </div>
                         <div className="hidden md:block text-left">
                           <p className="text-white font-medium text-sm">
-                            {profile?.display_name || profile?.full_name || 'User'}
+                            {getDisplayName()}
                           </p>
                           {profile?.verification_status === 'verified' ? (
                             <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">

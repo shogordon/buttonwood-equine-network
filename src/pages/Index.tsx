@@ -5,6 +5,7 @@ import { ArrowRight, Heart, Search, CheckCircle, Users, Star, Shield } from "luc
 import { Link } from "react-router-dom";
 import { AIPromptInterface } from "@/components/AIPromptInterface";
 import AppNavigation from "@/components/navigation/AppNavigation";
+import Logo from "@/components/ui/Logo";
 import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
