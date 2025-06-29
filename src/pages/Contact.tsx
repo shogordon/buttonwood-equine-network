@@ -2,6 +2,7 @@
 import { Shield } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import Logo from "@/components/ui/Logo";
 
 const Contact = () => {
   return (
@@ -20,10 +21,10 @@ const Contact = () => {
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center space-x-2">
               <div className="w-10 h-10 rounded-xl bg-white/5 backdrop-blur-md flex items-center justify-center">
-                <Shield className="h-6 w-6 text-blue-400" />
+                <Logo />
               </div>
               <span className="text-xl font-semibold text-white">
-                Buttonwood Bluebook
+                The Aisle
               </span>
             </Link>
             <div className="hidden md:flex items-center space-x-8">
@@ -33,11 +34,14 @@ const Contact = () => {
               <Link to="/pricing" className="text-white/80 hover:text-white transition-colors">
                 Pricing
               </Link>
-              <Link to="/trust" className="text-white/80 hover:text-white transition-colors">
+              <Link to="/how-it-works" className="text-white/80 hover:text-white transition-colors">
                 How It Works
               </Link>
               <Link to="/trust" className="text-white/80 hover:text-white transition-colors">
                 Trust & Safety
+              </Link>
+              <Link to="/blog" className="text-white/80 hover:text-white transition-colors">
+                Blog
               </Link>
               <Link to="/auth">
                 <Button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:scale-105 transition-all duration-300 px-6 py-2.5 font-semibold">

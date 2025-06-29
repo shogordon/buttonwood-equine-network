@@ -39,11 +39,14 @@ const Index = () => {
               <Link to="/pricing" className="text-white/80 hover:text-white transition-colors">
                 Pricing
               </Link>
-              <Link to="/trust" className="text-white/80 hover:text-white transition-colors">
+              <Link to="/how-it-works" className="text-white/80 hover:text-white transition-colors">
                 How It Works
               </Link>
               <Link to="/trust" className="text-white/80 hover:text-white transition-colors">
                 Trust & Safety
+              </Link>
+              <Link to="/blog" className="text-white/80 hover:text-white transition-colors">
+                Blog
               </Link>
               <Link to="/auth">
                 <Button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:scale-105 transition-all duration-300 px-6 py-2.5 font-semibold">

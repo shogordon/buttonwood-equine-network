@@ -22,11 +22,14 @@ const AuthNavigation = () => {
             <Link to="/pricing" className="text-white/70 hover:text-white transition-colors">
               Pricing
             </Link>
-            <Link to="/trust" className="text-white/70 hover:text-white transition-colors">
+            <Link to="/how-it-works" className="text-white/70 hover:text-white transition-colors">
               How It Works
             </Link>
             <Link to="/trust" className="text-white/70 hover:text-white transition-colors">
               Trust & Safety
+            </Link>
+            <Link to="/blog" className="text-white/70 hover:text-white transition-colors">
+              Blog
             </Link>
           </div>
         </div>

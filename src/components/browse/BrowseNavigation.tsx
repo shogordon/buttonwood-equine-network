@@ -25,6 +25,18 @@ const BrowseNavigation = ({ user, profile, onSignOut }: BrowseNavigationProps) =
             </span>
           </Link>
           
+          <div className="hidden md:flex items-center space-x-6 mr-8">
+            <Link to="/how-it-works" className="text-white/70 hover:text-white transition-colors">
+              How It Works
+            </Link>
+            <Link to="/trust" className="text-white/70 hover:text-white transition-colors">
+              Trust & Safety
+            </Link>
+            <Link to="/blog" className="text-white/70 hover:text-white transition-colors">
+              Blog
+            </Link>
+          </div>
+          
           <div className="flex items-center space-x-4">
             {profile && (
               <div className="flex items-center space-x-3">

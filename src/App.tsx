@@ -17,6 +17,8 @@ import NotFound from "./pages/NotFound";
 import About from "./pages/About";
 import Pricing from "./pages/Pricing";
 import Trust from "./pages/Trust";
+import HowItWorks from "./pages/HowItWorks";
+import Blog from "./pages/Blog";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Contact from "./pages/Contact";
@@ -44,6 +46,8 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/trust" element={<Trust />} />
+            <Route path="/how-it-works" element={<HowItWorks />} />
+            <Route path="/blog" element={<Blog />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/contact" element={<Contact />} />
