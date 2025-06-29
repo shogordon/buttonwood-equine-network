@@ -3,8 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { FilterState } from "@/components/browse/FilterPanel";
 
-export const useBrowseData = () => {
+interface SearchParams {
+  searchQuery?: string;
+  filters?: FilterState;
+}
+
+export const useBrowseData = (searchParams?: SearchParams) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -18,15 +24,55 @@ export const useBrowseData = () => {
   }, [user, navigate]);
 
   const { data: horses = [], isLoading: horsesLoading } = useQuery({
-    queryKey: ['horses'],
+    queryKey: ['horses', searchParams?.searchQuery, searchParams?.filters],
     queryFn: async () => {
-      console.log('Fetching horses');
-      const { data, error } = await supabase
+      console.log('Fetching horses with search params:', searchParams);
+      
+      let query = supabase
         .from('horse_profiles')
         .select('*')
         .eq('listing_status', 'published')
-        .eq('is_available', true)
-        .order('created_at', { ascending: false });
+        .eq('is_available', true);
+
+      // Apply text search
+      if (searchParams?.searchQuery && searchParams.searchQuery.trim()) {
+        const searchTerm = searchParams.searchQuery.trim();
+        query = query.or(`horse_name.ilike.%${searchTerm}%,breed.ilike.%${searchTerm}%,location.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`);
+      }
+
+      // Apply filters
+      if (searchParams?.filters) {
+        const { filters } = searchParams;
+        
+        if (filters.priceMin !== undefined) {
+          query = query.gte('price', filters.priceMin);
+        }
+        if (filters.priceMax !== undefined) {
+          query = query.lte('price', filters.priceMax);
+        }
+        if (filters.ageMin !== undefined) {
+          query = query.gte('age', filters.ageMin);
+        }
+        if (filters.ageMax !== undefined) {
+          query = query.lte('age', filters.ageMax);
+        }
+        if (filters.location && filters.location.trim()) {
+          query = query.ilike('location', `%${filters.location.trim()}%`);
+        }
+        if (filters.breed && filters.breed.trim()) {
+          query = query.eq('breed', filters.breed);
+        }
+        if (filters.sex && filters.sex.trim()) {
+          query = query.eq('sex', filters.sex);
+        }
+        if (filters.disciplines && filters.disciplines.length > 0) {
+          query = query.overlaps('disciplines', filters.disciplines);
+        }
+      }
+
+      query = query.order('created_at', { ascending: false });
+
+      const { data, error } = await query;
 
       if (error) {
         console.error('Error fetching horses:', error);

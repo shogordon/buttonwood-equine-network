@@ -5,11 +5,31 @@ import HorseGrid from "@/components/browse/HorseGrid";
 import LoadingState from "@/components/browse/LoadingState";
 import AppNavigation from "@/components/navigation/AppNavigation";
 import { useBrowseData } from "@/hooks/useBrowseData";
+import { useSearchFilters } from "@/hooks/useSearchFilters";
 
 const Browse = () => {
-  const { user, profile, horses, loading, handleSignOut, handleGetVerified } = useBrowseData();
+  const {
+    searchQuery,
+    filters,
+    showFilters,
+    handleSearchChange,
+    handleFiltersChange,
+    toggleFilters
+  } = useSearchFilters();
 
-  console.log('Browse component render', { user: !!user, profile: !!profile, horses: horses?.length, loading });
+  const { user, profile, horses, loading, handleSignOut, handleGetVerified } = useBrowseData({
+    searchQuery,
+    filters
+  });
+
+  console.log('Browse component render', { 
+    user: !!user, 
+    profile: !!profile, 
+    horses: horses?.length, 
+    loading,
+    searchQuery,
+    activeFilters: Object.keys(filters).length
+  });
 
   if (loading) {
     return <LoadingState />;
@@ -27,6 +47,13 @@ const Browse = () => {
       <BrowseHeader 
         profile={profile}
         onGetVerified={handleGetVerified}
+        searchQuery={searchQuery}
+        onSearchChange={handleSearchChange}
+        filters={filters}
+        onFiltersChange={handleFiltersChange}
+        showFilters={showFilters}
+        onFilterToggle={toggleFilters}
+        resultCount={horses?.length}
       />
       
       <HorseGrid 

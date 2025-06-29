@@ -1,13 +1,32 @@
 
 import { Button } from "@/components/ui/button";
 import { Shield } from "lucide-react";
+import SearchBar from "./SearchBar";
+import FilterPanel, { FilterState } from "./FilterPanel";
 
 interface BrowseHeaderProps {
   profile: any;
   onGetVerified: () => void;
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
+  filters: FilterState;
+  onFiltersChange: (filters: FilterState) => void;
+  showFilters: boolean;
+  onFilterToggle: () => void;
+  resultCount?: number;
 }
 
-const BrowseHeader = ({ profile, onGetVerified }: BrowseHeaderProps) => {
+const BrowseHeader = ({ 
+  profile, 
+  onGetVerified,
+  searchQuery,
+  onSearchChange,
+  filters,
+  onFiltersChange,
+  showFilters,
+  onFilterToggle,
+  resultCount
+}: BrowseHeaderProps) => {
   return (
     <section className="pt-32 pb-16 px-6 relative">
       <div className="container mx-auto text-center relative z-10">
@@ -18,6 +37,22 @@ const BrowseHeader = ({ profile, onGetVerified }: BrowseHeaderProps) => {
           Discover exceptional hunter/jumper horses from verified sellers. 
           No commissions, no confusion.
         </p>
+
+        {/* Search Bar */}
+        <SearchBar
+          searchQuery={searchQuery}
+          onSearchChange={onSearchChange}
+          onFilterToggle={onFilterToggle}
+          showFilters={showFilters}
+          resultCount={resultCount}
+        />
+
+        {/* Filter Panel */}
+        <FilterPanel
+          filters={filters}
+          onFiltersChange={onFiltersChange}
+          isVisible={showFilters}
+        />
 
         {profile?.verification_status !== 'verified' && (
           <div className="max-w-2xl mx-auto glass-card p-6 mb-12 rounded-2xl">
