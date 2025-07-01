@@ -1,5 +1,6 @@
 
 import { useMemo } from 'react';
+import React from 'react';
 import { LISTING_STEPS } from '@/config/listingSteps';
 
 // Dynamic imports for all step components
@@ -8,15 +9,13 @@ const OwnerInfoStep = React.lazy(() => import('@/components/listing/OwnerInfoSte
 const AgentInfoStep = React.lazy(() => import('@/components/listing/AgentInfoStep'));
 const EnhancedHorseDetailsStep = React.lazy(() => import('@/components/listing/EnhancedHorseDetailsStep'));
 const SaleInfoStep = React.lazy(() => import('@/components/listing/SaleInfoStep'));
-const DescriptionStep = React.lazy(() => import('@/components/listing/DescriptionStep'));
 const ProsConsStep = React.lazy(() => import('@/components/listing/ProsConsStep'));
 const TagsFiltersStep = React.lazy(() => import('@/components/listing/TagsFiltersStep'));
 const ProgramMaintenanceStep = React.lazy(() => import('@/components/listing/ProgramMaintenanceStep'));
 const MediaUploadStep = React.lazy(() => import('@/components/listing/MediaUploadStep'));
+const DescriptionStep = React.lazy(() => import('@/components/listing/DescriptionStep'));
 const VerificationStep = React.lazy(() => import('@/components/listing/VerificationStep'));
 const PreviewStep = React.lazy(() => import('@/components/listing/PreviewStep'));
-
-import React from 'react';
 
 interface UseStepComponentProps {
   currentStep: number;
@@ -45,11 +44,11 @@ export const useStepComponent = ({
     3: AgentInfoStep,
     4: EnhancedHorseDetailsStep,
     5: SaleInfoStep,
-    6: DescriptionStep,
-    7: ProsConsStep,
-    8: TagsFiltersStep,
-    9: ProgramMaintenanceStep,
-    10: MediaUploadStep,
+    6: ProsConsStep,
+    7: TagsFiltersStep,
+    8: ProgramMaintenanceStep,
+    9: MediaUploadStep,
+    10: DescriptionStep,
     11: VerificationStep,
     12: PreviewStep,
   }), []);
