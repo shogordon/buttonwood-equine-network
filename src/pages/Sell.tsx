@@ -1,14 +1,12 @@
 
-import { useState } from "react";
-import { Plus, Eye, Edit, Trash2 } from "lucide-react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import AppNavigation from "@/components/navigation/AppNavigation";
+import SellHero from "@/components/sell/SellHero";
+import UserListingsGrid from "@/components/sell/UserListingsGrid";
 
 interface HorseProfile {
   id: string;
@@ -81,105 +79,12 @@ const Sell = () => {
         <div className="floating-element bottom-32 left-40 w-48 h-48 animate-float opacity-10" style={{ animationDelay: '4s' }} />
       </div>
 
-      {/* Use unified navigation */}
       <AppNavigation onSignOut={handleSignOut} />
 
       <div className="pt-32 pb-20">
         <div className="container mx-auto px-6">
-          {/* Header Section - Hero */}
-          <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold text-white mb-6 text-shadow">
-              Sell Your Horse
-            </h1>
-            <p className="text-xl text-white/80 mb-8 max-w-3xl mx-auto">
-              List your horse with confidence. Our platform connects you with serious buyers and provides all the tools you need for a successful sale.
-            </p>
-            <Link to="/sell/new">
-              <Button className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl hover:scale-105 transition-all duration-300 px-8 py-4 text-lg font-semibold">
-                <Plus className="mr-2 h-5 w-5" />
-                List Your Horse
-              </Button>
-            </Link>
-          </div>
-
-          {/* Your Listings Section */}
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl font-bold text-white mb-6">Your Listings</h2>
-            
-            {horses && horses.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {horses.map((horse) => (
-                  <Card key={horse.id} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300">
-                    <div className="aspect-video bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
-                      {horse.images && horse.images.length > 0 ? (
-                        <img 
-                          src={horse.images[0]} 
-                          alt={horse.horse_name}
-                          className="w-full h-full object-cover"
-                          loading="lazy"
-                        />
-                      ) : (
-                        <div className="text-white/60 text-center">
-                          <Eye className="h-12 w-12 mx-auto mb-2" />
-                          <p>No Image</p>
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div>
-                          <h3 className="text-xl font-semibold text-white mb-1">
-                            {horse.horse_name}
-                          </h3>
-                          <p className="text-white/60">
-                            {horse.breed} • {horse.age} years old
-                          </p>
-                        </div>
-                        <Badge 
-                          variant={horse.listing_status === 'published' ? 'default' : 'secondary'}
-                          className={horse.listing_status === 'published' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}
-                        >
-                          {horse.listing_status}
-                        </Badge>
-                      </div>
-                      
-                      {horse.price && (
-                        <p className="text-2xl font-bold text-white mb-4">
-                          ${horse.price.toLocaleString()}
-                        </p>
-                      )}
-                      
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm" className="flex-1 bg-white/5 border-white/20 text-white hover:bg-white/10">
-                          <Edit className="h-4 w-4 mr-1" />
-                          Edit
-                        </Button>
-                        <Button variant="outline" size="sm" className="bg-white/5 border-white/20 text-white hover:bg-white/10">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button variant="outline" size="sm" className="bg-red-500/20 border-red-500/30 text-red-400 hover:bg-red-500/30">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <Card className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-12 text-center">
-                <div className="text-white/60 mb-6">
-                  <Plus className="h-16 w-16 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">No listings yet</h3>
-                  <p>Create your first horse listing to get started selling.</p>
-                </div>
-                <Link to="/sell/new">
-                  <Button className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl">
-                    Create Your First Listing
-                  </Button>
-                </Link>
-              </Card>
-            )}
-          </div>
+          <SellHero />
+          <UserListingsGrid horses={horses} />
         </div>
       </div>
     </div>
