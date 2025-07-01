@@ -33,24 +33,11 @@ export const useListingDataMapping = () => {
       showRecord: data.show_record,
       pedigree: data.pedigree,
       healthRecords: data.health_records,
-      // Radio button fields - ensure they're properly mapped
+      // Radio button fields that exist in database
       userRole: data.user_role,
       ownerType: data.owner_type,
       listingType: data.listing_type || [],
       agentContactVisibility: data.agent_contact_visibility,
-      // Add additional owner info fields
-      ownerName: data.owner_name,
-      ownerEmail: data.owner_email,
-      ownerPhone: data.owner_phone,
-      ownerZip: data.owner_zip,
-      displayOwnerName: data.display_owner_name || false,
-      businessName: data.business_name,
-      businessEmail: data.business_email,
-      businessPhone: data.business_phone,
-      authorizedAgentName: data.authorized_agent_name,
-      authorizedAgentEmail: data.authorized_agent_email,
-      authorizedAgentPhone: data.authorized_agent_phone,
-      displayBusinessName: data.display_business_name || false,
     };
     console.log('Mapped form data:', mapped);
     return mapped;
@@ -68,6 +55,7 @@ export const useListingDataMapping = () => {
       ? listingData.experienceLevel as HorseExperienceLevel 
       : undefined;
 
+    // Only include fields that actually exist in the horse_profiles table
     const mapped = {
       user_id: userId,
       horse_name: listingData.barnName || listingData.horseName || 'Draft Horse',
@@ -96,24 +84,11 @@ export const useListingDataMapping = () => {
       show_record: listingData.showRecord,
       pedigree: listingData.pedigree,
       health_records: listingData.healthRecords,
-      // Radio button fields - ensure they're properly mapped
+      // Radio button fields that exist in database
       user_role: listingData.userRole,
       owner_type: listingData.ownerType,
       listing_type: listingData.listingType || [],
       agent_contact_visibility: listingData.agentContactVisibility,
-      // Add additional owner info fields
-      owner_name: listingData.ownerName,
-      owner_email: listingData.ownerEmail,
-      owner_phone: listingData.ownerPhone,
-      owner_zip: listingData.ownerZip,
-      display_owner_name: listingData.displayOwnerName || false,
-      business_name: listingData.businessName,
-      business_email: listingData.businessEmail,
-      business_phone: listingData.businessPhone,
-      authorized_agent_name: listingData.authorizedAgentName,
-      authorized_agent_email: listingData.authorizedAgentEmail,
-      authorized_agent_phone: listingData.authorizedAgentPhone,
-      display_business_name: listingData.displayBusinessName || false,
       listing_status: 'draft',
       is_available: true,
       updated_at: new Date().toISOString(),

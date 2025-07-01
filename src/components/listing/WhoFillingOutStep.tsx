@@ -23,11 +23,16 @@ const WhoFillingOutStep = ({ data, onUpdate }: StepProps) => {
   // Sync with incoming data changes
   useEffect(() => {
     console.log('WhoFillingOutStep: Syncing with incoming data:', data);
-    if (data.userRole !== formData.userRole || JSON.stringify(data.listingType) !== JSON.stringify(formData.listingType)) {
-      setFormData({
-        userRole: data.userRole || '',
-        listingType: data.listingType || [],
-      });
+    const newFormData = {
+      userRole: data.userRole || '',
+      listingType: data.listingType || [],
+    };
+    
+    // Only update if data has actually changed
+    if (newFormData.userRole !== formData.userRole || 
+        JSON.stringify(newFormData.listingType) !== JSON.stringify(formData.listingType)) {
+      console.log('WhoFillingOutStep: Data changed, updating form state');
+      setFormData(newFormData);
     }
   }, [data.userRole, data.listingType]);
 

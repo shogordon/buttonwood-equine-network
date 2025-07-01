@@ -42,7 +42,7 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
   // Sync local state with incoming data changes (including loaded drafts)
   useEffect(() => {
     console.log('OwnerInfoStep: Syncing state with data:', data);
-    setFormData({
+    const newFormData = {
       ownerType: data.ownerType || '',
       ownerName: data.ownerName || '',
       ownerEmail: data.ownerEmail || '',
@@ -56,26 +56,18 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
       authorizedAgentEmail: data.authorizedAgentEmail || '',
       authorizedAgentPhone: data.authorizedAgentPhone || '',
       displayBusinessName: data.displayBusinessName || false,
-    });
-  }, [
-    data.ownerType, 
-    data.ownerName, 
-    data.ownerEmail, 
-    data.ownerPhone, 
-    data.ownerZip,
-    data.displayOwnerName,
-    data.businessName,
-    data.businessEmail,
-    data.businessPhone,
-    data.authorizedAgentName,
-    data.authorizedAgentEmail,
-    data.authorizedAgentPhone,
-    data.displayBusinessName
-  ]);
+    };
+    
+    // Only update if data has actually changed
+    if (JSON.stringify(newFormData) !== JSON.stringify(formData)) {
+      console.log('OwnerInfoStep: Data changed, updating form state');
+      setFormData(newFormData);
+    }
+  }, [data]);
 
   // Auto-populate owner data when user role is "owner"
   useEffect(() => {
-    if (data.userRole === 'owner' && user && profile) {
+    if (data.userRole === 'owner' && user && profile && !formData.ownerName) {
       const autoPopulatedData = {
         ...formData,
         ownerName: profile.first_name && profile.last_name 

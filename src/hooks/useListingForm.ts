@@ -54,17 +54,19 @@ export const useListingForm = (draftId?: string) => {
     setCurrentDraftId,
   } = useListingDraft();
 
-  const updateListingData = (stepData: Partial<ListingData>) => {
+  const updateListingData = useCallback((stepData: Partial<ListingData>) => {
     console.log('useListingForm: Updating listing data with:', stepData);
     setListingData(prev => {
       const updated = { ...prev, ...stepData };
       console.log('useListingForm: New listing data state:', updated);
       return updated;
     });
-  };
+  }, []);
 
   const hasUnsavedChanges = useCallback(() => {
-    return JSON.stringify(listingData) !== JSON.stringify(lastSavedDataRef.current);
+    const hasChanges = JSON.stringify(listingData) !== JSON.stringify(lastSavedDataRef.current);
+    console.log('useListingForm: Has unsaved changes:', hasChanges);
+    return hasChanges;
   }, [listingData]);
 
   const loadDraftData = useCallback(async () => {
@@ -83,14 +85,19 @@ export const useListingForm = (draftId?: string) => {
       }
     } catch (error) {
       console.error('useListingForm: Error loading draft:', error);
-      setDraftLoaded(true); // Set to true even on error to prevent infinite retries
+      setDraftLoaded(true);
     }
   }, [draftId, loadDraft, loading, draftLoaded]);
 
   const saveDraft = useCallback(async (showToast = true) => {
     console.log('useListingForm: Saving draft with data:', listingData);
-    await saveDraftToDb(listingData, showToast);
-    lastSavedDataRef.current = { ...listingData };
+    try {
+      await saveDraftToDb(listingData, showToast);
+      lastSavedDataRef.current = { ...listingData };
+      console.log('useListingForm: Draft saved successfully');
+    } catch (error) {
+      console.error('useListingForm: Error saving draft:', error);
+    }
   }, [listingData, saveDraftToDb]);
 
   const autoSave = useCallback(async () => {
@@ -105,7 +112,7 @@ export const useListingForm = (draftId?: string) => {
     if (draftId && !draftLoaded && !loading) {
       loadDraftData();
     }
-  }, [draftId, draftLoaded, loading]); // Removed loadDraftData from dependencies
+  }, [draftId, draftLoaded, loading]);
 
   return {
     listingData,
