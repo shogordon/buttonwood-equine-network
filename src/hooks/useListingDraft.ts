@@ -19,7 +19,6 @@ export const useListingDraft = () => {
   const hasMinimalContent = (listingData: Partial<ListingData>) => {
     return !!(
       listingData.horseName?.trim() ||
-      listingData.horse_name?.trim() ||
       listingData.breed?.trim() ||
       listingData.location?.trim() ||
       listingData.price ||

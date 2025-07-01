@@ -15,7 +15,7 @@ interface StepProps {
 
 const BasicHorseInfoStep = ({ data, onUpdate }: StepProps) => {
   const [formData, setFormData] = useState({
-    horseName: data.horseName || data.horse_name || '',
+    horseName: data.horseName || '',
     sex: data.sex || '',
     breed: data.breed || '',
     height: data.height || '',
@@ -28,13 +28,8 @@ const BasicHorseInfoStep = ({ data, onUpdate }: StepProps) => {
     const updated = { ...formData, [field]: value };
     setFormData(updated);
     
-    // Update both horseName and horse_name for compatibility
-    const updateData = { ...updated };
-    if (field === 'horseName') {
-      updateData.horse_name = value;
-    }
-    
-    onUpdate(updateData);
+    // Update only with the field that changed
+    onUpdate({ [field]: value });
   };
 
   const currentYear = new Date().getFullYear();
