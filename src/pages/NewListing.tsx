@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
@@ -33,7 +32,7 @@ const NewListing = () => {
     hasUnsavedChanges
   } = useListingForm(draftId);
 
-  const { currentStep, nextStep, prevStep } = useListingNavigation({
+  const { currentStep, nextStep, prevStep, setCurrentStep } = useListingNavigation({
     userRole: listingData.userRole || '',
     hasUnsavedChanges: hasUnsavedChanges(),
     autoSave,
@@ -46,6 +45,7 @@ const NewListing = () => {
     nextStep,
     prevStep,
     saveDraft,
+    setCurrentStep,
   });
 
   // Auto-save functionality

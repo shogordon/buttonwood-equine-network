@@ -3,7 +3,8 @@ import { useState } from "react";
 import { PreviewControls } from "./preview/PreviewControls";
 import { HorsePreviewCard } from "./preview/HorsePreviewCard";
 import { PublishActions } from "./preview/PublishActions";
-import { usePreviewValidation } from "./preview/usePreviewValidation";
+import { RequiredFieldsChecklist } from "./RequiredFieldsChecklist";
+import { useEnhancedValidation } from "@/hooks/useEnhancedValidation";
 import { usePreviewPublish } from "./preview/usePreviewPublish";
 import { toast } from "@/components/ui/sonner";
 
@@ -15,17 +16,19 @@ interface StepProps {
   isFirst: boolean;
   isLast: boolean;
   onSaveDraft: () => void;
+  onNavigateToStep?: (stepId: number) => void;
 }
 
-const PreviewStep = ({ data, onSaveDraft }: StepProps) => {
+const PreviewStep = ({ data, onSaveDraft, onNavigateToStep }: StepProps) => {
   const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>('desktop');
-  const { validateListing } = usePreviewValidation();
+  const { validateListingWithSteps } = useEnhancedValidation();
   const { publishListing, publishing } = usePreviewPublish();
 
-  const missingFields = validateListing(data);
+  const missingFields = validateListingWithSteps(data);
+  const missingFieldNames = missingFields.map(f => f.displayName);
 
   const handlePublish = () => {
-    publishListing(data, missingFields);
+    publishListing(data, missingFieldNames);
   };
 
   const handleSaveDraft = async () => {
@@ -38,6 +41,12 @@ const PreviewStep = ({ data, onSaveDraft }: StepProps) => {
     }
   };
 
+  const handleNavigateToStep = (stepId: number) => {
+    if (onNavigateToStep) {
+      onNavigateToStep(stepId);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
@@ -45,10 +54,16 @@ const PreviewStep = ({ data, onSaveDraft }: StepProps) => {
         <p className="text-white/60">Review your listing before making it live</p>
       </div>
 
+      {/* Required Fields Checklist */}
+      <RequiredFieldsChecklist 
+        missingFields={missingFields}
+        onNavigateToStep={handleNavigateToStep}
+      />
+
       <PreviewControls 
         viewMode={viewMode}
         onViewModeChange={setViewMode}
-        missingFields={missingFields}
+        missingFields={missingFieldNames}
       />
 
       {/* Preview Container */}
@@ -62,7 +77,7 @@ const PreviewStep = ({ data, onSaveDraft }: StepProps) => {
         onPublish={handlePublish}
         onSaveDraft={handleSaveDraft}
         publishing={publishing}
-        missingFields={missingFields}
+        missingFields={missingFieldNames}
       />
     </div>
   );

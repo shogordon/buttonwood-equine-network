@@ -1,10 +1,10 @@
-
 import { useState, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ListingData } from "@/types/listing";
 import { useListingDataMapping } from "./useListingDataMapping";
+import { generateTagline } from "@/utils/taglineGenerator";
 
 export const useListingDraft = () => {
   const { user } = useAuth();
@@ -19,8 +19,10 @@ export const useListingDraft = () => {
   const hasMinimalContent = (listingData: Partial<ListingData>) => {
     return !!(
       listingData.horseName?.trim() ||
+      listingData.barnName?.trim() ||
       listingData.breed?.trim() ||
       listingData.location?.trim() ||
+      listingData.currentLocation?.trim() ||
       listingData.price ||
       listingData.description?.trim() ||
       listingData.userRole ||
@@ -28,6 +30,29 @@ export const useListingDraft = () => {
       (listingData.listingType && listingData.listingType.length > 0) ||
       listingData.agentContactVisibility
     );
+  };
+
+  // Generate a smart draft name based on available data
+  const generateDraftName = (listingData: Partial<ListingData>): string => {
+    const horseName = listingData.barnName || listingData.horseName;
+    
+    if (horseName?.trim() && horseName !== 'Draft Horse') {
+      // Try to generate a tagline if we have enough information
+      if (listingData.description || listingData.breed || listingData.disciplines?.length) {
+        try {
+          const tagline = generateTagline(listingData);
+          return `${horseName.trim()} - ${tagline}`;
+        } catch (error) {
+          console.error('Error generating tagline:', error);
+          return horseName.trim();
+        }
+      }
+      return horseName.trim();
+    }
+    
+    // Fallback naming strategy
+    const timestamp = new Date().toLocaleString();
+    return `Untitled Draft ${timestamp}`;
   };
 
   const loadDraft = useCallback(async (draftId: string) => {
@@ -81,11 +106,8 @@ export const useListingDraft = () => {
     try {
       const horseData = mapFormDataToDatabase(listingData, user.id);
       
-      // Generate a better default name if needed
-      if (!horseData.horse_name || horseData.horse_name === 'Draft Horse') {
-        const timestamp = new Date().toLocaleString();
-        horseData.horse_name = `Untitled Draft ${timestamp}`;
-      }
+      // Use the smart naming strategy
+      horseData.horse_name = generateDraftName(listingData);
 
       console.log('Saving draft with data:', horseData);
 

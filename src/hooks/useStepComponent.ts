@@ -10,6 +10,7 @@ interface UseStepComponentProps {
   nextStep: () => void;
   prevStep: () => void;
   saveDraft: () => void;
+  setCurrentStep?: (step: number) => void;
 }
 
 export const useStepComponent = ({
@@ -19,6 +20,7 @@ export const useStepComponent = ({
   nextStep,
   prevStep,
   saveDraft,
+  setCurrentStep,
 }: UseStepComponentProps) => {
   const currentStepComponent = useMemo(() => {
     const step = LISTING_STEPS.find(step => step.id === currentStep);
@@ -44,11 +46,15 @@ export const useStepComponent = ({
 
     // Add saveDraft function for PreviewStep
     if (currentStep === 12) {
-      return { ...baseProps, onSaveDraft: saveDraft };
+      return { 
+        ...baseProps, 
+        onSaveDraft: saveDraft,
+        onNavigateToStep: setCurrentStep 
+      };
     }
 
     return baseProps;
-  }, [currentStep, listingData, updateListingData, nextStep, prevStep, saveDraft]);
+  }, [currentStep, listingData, updateListingData, nextStep, prevStep, saveDraft, setCurrentStep]);
 
   return {
     CurrentStepComponent: currentStepComponent,
