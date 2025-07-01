@@ -4,6 +4,14 @@ import { ListingData, HorseDiscipline, HorseExperienceLevel } from "@/types/list
 export const useListingDataMapping = () => {
   const mapDatabaseToFormData = (data: any): Partial<ListingData> => {
     console.log('Mapping database data to form data:', data);
+    
+    // Provide sensible defaults for published listings that may be missing critical form navigation data
+    const userRole = data.user_role || 'owner'; // Default to owner if not specified
+    const ownerType = data.owner_type || 'person'; // Default to person if not specified
+    const listingType = data.listing_type && data.listing_type.length > 0 
+      ? data.listing_type 
+      : ['For sale']; // Default to 'For sale' if empty or null
+    
     const mapped = {
       horseName: data.horse_name,
       barnName: data.horse_name,
@@ -33,11 +41,11 @@ export const useListingDataMapping = () => {
       showRecord: data.show_record,
       pedigree: data.pedigree,
       healthRecords: data.health_records,
-      // Radio button fields that exist in database
-      userRole: data.user_role,
-      ownerType: data.owner_type,
-      listingType: data.listing_type || [],
-      agentContactVisibility: data.agent_contact_visibility,
+      // Critical fields with defaults for form navigation
+      userRole: userRole,
+      ownerType: ownerType,
+      listingType: listingType,
+      agentContactVisibility: data.agent_contact_visibility || 'visible',
     };
     console.log('Mapped form data:', mapped);
     return mapped;
@@ -85,10 +93,10 @@ export const useListingDataMapping = () => {
       pedigree: listingData.pedigree,
       health_records: listingData.healthRecords,
       // Radio button fields that exist in database
-      user_role: listingData.userRole,
-      owner_type: listingData.ownerType,
-      listing_type: listingData.listingType || [],
-      agent_contact_visibility: listingData.agentContactVisibility,
+      user_role: listingData.userRole || 'owner',
+      owner_type: listingData.ownerType || 'person',
+      listing_type: listingData.listingType || ['For sale'],
+      agent_contact_visibility: listingData.agentContactVisibility || 'visible',
       listing_status: 'draft',
       is_available: true,
       updated_at: new Date().toISOString(),

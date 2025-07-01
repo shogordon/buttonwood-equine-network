@@ -24,7 +24,9 @@ export const useListingNavigation = ({
     let nextStepId = currentStep + 1;
     
     // Skip agent info step if user is not an agent
-    if (nextStepId === 3 && userRole !== 'agent') {
+    // Use fallback to 'owner' if userRole is empty/null
+    const roleToCheck = userRole || 'owner';
+    if (nextStepId === 3 && roleToCheck !== 'agent') {
       nextStepId = 4;
     }
 
@@ -42,7 +44,9 @@ export const useListingNavigation = ({
     let prevStepId = currentStep - 1;
     
     // Skip agent info step if user is not an agent
-    if (prevStepId === 3 && userRole !== 'agent') {
+    // Use fallback to 'owner' if userRole is empty/null
+    const roleToCheck = userRole || 'owner';
+    if (prevStepId === 3 && roleToCheck !== 'agent') {
       prevStepId = 2;
     }
 
