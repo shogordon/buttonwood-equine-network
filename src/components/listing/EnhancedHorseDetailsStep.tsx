@@ -26,6 +26,7 @@ const EnhancedHorseDetailsStep = ({ data, onUpdate }: StepProps) => {
     dam: data.dam || '',
     damsire: data.damsire || '',
     papersStatus: data.papersStatus || '',
+    location: data.location || data.currentLocation || '',
   });
 
   const handleChange = (field: string, value: any) => {
@@ -150,6 +151,18 @@ const EnhancedHorseDetailsStep = ({ data, onUpdate }: StepProps) => {
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+      <div>
+        <Label htmlFor="location" className="text-white mb-2 block">Location *</Label>
+        <Input
+          id="location"
+          value={formData.location}
+          onChange={(e) => handleChange('location', e.target.value)}
+          placeholder="City, State or general area"
+          className="bg-white/5 border-white/20 text-white placeholder:text-white/40"
+          required
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

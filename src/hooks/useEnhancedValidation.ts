@@ -13,7 +13,7 @@ export const useEnhancedValidation = () => {
     const validationRules = [
       { 
         field: 'horseName', 
-        stepId: 1, 
+        stepId: 4, 
         displayName: 'Horse Name',
         check: (data: any) => !data.horseName?.trim() && !data.barnName?.trim()
       },
@@ -25,7 +25,7 @@ export const useEnhancedValidation = () => {
       },
       { 
         field: 'location', 
-        stepId: 1, 
+        stepId: 4, 
         displayName: 'Location',
         check: (data: any) => !data.location?.trim() && !data.currentLocation?.trim()
       }
