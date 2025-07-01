@@ -17,9 +17,10 @@ interface StepProps {
   isLast: boolean;
   onSaveDraft: () => void;
   onNavigateToStep?: (stepId: number) => void;
+  currentDraftId?: string | null;
 }
 
-const PreviewStep = ({ data, onSaveDraft, onNavigateToStep }: StepProps) => {
+const PreviewStep = ({ data, onSaveDraft, onNavigateToStep, currentDraftId }: StepProps) => {
   const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>('desktop');
   const { validateListingWithSteps } = useEnhancedValidation();
   const { publishListing, publishing } = usePreviewPublish();
@@ -28,7 +29,7 @@ const PreviewStep = ({ data, onSaveDraft, onNavigateToStep }: StepProps) => {
   const missingFieldNames = missingFields.map(f => f.displayName);
 
   const handlePublish = () => {
-    publishListing(data, missingFieldNames);
+    publishListing(data, missingFieldNames, currentDraftId);
   };
 
   const handleSaveDraft = async () => {

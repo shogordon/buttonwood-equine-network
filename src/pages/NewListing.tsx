@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
@@ -30,7 +29,8 @@ const NewListing = () => {
     saveStatus,
     lastSaved,
     loadDraft,
-    hasUnsavedChanges
+    hasUnsavedChanges,
+    currentDraftId
   } = useListingForm(draftId);
 
   // Memoize the unsaved changes value to prevent function calls during render
@@ -52,6 +52,7 @@ const NewListing = () => {
     prevStep,
     saveDraft,
     setCurrentStep,
+    currentDraftId,
   });
 
   // Auto-save functionality

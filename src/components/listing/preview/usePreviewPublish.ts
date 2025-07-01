@@ -14,7 +14,7 @@ export const usePreviewPublish = () => {
   const navigate = useNavigate();
   const [publishing, setPublishing] = useState(false);
 
-  const publishListing = async (data: any, missingFields: string[]) => {
+  const publishListing = async (data: any, missingFields: string[], currentDraftId?: string | null) => {
     if (!user) return;
     
     if (missingFields.length > 0) {
@@ -39,7 +39,7 @@ export const usePreviewPublish = () => {
       
       const horseData = {
         user_id: user.id,
-        horse_name: data.horseName,
+        horse_name: data.horseName || data.barnName,
         sex: data.sex,
         breed: data.breed,
         color: data.color,
@@ -70,13 +70,31 @@ export const usePreviewPublish = () => {
         verification_status: data.verificationRequested ? 'pending' : 'none',
       };
 
-      const { data: insertedHorse, error } = await supabase
-        .from('horse_profiles')
-        .insert(horseData)
-        .select()
-        .single();
+      let insertedHorse;
 
-      if (error) throw error;
+      if (currentDraftId) {
+        // Update existing draft
+        const { data: updatedHorse, error } = await supabase
+          .from('horse_profiles')
+          .update(horseData)
+          .eq('id', currentDraftId)
+          .eq('user_id', user.id)
+          .select()
+          .single();
+
+        if (error) throw error;
+        insertedHorse = updatedHorse;
+      } else {
+        // Create new listing
+        const { data: newHorse, error } = await supabase
+          .from('horse_profiles')
+          .insert(horseData)
+          .select()
+          .single();
+
+        if (error) throw error;
+        insertedHorse = newHorse;
+      }
 
       // Create commission disclosure if applicable
       if (data.commissionType && data.commissionType !== 'none') {
