@@ -9,13 +9,16 @@ import { useListingDataMapping } from "./useListingDataMapping";
 export const useListingDraft = () => {
   const { user } = useAuth();
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [currentDraftId, setCurrentDraftId] = useState<string | null>(null);
   const { mapDatabaseToFormData, mapFormDataToDatabase } = useListingDataMapping();
 
   const loadDraft = useCallback(async (draftId: string) => {
-    if (!user || !draftId) return null;
+    if (!user || !draftId || loading) return null;
+    
+    setLoading(true);
     
     try {
       const { data, error } = await supabase
@@ -35,16 +38,18 @@ export const useListingDraft = () => {
       if (data) {
         const mappedData = mapDatabaseToFormData(data);
         setCurrentDraftId(draftId);
-        toast.success('Draft loaded successfully');
+        // Remove the success toast for draft loading as it's expected behavior
         return mappedData;
       }
     } catch (error) {
       console.error('Error loading draft:', error);
       toast.error('Failed to load draft');
+    } finally {
+      setLoading(false);
     }
     
     return null;
-  }, [user, mapDatabaseToFormData]);
+  }, [user, mapDatabaseToFormData, loading]);
 
   const saveDraft = async (listingData: Partial<ListingData>, showToast = true, retryCount = 0) => {
     if (!user) return;
@@ -103,6 +108,7 @@ export const useListingDraft = () => {
     loadDraft,
     saveDraft,
     saving,
+    loading,
     saveStatus,
     lastSaved,
     currentDraftId,

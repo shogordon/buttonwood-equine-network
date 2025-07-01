@@ -57,7 +57,7 @@ const NewListing = () => {
   });
 
   // Navigation protection (simplified for now)
-  const { blocker, navigateWithSave } = useNavigationProtection({
+  const { navigateWithSave } = useNavigationProtection({
     hasUnsavedChanges: hasUnsavedChanges(),
     onSave: autoSave,
   });
@@ -79,11 +79,12 @@ const NewListing = () => {
     }
   }, [user, loading, navigate]);
 
+  // Load draft only once when component mounts with draftId
   useEffect(() => {
-    if (draftId && loadDraft) {
+    if (draftId && loadDraft && user) {
       loadDraft();
     }
-  }, [draftId, loadDraft]);
+  }, [draftId, user]); // Removed loadDraft from dependencies to prevent multiple calls
 
   if (loading) {
     return (

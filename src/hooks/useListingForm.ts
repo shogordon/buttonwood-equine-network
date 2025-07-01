@@ -46,6 +46,7 @@ export const useListingForm = (draftId?: string) => {
     loadDraft,
     saveDraft: saveDraftToDb,
     saving,
+    loading,
     saveStatus,
     lastSaved,
     currentDraftId,
@@ -64,14 +65,14 @@ export const useListingForm = (draftId?: string) => {
   }, [listingData]);
 
   const loadDraftData = useCallback(async () => {
-    if (!draftId) return;
+    if (!draftId || loading) return;
     
     const mappedData = await loadDraft(draftId);
     if (mappedData) {
       setListingData(prev => ({ ...prev, ...mappedData }));
       lastSavedDataRef.current = { ...listingData, ...mappedData };
     }
-  }, [draftId, loadDraft, listingData]);
+  }, [draftId, loadDraft, loading, listingData]);
 
   const saveDraft = useCallback(async (showToast = true) => {
     await saveDraftToDb(listingData, showToast);
@@ -90,6 +91,7 @@ export const useListingForm = (draftId?: string) => {
     saveDraft,
     autoSave,
     saving,
+    loading,
     saveStatus,
     lastSaved,
     loadDraft: loadDraftData,
