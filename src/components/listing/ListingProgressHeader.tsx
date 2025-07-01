@@ -1,7 +1,7 @@
-
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Save, ArrowRight } from "lucide-react";
+import { SaveStatus } from "./SaveStatus";
 
 interface Step {
   id: number;
@@ -13,13 +13,17 @@ interface ListingProgressHeaderProps {
   steps: Step[];
   onSaveDraft: () => void;
   saving: boolean;
+  saveStatus?: 'idle' | 'saving' | 'saved' | 'error';
+  lastSaved?: Date | null;
 }
 
 export const ListingProgressHeader = ({ 
   currentStep, 
   steps, 
   onSaveDraft, 
-  saving 
+  saving,
+  saveStatus = 'idle',
+  lastSaved
 }: ListingProgressHeaderProps) => {
   const progress = (currentStep / steps.length) * 100;
 
@@ -27,15 +31,21 @@ export const ListingProgressHeader = ({
     <div className="mb-8">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-3xl font-bold text-white">Create New Listing</h1>
-        <Button 
-          onClick={onSaveDraft} 
-          disabled={saving}
-          variant="outline" 
-          className="bg-white/5 border-white/20 text-white hover:bg-white/10"
-        >
-          <Save className="h-4 w-4 mr-2" />
-          {saving ? 'Saving...' : 'Save Draft'}
-        </Button>
+        <div className="flex items-center gap-3">
+          <SaveStatus 
+            status={saveStatus} 
+            lastSaved={lastSaved || undefined}
+          />
+          <Button 
+            onClick={onSaveDraft} 
+            disabled={saving}
+            variant="outline" 
+            className="bg-white/5 border-white/20 text-white hover:bg-white/10"
+          >
+            <Save className="h-4 w-4 mr-2" />
+            {saving ? 'Saving...' : 'Save Draft'}
+          </Button>
+        </div>
       </div>
       
       <div className="mb-4">

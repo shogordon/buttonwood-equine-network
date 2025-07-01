@@ -1,10 +1,11 @@
-
 import { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { useListingForm } from "@/hooks/useListingForm";
+import { useAutoSave } from "@/hooks/useAutoSave";
+import { useNavigationProtection } from "@/hooks/useNavigationProtection";
 
 // Import new step components
 import WhoFillingOutStep from "@/components/listing/WhoFillingOutStep";
@@ -44,7 +45,42 @@ const NewListing = () => {
   const navigate = useNavigate();
   const { draftId } = useParams();
   const [currentStep, setCurrentStep] = useState(1);
-  const { listingData, updateListingData, saveDraft, saving, loadDraft } = useListingForm(draftId);
+  const { 
+    listingData, 
+    updateListingData, 
+    saveDraft, 
+    autoSave,
+    saving, 
+    saveStatus,
+    lastSaved,
+    loadDraft,
+    hasUnsavedChanges
+  } = useListingForm(draftId);
+
+  // Auto-save functionality
+  useAutoSave({
+    data: listingData,
+    saveFunction: autoSave,
+    delay: 3000,
+    enabled: true,
+  });
+
+  // Navigation protection
+  const { blocker, navigateWithSave } = useNavigationProtection({
+    hasUnsavedChanges: hasUnsavedChanges(),
+    onSave: autoSave,
+  });
+
+  // Periodic auto-save every 2 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (hasUnsavedChanges()) {
+        autoSave();
+      }
+    }, 120000); // 2 minutes
+
+    return () => clearInterval(interval);
+  }, [hasUnsavedChanges, autoSave]);
 
   const getCurrentStepComponent = () => {
     const step = STEPS.find(step => step.id === currentStep);
@@ -90,7 +126,12 @@ const NewListing = () => {
     }
   }, [draftId, loadDraft]);
 
-  const nextStep = () => {
+  const nextStep = async () => {
+    // Auto-save before navigation
+    if (hasUnsavedChanges()) {
+      await autoSave();
+    }
+
     let nextStepId = currentStep + 1;
     
     // Skip agent info step if user is not an agent
@@ -103,7 +144,12 @@ const NewListing = () => {
     }
   };
 
-  const prevStep = () => {
+  const prevStep = async () => {
+    // Auto-save before navigation
+    if (hasUnsavedChanges()) {
+      await autoSave();
+    }
+
     let prevStepId = currentStep - 1;
     
     // Skip agent info step if user is not an agent
@@ -126,6 +172,41 @@ const NewListing = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900">
+      {/* Navigation Blocker Dialog */}
+      {blocker.state === 'blocked' && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <Card className="bg-white/10 backdrop-blur-md border border-white/20 p-6 max-w-md">
+            <h3 className="text-lg font-semibold text-white mb-4">Unsaved Changes</h3>
+            <p className="text-white/80 mb-6">
+              You have unsaved changes. Would you like to save before leaving?
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={async () => {
+                  await autoSave();
+                  blocker.proceed();
+                }}
+                className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
+              >
+                Save & Continue
+              </button>
+              <button
+                onClick={() => blocker.proceed()}
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
+              >
+                Leave Without Saving
+              </button>
+              <button
+                onClick={() => blocker.reset()}
+                className="px-4 py-2 text-white/80 hover:text-white"
+              >
+                Cancel
+              </button>
+            </div>
+          </Card>
+        </div>
+      )}
+
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 bg-white/5 backdrop-blur-md shadow-md">
         <div className="container mx-auto px-6 py-4">
@@ -138,10 +219,13 @@ const NewListing = () => {
                 The Aisle
               </span>
             </Link>
-            <Link to="/sell" className="text-white/80 hover:text-white transition-colors">
+            <button 
+              onClick={() => navigateWithSave('/sell')}
+              className="text-white/80 hover:text-white transition-colors"
+            >
               <ArrowLeft className="h-5 w-5 inline mr-2" />
               Back to Dashboard
-            </Link>
+            </button>
           </div>
         </div>
       </nav>
@@ -152,8 +236,10 @@ const NewListing = () => {
           <ListingProgressHeader 
             currentStep={currentStep}
             steps={STEPS}
-            onSaveDraft={saveDraft}
+            onSaveDraft={() => saveDraft(true)}
             saving={saving}
+            saveStatus={saveStatus}
+            lastSaved={lastSaved}
           />
 
           {/* Step Content */}
@@ -169,6 +255,7 @@ const NewListing = () => {
             totalSteps={STEPS.length}
             onPrevStep={prevStep}
             onNextStep={nextStep}
+            saving={saving}
           />
         </div>
       </div>

@@ -1,5 +1,4 @@
-
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -170,11 +169,21 @@ export const useListingForm = (draftId?: string) => {
     contactVisibility: 'registered',
   });
   const [saving, setSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [currentDraftId, setCurrentDraftId] = useState<string | null>(draftId || null);
+  const lastSavedDataRef = useRef<Partial<ListingData>>({});
 
   const updateListingData = (stepData: Partial<ListingData>) => {
     setListingData(prev => ({ ...prev, ...stepData }));
+    if (saveStatus === 'saved') {
+      setSaveStatus('idle');
+    }
   };
+
+  const hasUnsavedChanges = useCallback(() => {
+    return JSON.stringify(listingData) !== JSON.stringify(lastSavedDataRef.current);
+  }, [listingData]);
 
   const loadDraft = useCallback(async () => {
     if (!user || !draftId) return;
@@ -237,10 +246,12 @@ export const useListingForm = (draftId?: string) => {
     }
   }, [user, draftId]);
 
-  const saveDraft = async () => {
+  const saveDraft = async (showToast = true, retryCount = 0) => {
     if (!user) return;
     
     setSaving(true);
+    setSaveStatus('saving');
+    
     try {
       const age = listingData.yearOfBirth ? new Date().getFullYear() - listingData.yearOfBirth : 0;
       
@@ -295,7 +306,7 @@ export const useListingForm = (draftId?: string) => {
           .eq('user_id', user.id);
 
         if (error) throw error;
-        toast.success('Draft updated successfully!');
+        if (showToast) toast.success('Draft updated successfully!');
       } else {
         // Create new draft
         const { data, error } = await supabase
@@ -307,22 +318,47 @@ export const useListingForm = (draftId?: string) => {
         if (error) throw error;
         
         setCurrentDraftId(data.id);
-        toast.success('Draft saved successfully!');
+        if (showToast) toast.success('Draft saved successfully!');
       }
+
+      // Update tracking refs
+      lastSavedDataRef.current = { ...listingData };
+      setSaveStatus('saved');
+      setLastSaved(new Date());
+      
     } catch (error) {
       console.error('Error saving draft:', error);
-      toast.error('Failed to save draft');
+      setSaveStatus('error');
+      
+      // Retry logic for failed saves
+      if (retryCount < 2) {
+        setTimeout(() => {
+          saveDraft(false, retryCount + 1);
+        }, 2000 * (retryCount + 1));
+      } else {
+        if (showToast) toast.error('Failed to save draft after multiple attempts');
+      }
     } finally {
       setSaving(false);
     }
   };
 
+  const autoSave = useCallback(async () => {
+    if (hasUnsavedChanges()) {
+      await saveDraft(false);
+    }
+  }, [hasUnsavedChanges, saveDraft]);
+
   return {
     listingData,
     updateListingData,
     saveDraft,
+    autoSave,
     saving,
+    saveStatus,
+    lastSaved,
     loadDraft,
-    currentDraftId
+    currentDraftId,
+    hasUnsavedChanges,
   };
 };
