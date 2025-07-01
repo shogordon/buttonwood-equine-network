@@ -1,6 +1,6 @@
 
 import { useState, useCallback } from 'react';
-import { LISTING_STEPS } from '@/config/listingSteps';
+import { NEW_LISTING_STEPS } from '@/config/newListingSteps';
 
 interface UseListingNavigationProps {
   userRole: string;
@@ -30,7 +30,7 @@ export const useListingNavigation = ({
       nextStepId = 4;
     }
 
-    if (nextStepId <= LISTING_STEPS.length) {
+    if (nextStepId <= NEW_LISTING_STEPS.length) {
       setCurrentStep(nextStepId);
     }
   }, [currentStep, userRole, hasUnsavedChanges, autoSave]);

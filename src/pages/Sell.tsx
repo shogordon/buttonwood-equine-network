@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import AppNavigation from "@/components/navigation/AppNavigation";
 import QuickStatsCards from "@/components/sell/QuickStatsCards";
 import UserListingsGrid from "@/components/sell/UserListingsGrid";
+import { useListingAnalytics } from "@/hooks/useListingAnalytics";
 import { Plus } from "lucide-react";
 
 interface HorseProfile {
@@ -19,10 +20,18 @@ interface HorseProfile {
   created_at: string;
   breed: string | null;
   age: number;
+  location?: string | null;
+  description?: string | null;
+  user_role?: string | null;
+  listing_type?: string[] | null;
+  height?: number | null;
+  color?: string | null;
+  updated_at?: string;
 }
 
 const Sell = () => {
   const { user, loading, handleSignOut } = useAuth();
+  const { analytics } = useListingAnalytics();
 
   const { data: horses, isLoading } = useQuery({
     queryKey: ['user-horses', user?.id],
@@ -35,7 +44,7 @@ const Sell = () => {
         .from('horse_profiles')
         .select('*')
         .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+        .order('updated_at', { ascending: false });
 
       if (error) {
         console.error('Error fetching user horses:', error);
@@ -106,9 +115,9 @@ const Sell = () => {
           {/* Quick Stats */}
           <QuickStatsCards 
             activeListings={publishedHorses.length}
-            totalViews={0} // TODO: Add analytics
-            pendingInquiries={0} // TODO: Add inquiries count
-            saves={0} // TODO: Add saves count
+            totalViews={analytics.totalViews}
+            pendingInquiries={analytics.pendingInquiries}
+            saves={analytics.totalSaves}
           />
 
           {/* Listings Grid */}

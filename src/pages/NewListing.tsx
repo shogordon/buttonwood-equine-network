@@ -7,8 +7,8 @@ import { useListingForm } from "@/hooks/useListingForm";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import { useNavigationProtection } from "@/hooks/useNavigationProtection";
 import { useListingNavigation } from "@/hooks/useListingNavigation";
-import { useStepComponent } from "@/hooks/useStepComponent";
-import { LISTING_STEPS } from "@/config/listingSteps";
+import { useNewStepComponent } from "@/hooks/useNewStepComponent";
+import { NEW_LISTING_STEPS } from "@/config/newListingSteps";
 
 // Import UI components
 import { ListingProgressHeader } from "@/components/listing/ListingProgressHeader";
@@ -56,7 +56,7 @@ const NewListing = () => {
     autoSave,
   });
 
-  const { CurrentStepComponent, stepProps } = useStepComponent({
+  const { CurrentStepComponent, stepProps } = useNewStepComponent({
     currentStep,
     listingData,
     updateListingData,
@@ -157,7 +157,7 @@ const NewListing = () => {
           {/* Progress Header */}
           <ListingProgressHeader 
             currentStep={currentStep}
-            steps={LISTING_STEPS}
+            steps={NEW_LISTING_STEPS}
             onSaveDraft={() => saveDraft(true)}
             saving={saving}
             saveStatus={saveStatus}
@@ -176,7 +176,7 @@ const NewListing = () => {
           {/* Navigation Footer */}
           <ListingNavigationFooter 
             currentStep={currentStep}
-            totalSteps={LISTING_STEPS.length}
+            totalSteps={NEW_LISTING_STEPS.length}
             onPrevStep={prevStep}
             onNextStep={nextStep}
             saving={saving}

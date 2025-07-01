@@ -1,11 +1,14 @@
 
-import { Eye, Edit, Trash2, PlayCircle } from "lucide-react";
+import { Eye, Edit, Trash2, PlayCircle, TrendingUp, Users, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useListingCompletion } from "@/hooks/useListingCompletion";
+import { ListingData } from "@/types/listing";
 
 interface HorseProfile {
   id: string;
@@ -17,14 +20,45 @@ interface HorseProfile {
   created_at: string;
   breed: string | null;
   age: number;
+  location?: string | null;
+  description?: string | null;
+  user_role?: string | null;
+  listing_type?: string[] | null;
+  height?: number | null;
+  color?: string | null;
+}
+
+interface ListingAnalytics {
+  views?: number;
+  inquiries?: number;
+  saves?: number;
+  lastWeekViews?: number;
+  lastWeekInquiries?: number;
 }
 
 interface ListingCardProps {
   horse: HorseProfile;
   isDraft?: boolean;
+  analytics?: ListingAnalytics;
 }
 
-const ListingCard = ({ horse, isDraft = false }: ListingCardProps) => {
+const ListingCard = ({ horse, isDraft = false, analytics }: ListingCardProps) => {
+  const { calculateCompletion } = useListingCompletion();
+  // Calculate completion for drafts
+  const completion = isDraft ? calculateCompletion({
+    horseName: horse.horse_name,
+    breed: horse.breed,
+    age: horse.age,
+    location: horse.location,
+    price: horse.price,
+    userRole: horse.user_role,
+    listingType: horse.listing_type,
+    description: horse.description,
+    images: horse.images,
+    height: horse.height,
+    color: horse.color,
+  } as Partial<ListingData>) : null;
+
   const handleDeleteDraft = async () => {
     if (!isDraft) return;
     
@@ -94,6 +128,51 @@ const ListingCard = ({ horse, isDraft = false }: ListingCardProps) => {
           </Badge>
         </div>
         
+        {/* Completion progress for drafts */}
+        {isDraft && completion && (
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-white/60">Completion</span>
+              <span className="text-sm font-semibold text-white">{completion.percentage}%</span>
+            </div>
+            <Progress value={completion.percentage} className="h-2 bg-white/10" />
+            <p className="text-xs text-white/50 mt-1">{completion.nextAction}</p>
+          </div>
+        )}
+
+        {/* Analytics for published listings */}
+        {!isDraft && analytics && (
+          <div className="grid grid-cols-3 gap-2 mb-4 p-3 bg-white/5 rounded-lg">
+            <div className="text-center">
+              <div className="flex items-center justify-center mb-1">
+                <Eye className="h-3 w-3 text-blue-400 mr-1" />
+                <span className="text-xs text-white/60">Views</span>
+              </div>
+              <div className="text-sm font-semibold text-white">{analytics.views || 0}</div>
+              {analytics.lastWeekViews !== undefined && (
+                <div className="text-xs text-green-400">+{analytics.lastWeekViews} this week</div>
+              )}
+            </div>
+            <div className="text-center">
+              <div className="flex items-center justify-center mb-1">
+                <Users className="h-3 w-3 text-purple-400 mr-1" />
+                <span className="text-xs text-white/60">Inquiries</span>
+              </div>
+              <div className="text-sm font-semibold text-white">{analytics.inquiries || 0}</div>
+              {analytics.lastWeekInquiries !== undefined && analytics.lastWeekInquiries > 0 && (
+                <div className="text-xs text-green-400">+{analytics.lastWeekInquiries} this week</div>
+              )}
+            </div>
+            <div className="text-center">
+              <div className="flex items-center justify-center mb-1">
+                <Heart className="h-3 w-3 text-red-400 mr-1" />
+                <span className="text-xs text-white/60">Saves</span>
+              </div>
+              <div className="text-sm font-semibold text-white">{analytics.saves || 0}</div>
+            </div>
+          </div>
+        )}
+
         {horse.price && (
           <p className="text-2xl font-bold text-white mb-4">
             ${horse.price.toLocaleString()}
