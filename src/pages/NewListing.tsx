@@ -1,50 +1,26 @@
-import { useState, useEffect } from "react";
-import { ArrowLeft } from "lucide-react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { useListingForm } from "@/hooks/useListingForm";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import { useNavigationProtection } from "@/hooks/useNavigationProtection";
+import { useListingNavigation } from "@/hooks/useListingNavigation";
+import { useStepComponent } from "@/hooks/useStepComponent";
+import { LISTING_STEPS } from "@/config/listingSteps";
 
-// Import new step components
-import WhoFillingOutStep from "@/components/listing/WhoFillingOutStep";
-import OwnerInfoStep from "@/components/listing/OwnerInfoStep";
-import AgentInfoStep from "@/components/listing/AgentInfoStep";
-import EnhancedHorseDetailsStep from "@/components/listing/EnhancedHorseDetailsStep";
-import SaleInfoStep from "@/components/listing/SaleInfoStep";
-import ProsConsStep from "@/components/listing/ProsConsStep";
-import TagsFiltersStep from "@/components/listing/TagsFiltersStep";
-import ProgramMaintenanceStep from "@/components/listing/ProgramMaintenanceStep";
-import MediaUploadStep from "@/components/listing/MediaUploadStep";
-import DescriptionStep from "@/components/listing/DescriptionStep";
-import VerificationStep from "@/components/listing/VerificationStep";
-import PreviewStep from "@/components/listing/PreviewStep";
-
-// Import navigation components
+// Import UI components
 import { ListingProgressHeader } from "@/components/listing/ListingProgressHeader";
 import { ListingNavigationFooter } from "@/components/listing/ListingNavigationFooter";
-
-const STEPS = [
-  { id: 1, title: "Who's Filling This Out?", component: WhoFillingOutStep },
-  { id: 2, title: "Owner Info", component: OwnerInfoStep },
-  { id: 3, title: "Agent Info", component: AgentInfoStep },
-  { id: 4, title: "Horse Details", component: EnhancedHorseDetailsStep },
-  { id: 5, title: "Sale Info", component: SaleInfoStep },
-  { id: 6, title: "Pros & Cons", component: ProsConsStep },
-  { id: 7, title: "Tags & Filters", component: TagsFiltersStep },
-  { id: 8, title: "Program & Maintenance", component: ProgramMaintenanceStep },
-  { id: 9, title: "Media Upload", component: MediaUploadStep },
-  { id: 10, title: "Description", component: DescriptionStep },
-  { id: 11, title: "Verification", component: VerificationStep },
-  { id: 12, title: "Preview & Publish", component: PreviewStep },
-];
+import { NavigationBlockerDialog } from "@/components/listing/NavigationBlockerDialog";
+import { ListingNavBar } from "@/components/listing/ListingNavBar";
 
 const NewListing = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { draftId } = useParams();
-  const [currentStep, setCurrentStep] = useState(1);
+  
   const { 
     listingData, 
     updateListingData, 
@@ -56,6 +32,21 @@ const NewListing = () => {
     loadDraft,
     hasUnsavedChanges
   } = useListingForm(draftId);
+
+  const { currentStep, nextStep, prevStep } = useListingNavigation({
+    userRole: listingData.userRole || '',
+    hasUnsavedChanges: hasUnsavedChanges(),
+    autoSave,
+  });
+
+  const { CurrentStepComponent, stepProps } = useStepComponent({
+    currentStep,
+    listingData,
+    updateListingData,
+    nextStep,
+    prevStep,
+    saveDraft,
+  });
 
   // Auto-save functionality
   useAutoSave({
@@ -82,38 +73,6 @@ const NewListing = () => {
     return () => clearInterval(interval);
   }, [hasUnsavedChanges, autoSave]);
 
-  const getCurrentStepComponent = () => {
-    const step = STEPS.find(step => step.id === currentStep);
-    if (!step) return null;
-
-    // Skip agent info step if user is not an agent
-    if (step.id === 3 && listingData.userRole !== 'agent') {
-      return null;
-    }
-
-    return step.component;
-  };
-
-  const getCurrentStepProps = () => {
-    const baseProps = {
-      data: listingData,
-      onUpdate: updateListingData,
-      onNext: nextStep,
-      onPrev: prevStep,
-      isFirst: currentStep === 1,
-      isLast: currentStep === STEPS.length,
-    };
-
-    // Add saveDraft function for PreviewStep
-    if (currentStep === 12) {
-      return { ...baseProps, onSaveDraft: saveDraft };
-    }
-
-    return baseProps;
-  };
-
-  const CurrentStepComponent = getCurrentStepComponent();
-
   useEffect(() => {
     if (!loading && !user) {
       navigate('/auth');
@@ -126,42 +85,6 @@ const NewListing = () => {
     }
   }, [draftId, loadDraft]);
 
-  const nextStep = async () => {
-    // Auto-save before navigation
-    if (hasUnsavedChanges()) {
-      await autoSave();
-    }
-
-    let nextStepId = currentStep + 1;
-    
-    // Skip agent info step if user is not an agent
-    if (nextStepId === 3 && listingData.userRole !== 'agent') {
-      nextStepId = 4;
-    }
-
-    if (nextStepId <= STEPS.length) {
-      setCurrentStep(nextStepId);
-    }
-  };
-
-  const prevStep = async () => {
-    // Auto-save before navigation
-    if (hasUnsavedChanges()) {
-      await autoSave();
-    }
-
-    let prevStepId = currentStep - 1;
-    
-    // Skip agent info step if user is not an agent
-    if (prevStepId === 3 && listingData.userRole !== 'agent') {
-      prevStepId = 2;
-    }
-
-    if (prevStepId >= 1) {
-      setCurrentStep(prevStepId);
-    }
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 flex items-center justify-center">
@@ -173,69 +96,25 @@ const NewListing = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900">
       {/* Navigation Blocker Dialog */}
-      {blocker.state === 'blocked' && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <Card className="bg-white/10 backdrop-blur-md border border-white/20 p-6 max-w-md">
-            <h3 className="text-lg font-semibold text-white mb-4">Unsaved Changes</h3>
-            <p className="text-white/80 mb-6">
-              You have unsaved changes. Would you like to save before leaving?
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={async () => {
-                  await autoSave();
-                  blocker.proceed();
-                }}
-                className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
-              >
-                Save & Continue
-              </button>
-              <button
-                onClick={() => blocker.proceed()}
-                className="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
-              >
-                Leave Without Saving
-              </button>
-              <button
-                onClick={() => blocker.reset()}
-                className="px-4 py-2 text-white/80 hover:text-white"
-              >
-                Cancel
-              </button>
-            </div>
-          </Card>
-        </div>
-      )}
+      <NavigationBlockerDialog
+        isOpen={blocker.state === 'blocked'}
+        onSaveAndContinue={async () => {
+          await autoSave();
+          blocker.proceed();
+        }}
+        onLeaveWithoutSaving={() => blocker.proceed()}
+        onCancel={() => blocker.reset()}
+      />
 
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-white/5 backdrop-blur-md shadow-md">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 rounded-xl bg-white/5 backdrop-blur-md flex items-center justify-center">
-                <img src="/lovable-uploads/the-aisle-logo.png" alt="The Aisle" className="h-6 w-6" />
-              </div>
-              <span className="text-xl font-semibold text-white">
-                The Aisle
-              </span>
-            </Link>
-            <button 
-              onClick={() => navigateWithSave('/sell')}
-              className="text-white/80 hover:text-white transition-colors"
-            >
-              <ArrowLeft className="h-5 w-5 inline mr-2" />
-              Back to Dashboard
-            </button>
-          </div>
-        </div>
-      </nav>
+      <ListingNavBar onBackClick={() => navigateWithSave('/sell')} />
 
       <div className="pt-32 pb-20">
         <div className="container mx-auto px-6 max-w-4xl">
           {/* Progress Header */}
           <ListingProgressHeader 
             currentStep={currentStep}
-            steps={STEPS}
+            steps={LISTING_STEPS}
             onSaveDraft={() => saveDraft(true)}
             saving={saving}
             saveStatus={saveStatus}
@@ -245,14 +124,14 @@ const NewListing = () => {
           {/* Step Content */}
           <Card className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8">
             {CurrentStepComponent && (
-              <CurrentStepComponent {...getCurrentStepProps()} />
+              <CurrentStepComponent {...stepProps} />
             )}
           </Card>
 
           {/* Navigation Footer */}
           <ListingNavigationFooter 
             currentStep={currentStep}
-            totalSteps={STEPS.length}
+            totalSteps={LISTING_STEPS.length}
             onPrevStep={prevStep}
             onNextStep={nextStep}
             saving={saving}
