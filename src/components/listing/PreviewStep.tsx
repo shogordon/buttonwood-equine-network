@@ -5,6 +5,7 @@ import { HorsePreviewCard } from "./preview/HorsePreviewCard";
 import { PublishActions } from "./preview/PublishActions";
 import { usePreviewValidation } from "./preview/usePreviewValidation";
 import { usePreviewPublish } from "./preview/usePreviewPublish";
+import { toast } from "@/components/ui/sonner";
 
 interface StepProps {
   data: any;
@@ -27,8 +28,14 @@ const PreviewStep = ({ data, onSaveDraft }: StepProps) => {
     publishListing(data, missingFields);
   };
 
-  const handleSaveDraft = () => {
-    onSaveDraft();
+  const handleSaveDraft = async () => {
+    try {
+      await onSaveDraft();
+      toast.success("Draft saved successfully!");
+    } catch (error) {
+      console.error('Error saving draft:', error);
+      toast.error("Failed to save draft. Please try again.");
+    }
   };
 
   return (
