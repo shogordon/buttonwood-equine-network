@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+
+import { useState } from "react";
 import { Plus, Eye, Edit, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -7,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import Logo from "@/components/ui/Logo";
+import AppNavigation from "@/components/navigation/AppNavigation";
 
 interface HorseProfile {
   id: string;
@@ -22,12 +23,14 @@ interface HorseProfile {
 }
 
 const Sell = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, handleSignOut } = useAuth();
 
   const { data: horses, isLoading } = useQuery({
     queryKey: ['user-horses', user?.id],
     queryFn: async () => {
       if (!user) return [];
+      
+      console.log('Fetching horses for user:', user.id);
       
       const { data, error } = await supabase
         .from('horse_profiles')
@@ -35,7 +38,12 @@ const Sell = () => {
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching user horses:', error);
+        throw error;
+      }
+      
+      console.log('Found horses for user:', data?.length || 0);
       return data as HorseProfile[];
     },
     enabled: !!user,
@@ -73,33 +81,12 @@ const Sell = () => {
         <div className="floating-element bottom-32 left-40 w-48 h-48 animate-float opacity-10" style={{ animationDelay: '4s' }} />
       </div>
 
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-white/5 backdrop-blur-md shadow-md">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 rounded-xl bg-white/5 backdrop-blur-md flex items-center justify-center">
-                <Logo />
-              </div>
-              <span className="text-xl font-semibold text-white">
-                The Aisle
-              </span>
-            </Link>
-            <div className="hidden md:flex items-center space-x-8">
-              <Link to="/browse" className="text-white/80 hover:text-white transition-colors">
-                Browse
-              </Link>
-              <Link to="/sell" className="text-white font-medium">
-                Sell
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
+      {/* Use unified navigation */}
+      <AppNavigation onSignOut={handleSignOut} />
 
       <div className="pt-32 pb-20">
         <div className="container mx-auto px-6">
-          {/* Header Section */}
+          {/* Header Section - Hero */}
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold text-white mb-6 text-shadow">
               Sell Your Horse
@@ -108,14 +95,14 @@ const Sell = () => {
               List your horse with confidence. Our platform connects you with serious buyers and provides all the tools you need for a successful sale.
             </p>
             <Link to="/sell/new">
-              <Button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-2xl hover:scale-105 transition-all duration-300 px-8 py-4 text-lg font-semibold">
+              <Button className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl hover:scale-105 transition-all duration-300 px-8 py-4 text-lg font-semibold">
                 <Plus className="mr-2 h-5 w-5" />
-                List a Horse
+                List Your Horse
               </Button>
             </Link>
           </div>
 
-          {/* Horse Listings */}
+          {/* Your Listings Section */}
           <div className="max-w-6xl mx-auto">
             <h2 className="text-2xl font-bold text-white mb-6">Your Listings</h2>
             
@@ -129,6 +116,7 @@ const Sell = () => {
                           src={horse.images[0]} 
                           alt={horse.horse_name}
                           className="w-full h-full object-cover"
+                          loading="lazy"
                         />
                       ) : (
                         <div className="text-white/60 text-center">
@@ -182,10 +170,10 @@ const Sell = () => {
                 <div className="text-white/60 mb-6">
                   <Plus className="h-16 w-16 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold mb-2">No listings yet</h3>
-                  <p>Create your first horse listing to get started selling on Buttonwood Bluebook.</p>
+                  <p>Create your first horse listing to get started selling.</p>
                 </div>
                 <Link to="/sell/new">
-                  <Button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl">
+                  <Button className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl">
                     Create Your First Listing
                   </Button>
                 </Link>
