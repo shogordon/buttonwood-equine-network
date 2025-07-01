@@ -34,7 +34,10 @@ export const useAutoSave = ({
       debouncedData.location?.trim() ||
       debouncedData.price ||
       debouncedData.description?.trim() ||
-      debouncedData.userRole
+      debouncedData.userRole ||
+      debouncedData.ownerType ||
+      (debouncedData.listingType && debouncedData.listingType.length > 0) ||
+      debouncedData.agentContactVisibility
     );
     
     return hasContent && currentDataStr !== lastSavedDataStr;
@@ -46,6 +49,7 @@ export const useAutoSave = ({
     try {
       await saveFunction();
       lastSavedData.current = { ...debouncedData };
+      console.log('Auto-save completed successfully');
     } catch (error) {
       console.error('Auto-save failed:', error);
     }

@@ -23,7 +23,10 @@ export const useListingDraft = () => {
       listingData.location?.trim() ||
       listingData.price ||
       listingData.description?.trim() ||
-      listingData.userRole
+      listingData.userRole ||
+      listingData.ownerType ||
+      (listingData.listingType && listingData.listingType.length > 0) ||
+      listingData.agentContactVisibility
     );
   };
 
@@ -50,7 +53,7 @@ export const useListingDraft = () => {
       if (data) {
         const mappedData = mapDatabaseToFormData(data);
         setCurrentDraftId(draftId);
-        // Remove the success toast for draft loading as it's expected behavior
+        console.log('Draft loaded successfully:', mappedData);
         return mappedData;
       }
     } catch (error) {
@@ -83,6 +86,8 @@ export const useListingDraft = () => {
         const timestamp = new Date().toLocaleString();
         horseData.horse_name = `Untitled Draft ${timestamp}`;
       }
+
+      console.log('Saving draft with data:', horseData);
 
       if (currentDraftId) {
         // Update existing draft

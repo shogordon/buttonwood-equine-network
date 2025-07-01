@@ -32,6 +32,11 @@ export const useListingDataMapping = () => {
       showRecord: data.show_record,
       pedigree: data.pedigree,
       healthRecords: data.health_records,
+      // Add radio button fields
+      userRole: data.user_role,
+      ownerType: data.owner_type,
+      listingType: data.listing_type || [],
+      agentContactVisibility: data.agent_contact_visibility,
     };
   };
 
@@ -75,6 +80,11 @@ export const useListingDataMapping = () => {
       show_record: listingData.showRecord,
       pedigree: listingData.pedigree,
       health_records: listingData.healthRecords,
+      // Add radio button fields
+      user_role: listingData.userRole,
+      owner_type: listingData.ownerType,
+      listing_type: listingData.listingType || [],
+      agent_contact_visibility: listingData.agentContactVisibility,
       listing_status: 'draft',
       is_available: true,
       updated_at: new Date().toISOString(),

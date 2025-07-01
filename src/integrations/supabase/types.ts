@@ -218,6 +218,7 @@ export type Database = {
       horse_profiles: {
         Row: {
           age: number
+          agent_contact_visibility: string | null
           breed: string | null
           color: string | null
           cons: string[] | null
@@ -236,8 +237,10 @@ export type Database = {
           images: string[] | null
           is_available: boolean | null
           listing_status: string | null
+          listing_type: string[] | null
           location: string | null
           maintenance_details: string[] | null
+          owner_type: string | null
           pedigree: string | null
           price: number | null
           program_details: string[] | null
@@ -251,6 +254,7 @@ export type Database = {
           trial_available: boolean | null
           updated_at: string | null
           user_id: string
+          user_role: string | null
           verification_status: string | null
           videos: string[] | null
           xrays_available: boolean | null
@@ -258,6 +262,7 @@ export type Database = {
         }
         Insert: {
           age: number
+          agent_contact_visibility?: string | null
           breed?: string | null
           color?: string | null
           cons?: string[] | null
@@ -276,8 +281,10 @@ export type Database = {
           images?: string[] | null
           is_available?: boolean | null
           listing_status?: string | null
+          listing_type?: string[] | null
           location?: string | null
           maintenance_details?: string[] | null
+          owner_type?: string | null
           pedigree?: string | null
           price?: number | null
           program_details?: string[] | null
@@ -291,6 +298,7 @@ export type Database = {
           trial_available?: boolean | null
           updated_at?: string | null
           user_id: string
+          user_role?: string | null
           verification_status?: string | null
           videos?: string[] | null
           xrays_available?: boolean | null
@@ -298,6 +306,7 @@ export type Database = {
         }
         Update: {
           age?: number
+          agent_contact_visibility?: string | null
           breed?: string | null
           color?: string | null
           cons?: string[] | null
@@ -316,8 +325,10 @@ export type Database = {
           images?: string[] | null
           is_available?: boolean | null
           listing_status?: string | null
+          listing_type?: string[] | null
           location?: string | null
           maintenance_details?: string[] | null
+          owner_type?: string | null
           pedigree?: string | null
           price?: number | null
           program_details?: string[] | null
@@ -331,6 +342,7 @@ export type Database = {
           trial_available?: boolean | null
           updated_at?: string | null
           user_id?: string
+          user_role?: string | null
           verification_status?: string | null
           videos?: string[] | null
           xrays_available?: boolean | null
