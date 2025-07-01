@@ -1,5 +1,5 @@
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { ListingData } from "@/types/listing";
 import { useListingDraft } from "./useListingDraft";
 
@@ -41,6 +41,7 @@ const getInitialListingData = (): Partial<ListingData> => ({
 export const useListingForm = (draftId?: string) => {
   const [listingData, setListingData] = useState<Partial<ListingData>>(getInitialListingData());
   const lastSavedDataRef = useRef<Partial<ListingData>>({});
+  const [draftLoaded, setDraftLoaded] = useState(false);
   
   const {
     loadDraft,
@@ -54,7 +55,12 @@ export const useListingForm = (draftId?: string) => {
   } = useListingDraft();
 
   const updateListingData = (stepData: Partial<ListingData>) => {
-    setListingData(prev => ({ ...prev, ...stepData }));
+    console.log('useListingForm: Updating listing data with:', stepData);
+    setListingData(prev => {
+      const updated = { ...prev, ...stepData };
+      console.log('useListingForm: New listing data state:', updated);
+      return updated;
+    });
     if (saveStatus === 'saved') {
       // Reset save status when data changes
     }
@@ -65,25 +71,44 @@ export const useListingForm = (draftId?: string) => {
   }, [listingData]);
 
   const loadDraftData = useCallback(async () => {
-    if (!draftId || loading) return;
+    if (!draftId || loading || draftLoaded) {
+      console.log('useListingForm: Skipping draft load - draftId:', draftId, 'loading:', loading, 'draftLoaded:', draftLoaded);
+      return;
+    }
     
+    console.log('useListingForm: Loading draft:', draftId);
     const mappedData = await loadDraft(draftId);
     if (mappedData) {
-      setListingData(prev => ({ ...prev, ...mappedData }));
-      lastSavedDataRef.current = { ...listingData, ...mappedData };
+      console.log('useListingForm: Draft loaded successfully:', mappedData);
+      setListingData(prev => {
+        const updated = { ...prev, ...mappedData };
+        console.log('useListingForm: Updated listing data with draft:', updated);
+        return updated;
+      });
+      lastSavedDataRef.current = { ...getInitialListingData(), ...mappedData };
+      setDraftLoaded(true);
     }
-  }, [draftId, loadDraft, loading, listingData]);
+  }, [draftId, loadDraft, loading, draftLoaded]);
 
   const saveDraft = useCallback(async (showToast = true) => {
+    console.log('useListingForm: Saving draft with data:', listingData);
     await saveDraftToDb(listingData, showToast);
     lastSavedDataRef.current = { ...listingData };
   }, [listingData, saveDraftToDb]);
 
   const autoSave = useCallback(async () => {
     if (hasUnsavedChanges()) {
+      console.log('useListingForm: Auto-saving due to unsaved changes');
       await saveDraft(false);
     }
   }, [hasUnsavedChanges, saveDraft]);
+
+  // Load draft data when component mounts and draftId is available
+  useEffect(() => {
+    if (draftId && !draftLoaded) {
+      loadDraftData();
+    }
+  }, [draftId, draftLoaded, loadDraftData]);
 
   return {
     listingData,

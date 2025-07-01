@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -40,6 +39,40 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
 
   const [validationErrors, setValidationErrors] = useState<{[key: string]: string}>({});
 
+  // Sync local state with incoming data changes (including loaded drafts)
+  useEffect(() => {
+    console.log('OwnerInfoStep: Syncing state with data:', data);
+    setFormData({
+      ownerType: data.ownerType || '',
+      ownerName: data.ownerName || '',
+      ownerEmail: data.ownerEmail || '',
+      ownerPhone: data.ownerPhone || '',
+      ownerZip: data.ownerZip || '',
+      displayOwnerName: data.displayOwnerName || false,
+      businessName: data.businessName || '',
+      businessEmail: data.businessEmail || '',
+      businessPhone: data.businessPhone || '',
+      authorizedAgentName: data.authorizedAgentName || '',
+      authorizedAgentEmail: data.authorizedAgentEmail || '',
+      authorizedAgentPhone: data.authorizedAgentPhone || '',
+      displayBusinessName: data.displayBusinessName || false,
+    });
+  }, [
+    data.ownerType, 
+    data.ownerName, 
+    data.ownerEmail, 
+    data.ownerPhone, 
+    data.ownerZip,
+    data.displayOwnerName,
+    data.businessName,
+    data.businessEmail,
+    data.businessPhone,
+    data.authorizedAgentName,
+    data.authorizedAgentEmail,
+    data.authorizedAgentPhone,
+    data.displayBusinessName
+  ]);
+
   // Auto-populate owner data when user role is "owner"
   useEffect(() => {
     if (data.userRole === 'owner' && user && profile) {
@@ -63,6 +96,7 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
   };
 
   const handleChange = (field: string, value: any) => {
+    console.log('OwnerInfoStep: Field changed:', field, value);
     const updated = { ...formData, [field]: value };
     setFormData(updated);
     onUpdate(updated);
@@ -74,6 +108,7 @@ const OwnerInfoStep = ({ data, onUpdate }: StepProps) => {
   };
 
   const handleOwnerTypeChange = (type: string) => {
+    console.log('OwnerInfoStep: Owner type changed to:', type);
     const updated = { ...formData, ownerType: type };
     setFormData(updated);
     onUpdate(updated);

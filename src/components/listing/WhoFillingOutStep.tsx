@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -20,13 +20,24 @@ const WhoFillingOutStep = ({ data, onUpdate }: StepProps) => {
     listingType: data.listingType || [],
   });
 
+  // Sync local state with incoming data changes (including loaded drafts)
+  useEffect(() => {
+    console.log('WhoFillingOutStep: Syncing state with data:', data);
+    setFormData({
+      userRole: data.userRole || '',
+      listingType: data.listingType || [],
+    });
+  }, [data.userRole, data.listingType]);
+
   const handleRoleChange = (role: string) => {
+    console.log('WhoFillingOutStep: Role changed to:', role);
     const updated = { ...formData, userRole: role };
     setFormData(updated);
     onUpdate(updated);
   };
 
   const handleListingTypeChange = (type: string, checked: boolean) => {
+    console.log('WhoFillingOutStep: Listing type changed:', type, checked);
     const updated = { ...formData };
     if (checked) {
       updated.listingType = [...updated.listingType, type];

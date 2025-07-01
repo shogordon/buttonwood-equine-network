@@ -3,7 +3,8 @@ import { ListingData, HorseDiscipline, HorseExperienceLevel } from "@/types/list
 
 export const useListingDataMapping = () => {
   const mapDatabaseToFormData = (data: any): Partial<ListingData> => {
-    return {
+    console.log('Mapping database data to form data:', data);
+    const mapped = {
       horseName: data.horse_name,
       barnName: data.horse_name,
       breed: data.breed,
@@ -32,12 +33,27 @@ export const useListingDataMapping = () => {
       showRecord: data.show_record,
       pedigree: data.pedigree,
       healthRecords: data.health_records,
-      // Add radio button fields
+      // Radio button fields - ensure they're properly mapped
       userRole: data.user_role,
       ownerType: data.owner_type,
       listingType: data.listing_type || [],
       agentContactVisibility: data.agent_contact_visibility,
+      // Add additional owner info fields
+      ownerName: data.owner_name,
+      ownerEmail: data.owner_email,
+      ownerPhone: data.owner_phone,
+      ownerZip: data.owner_zip,
+      displayOwnerName: data.display_owner_name || false,
+      businessName: data.business_name,
+      businessEmail: data.business_email,
+      businessPhone: data.business_phone,
+      authorizedAgentName: data.authorized_agent_name,
+      authorizedAgentEmail: data.authorized_agent_email,
+      authorizedAgentPhone: data.authorized_agent_phone,
+      displayBusinessName: data.display_business_name || false,
     };
+    console.log('Mapped form data:', mapped);
+    return mapped;
   };
 
   const mapFormDataToDatabase = (listingData: Partial<ListingData>, userId: string) => {
@@ -52,7 +68,7 @@ export const useListingDataMapping = () => {
       ? listingData.experienceLevel as HorseExperienceLevel 
       : undefined;
 
-    return {
+    const mapped = {
       user_id: userId,
       horse_name: listingData.barnName || listingData.horseName || 'Draft Horse',
       sex: listingData.sex,
@@ -80,15 +96,30 @@ export const useListingDataMapping = () => {
       show_record: listingData.showRecord,
       pedigree: listingData.pedigree,
       health_records: listingData.healthRecords,
-      // Add radio button fields
+      // Radio button fields - ensure they're properly mapped
       user_role: listingData.userRole,
       owner_type: listingData.ownerType,
       listing_type: listingData.listingType || [],
       agent_contact_visibility: listingData.agentContactVisibility,
+      // Add additional owner info fields
+      owner_name: listingData.ownerName,
+      owner_email: listingData.ownerEmail,
+      owner_phone: listingData.ownerPhone,
+      owner_zip: listingData.ownerZip,
+      display_owner_name: listingData.displayOwnerName || false,
+      business_name: listingData.businessName,
+      business_email: listingData.businessEmail,
+      business_phone: listingData.businessPhone,
+      authorized_agent_name: listingData.authorizedAgentName,
+      authorized_agent_email: listingData.authorizedAgentEmail,
+      authorized_agent_phone: listingData.authorizedAgentPhone,
+      display_business_name: listingData.displayBusinessName || false,
       listing_status: 'draft',
       is_available: true,
       updated_at: new Date().toISOString(),
     };
+    console.log('Mapping form data to database:', mapped);
+    return mapped;
   };
 
   return {
