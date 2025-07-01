@@ -12,19 +12,36 @@ interface UseAutoSaveProps {
 export const useAutoSave = ({ 
   data, 
   saveFunction, 
-  delay = 3000, 
+  delay = 5000, // Increased delay to 5 seconds
   enabled = true 
 }: UseAutoSaveProps) => {
   const lastSavedData = useRef<any>(null);
   const debouncedData = useDebounce(data, delay);
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
 
-  const hasChanges = useCallback(() => {
-    return JSON.stringify(debouncedData) !== JSON.stringify(lastSavedData.current);
+  // Check if data has meaningful changes
+  const hasSignificantChanges = useCallback(() => {
+    if (!debouncedData || !lastSavedData.current) return false;
+    
+    const currentDataStr = JSON.stringify(debouncedData);
+    const lastSavedDataStr = JSON.stringify(lastSavedData.current);
+    
+    // Only consider it a significant change if there's actual content
+    const hasContent = !!(
+      debouncedData.horseName?.trim() ||
+      debouncedData.horse_name?.trim() ||
+      debouncedData.breed?.trim() ||
+      debouncedData.location?.trim() ||
+      debouncedData.price ||
+      debouncedData.description?.trim() ||
+      debouncedData.userRole
+    );
+    
+    return hasContent && currentDataStr !== lastSavedDataStr;
   }, [debouncedData]);
 
   const performAutoSave = useCallback(async () => {
-    if (!enabled || !hasChanges()) return;
+    if (!enabled || !hasSignificantChanges()) return;
     
     try {
       await saveFunction();
@@ -32,13 +49,13 @@ export const useAutoSave = ({
     } catch (error) {
       console.error('Auto-save failed:', error);
     }
-  }, [enabled, hasChanges, saveFunction, debouncedData]);
+  }, [enabled, hasSignificantChanges, saveFunction, debouncedData]);
 
   useEffect(() => {
-    if (enabled && hasChanges() && debouncedData) {
+    if (enabled && hasSignificantChanges() && debouncedData) {
       performAutoSave();
     }
-  }, [debouncedData, enabled, hasChanges, performAutoSave]);
+  }, [debouncedData, enabled, hasSignificantChanges, performAutoSave]);
 
   useEffect(() => {
     return () => {
@@ -48,5 +65,5 @@ export const useAutoSave = ({
     };
   }, []);
 
-  return { hasChanges: hasChanges() };
+  return { hasChanges: hasSignificantChanges() };
 };

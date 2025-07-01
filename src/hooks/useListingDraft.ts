@@ -15,6 +15,19 @@ export const useListingDraft = () => {
   const [currentDraftId, setCurrentDraftId] = useState<string | null>(null);
   const { mapDatabaseToFormData, mapFormDataToDatabase } = useListingDataMapping();
 
+  // Check if the listing data has meaningful content
+  const hasMinimalContent = (listingData: Partial<ListingData>) => {
+    return !!(
+      listingData.horseName?.trim() ||
+      listingData.horse_name?.trim() ||
+      listingData.breed?.trim() ||
+      listingData.location?.trim() ||
+      listingData.price ||
+      listingData.description?.trim() ||
+      listingData.userRole
+    );
+  };
+
   const loadDraft = useCallback(async (draftId: string) => {
     if (!user || !draftId || loading) return null;
     
@@ -54,11 +67,23 @@ export const useListingDraft = () => {
   const saveDraft = async (listingData: Partial<ListingData>, showToast = true, retryCount = 0) => {
     if (!user) return;
     
+    // Only save if there's meaningful content
+    if (!hasMinimalContent(listingData)) {
+      console.log('Skipping auto-save: No meaningful content to save');
+      return;
+    }
+    
     setSaving(true);
     setSaveStatus('saving');
     
     try {
       const horseData = mapFormDataToDatabase(listingData, user.id);
+      
+      // Generate a better default name if needed
+      if (!horseData.horse_name || horseData.horse_name === 'Draft Horse') {
+        const timestamp = new Date().toLocaleString();
+        horseData.horse_name = `Untitled Draft ${timestamp}`;
+      }
 
       if (currentDraftId) {
         // Update existing draft
@@ -104,6 +129,30 @@ export const useListingDraft = () => {
     }
   };
 
+  const cleanupEmptyDrafts = async () => {
+    if (!user) return;
+    
+    try {
+      // Delete drafts with minimal content (empty or just "Draft Horse")
+      const { error } = await supabase
+        .from('horse_profiles')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('listing_status', 'draft')
+        .or('horse_name.eq.Draft Horse,horse_name.is.null,description.is.null')
+        .is('breed', null)
+        .is('price', null);
+
+      if (error) {
+        console.error('Error cleaning up empty drafts:', error);
+      } else {
+        console.log('Empty drafts cleaned up successfully');
+      }
+    } catch (error) {
+      console.error('Error during draft cleanup:', error);
+    }
+  };
+
   return {
     loadDraft,
     saveDraft,
@@ -113,5 +162,6 @@ export const useListingDraft = () => {
     lastSaved,
     currentDraftId,
     setCurrentDraftId,
+    cleanupEmptyDrafts,
   };
 };

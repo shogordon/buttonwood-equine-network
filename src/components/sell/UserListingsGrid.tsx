@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import ListingCard from "./ListingCard";
+import DraftCleanup from "./DraftCleanup";
 
 interface HorseProfile {
   id: string;
@@ -29,6 +30,13 @@ const UserListingsGrid = ({ horses }: UserListingsGridProps) => {
   return (
     <div className="max-w-6xl mx-auto">
       <h2 className="text-2xl font-bold text-white mb-6">Your Listings</h2>
+      
+      {/* Draft Cleanup Section - Show only if there are drafts */}
+      {draftHorses.length > 0 && (
+        <div className="mb-8">
+          <DraftCleanup />
+        </div>
+      )}
       
       {/* Draft Listings Section */}
       {draftHorses.length > 0 && (
