@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -132,7 +133,7 @@ interface ListingData {
   healthRecords: string;
 }
 
-export const useListingForm = () => {
+export const useListingForm = (draftId?: string) => {
   const { user } = useAuth();
   const [listingData, setListingData] = useState<Partial<ListingData>>({
     userRole: '',
@@ -169,10 +170,72 @@ export const useListingForm = () => {
     contactVisibility: 'registered',
   });
   const [saving, setSaving] = useState(false);
+  const [currentDraftId, setCurrentDraftId] = useState<string | null>(draftId || null);
 
   const updateListingData = (stepData: Partial<ListingData>) => {
     setListingData(prev => ({ ...prev, ...stepData }));
   };
+
+  const loadDraft = useCallback(async () => {
+    if (!user || !draftId) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('horse_profiles')
+        .select('*')
+        .eq('id', draftId)
+        .eq('user_id', user.id)
+        .eq('listing_status', 'draft')
+        .single();
+
+      if (error) {
+        console.error('Error loading draft:', error);
+        toast.error('Failed to load draft');
+        return;
+      }
+
+      if (data) {
+        // Map database fields to form data
+        const mappedData: Partial<ListingData> = {
+          horseName: data.horse_name,
+          barnName: data.horse_name,
+          breed: data.breed,
+          sex: data.sex,
+          color: data.color,
+          height: data.height,
+          yearOfBirth: data.year_of_birth,
+          age: data.age,
+          location: data.location,
+          currentLocation: data.location,
+          price: data.price,
+          saleType: data.sale_type,
+          trialAvailable: data.trial_available,
+          xraysAvailable: data.xrays_available,
+          pros: data.pros || [],
+          cons: data.cons || [],
+          disciplines: data.disciplines || [],
+          experienceLevel: data.experience_level,
+          temperament: data.temperament || [],
+          rideability: data.rideability || [],
+          programDetails: data.program_details || [],
+          maintenanceDetails: data.maintenance_details || [],
+          images: data.images || [],
+          videos: data.videos || [],
+          description: data.description,
+          showRecord: data.show_record,
+          pedigree: data.pedigree,
+          healthRecords: data.health_records,
+        };
+
+        setListingData(prev => ({ ...prev, ...mappedData }));
+        setCurrentDraftId(draftId);
+        toast.success('Draft loaded successfully');
+      }
+    } catch (error) {
+      console.error('Error loading draft:', error);
+      toast.error('Failed to load draft');
+    }
+  }, [user, draftId]);
 
   const saveDraft = async () => {
     if (!user) return;
@@ -192,7 +255,7 @@ export const useListingForm = () => {
 
       const horseData = {
         user_id: user.id,
-        horse_name: listingData.barnName || listingData.horseName || 'Untitled Horse',
+        horse_name: listingData.barnName || listingData.horseName || 'Draft Horse',
         sex: listingData.sex,
         breed: listingData.breed,
         color: listingData.color,
@@ -220,15 +283,32 @@ export const useListingForm = () => {
         health_records: listingData.healthRecords,
         listing_status: 'draft',
         is_available: true,
+        updated_at: new Date().toISOString(),
       };
 
-      const { error } = await supabase
-        .from('horse_profiles')
-        .insert(horseData);
+      if (currentDraftId) {
+        // Update existing draft
+        const { error } = await supabase
+          .from('horse_profiles')
+          .update(horseData)
+          .eq('id', currentDraftId)
+          .eq('user_id', user.id);
 
-      if (error) throw error;
-      
-      toast.success('Draft saved successfully!');
+        if (error) throw error;
+        toast.success('Draft updated successfully!');
+      } else {
+        // Create new draft
+        const { data, error } = await supabase
+          .from('horse_profiles')
+          .insert(horseData)
+          .select()
+          .single();
+
+        if (error) throw error;
+        
+        setCurrentDraftId(data.id);
+        toast.success('Draft saved successfully!');
+      }
     } catch (error) {
       console.error('Error saving draft:', error);
       toast.error('Failed to save draft');
@@ -241,6 +321,8 @@ export const useListingForm = () => {
     listingData,
     updateListingData,
     saveDraft,
-    saving
+    saving,
+    loadDraft,
+    currentDraftId
   };
 };

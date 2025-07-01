@@ -13,9 +13,10 @@ interface StepProps {
   onPrev: () => void;
   isFirst: boolean;
   isLast: boolean;
+  onSaveDraft: () => void;
 }
 
-const PreviewStep = ({ data }: StepProps) => {
+const PreviewStep = ({ data, onSaveDraft }: StepProps) => {
   const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>('desktop');
   const { validateListing } = usePreviewValidation();
   const { publishListing, publishing } = usePreviewPublish();
@@ -27,8 +28,7 @@ const PreviewStep = ({ data }: StepProps) => {
   };
 
   const handleSaveDraft = () => {
-    // This would use the existing saveDraft function from useListingForm
-    console.log('Save as draft functionality to be implemented');
+    onSaveDraft();
   };
 
   return (

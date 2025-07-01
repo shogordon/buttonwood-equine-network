@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { useListingForm } from "@/hooks/useListingForm";
@@ -42,8 +42,9 @@ const STEPS = [
 const NewListing = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const { draftId } = useParams();
   const [currentStep, setCurrentStep] = useState(1);
-  const { listingData, updateListingData, saveDraft, saving } = useListingForm();
+  const { listingData, updateListingData, saveDraft, saving, loadDraft } = useListingForm(draftId);
 
   const getCurrentStepComponent = () => {
     const step = STEPS.find(step => step.id === currentStep);
@@ -57,6 +58,24 @@ const NewListing = () => {
     return step.component;
   };
 
+  const getCurrentStepProps = () => {
+    const baseProps = {
+      data: listingData,
+      onUpdate: updateListingData,
+      onNext: nextStep,
+      onPrev: prevStep,
+      isFirst: currentStep === 1,
+      isLast: currentStep === STEPS.length,
+    };
+
+    // Add saveDraft function for PreviewStep
+    if (currentStep === 12) {
+      return { ...baseProps, onSaveDraft: saveDraft };
+    }
+
+    return baseProps;
+  };
+
   const CurrentStepComponent = getCurrentStepComponent();
 
   useEffect(() => {
@@ -64,6 +83,12 @@ const NewListing = () => {
       navigate('/auth');
     }
   }, [user, loading, navigate]);
+
+  useEffect(() => {
+    if (draftId && loadDraft) {
+      loadDraft();
+    }
+  }, [draftId, loadDraft]);
 
   const nextStep = () => {
     let nextStepId = currentStep + 1;
@@ -134,14 +159,7 @@ const NewListing = () => {
           {/* Step Content */}
           <Card className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8">
             {CurrentStepComponent && (
-              <CurrentStepComponent 
-                data={listingData} 
-                onUpdate={updateListingData}
-                onNext={nextStep}
-                onPrev={prevStep}
-                isFirst={currentStep === 1}
-                isLast={currentStep === STEPS.length}
-              />
+              <CurrentStepComponent {...getCurrentStepProps()} />
             )}
           </Card>
 
