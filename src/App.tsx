@@ -39,6 +39,7 @@ const App = () => (
             <Route path="/horse/:id" element={<HorseProfile />} />
             <Route path="/sell" element={<Sell />} />
             <Route path="/sell/new" element={<NewListing />} />
+            <Route path="/sell/edit/:draftId" element={<NewListing />} />
             <Route path="/verification" element={<Verification />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/about" element={<About />} />

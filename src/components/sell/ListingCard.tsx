@@ -45,23 +45,34 @@ const ListingCard = ({ horse, isDraft = false }: ListingCardProps) => {
     }
   };
 
+  const ImageContent = () => (
+    <div className="aspect-video bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
+      {horse.images && horse.images.length > 0 ? (
+        <img 
+          src={horse.images[0]} 
+          alt={horse.horse_name}
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
+      ) : (
+        <div className="text-white/60 text-center">
+          <Eye className="h-12 w-12 mx-auto mb-2" />
+          <p>No Image</p>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <Card className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300">
-      <div className="aspect-video bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
-        {horse.images && horse.images.length > 0 ? (
-          <img 
-            src={horse.images[0]} 
-            alt={horse.horse_name}
-            className="w-full h-full object-cover"
-            loading="lazy"
-          />
-        ) : (
-          <div className="text-white/60 text-center">
-            <Eye className="h-12 w-12 mx-auto mb-2" />
-            <p>No Image</p>
-          </div>
-        )}
-      </div>
+      {isDraft ? (
+        <Link to={`/sell/edit/${horse.id}`} className="cursor-pointer">
+          <ImageContent />
+        </Link>
+      ) : (
+        <ImageContent />
+      )}
+      
       <div className="p-6">
         <div className="flex items-start justify-between mb-4">
           <div>
