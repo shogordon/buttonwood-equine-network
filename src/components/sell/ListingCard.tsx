@@ -65,12 +65,15 @@ const ListingCard = ({ horse, isDraft = false }: ListingCardProps) => {
 
   return (
     <Card className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300">
+      {/* Make the image clickable based on listing type */}
       {isDraft ? (
         <Link to={`/sell/edit/${horse.id}`} className="cursor-pointer">
           <ImageContent />
         </Link>
       ) : (
-        <ImageContent />
+        <Link to={`/horse/${horse.id}`} className="cursor-pointer">
+          <ImageContent />
+        </Link>
       )}
       
       <div className="p-6">
@@ -117,13 +120,17 @@ const ListingCard = ({ horse, isDraft = false }: ListingCardProps) => {
             </>
           ) : (
             <>
-              <Button variant="outline" size="sm" className="flex-1 bg-white/5 border-white/20 text-white hover:bg-white/10">
-                <Edit className="h-4 w-4 mr-1" />
-                Edit
-              </Button>
-              <Button variant="outline" size="sm" className="bg-white/5 border-white/20 text-white hover:bg-white/10">
-                <Eye className="h-4 w-4" />
-              </Button>
+              <Link to={`/sell/edit/${horse.id}`} className="flex-1">
+                <Button variant="outline" size="sm" className="w-full bg-white/5 border-white/20 text-white hover:bg-white/10">
+                  <Edit className="h-4 w-4 mr-1" />
+                  Edit
+                </Button>
+              </Link>
+              <Link to={`/horse/${horse.id}`}>
+                <Button variant="outline" size="sm" className="bg-white/5 border-white/20 text-white hover:bg-white/10">
+                  <Eye className="h-4 w-4" />
+                </Button>
+              </Link>
               <Button variant="outline" size="sm" className="bg-red-500/20 border-red-500/30 text-red-400 hover:bg-red-500/30">
                 <Trash2 className="h-4 w-4" />
               </Button>

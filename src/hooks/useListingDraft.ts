@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -61,29 +62,29 @@ export const useListingDraft = () => {
     setLoading(true);
     
     try {
+      // Load any listing status (draft or published) for editing
       const { data, error } = await supabase
         .from('horse_profiles')
         .select('*')
         .eq('id', draftId)
         .eq('user_id', user.id)
-        .eq('listing_status', 'draft')
         .single();
 
       if (error) {
-        console.error('Error loading draft:', error);
-        toast.error('Failed to load draft');
+        console.error('Error loading listing:', error);
+        toast.error('Failed to load listing');
         return null;
       }
 
       if (data) {
         const mappedData = mapDatabaseToFormData(data);
         setCurrentDraftId(draftId);
-        console.log('Draft loaded successfully:', mappedData);
+        console.log('Listing loaded successfully:', mappedData);
         return mappedData;
       }
     } catch (error) {
-      console.error('Error loading draft:', error);
-      toast.error('Failed to load draft');
+      console.error('Error loading listing:', error);
+      toast.error('Failed to load listing');
     } finally {
       setLoading(false);
     }
@@ -106,13 +107,15 @@ export const useListingDraft = () => {
     try {
       const horseData = mapFormDataToDatabase(listingData, user.id);
       
-      // Use the smart naming strategy
-      horseData.horse_name = generateDraftName(listingData);
+      // Use the smart naming strategy for drafts only
+      if (!currentDraftId || horseData.listing_status === 'draft') {
+        horseData.horse_name = generateDraftName(listingData);
+      }
 
-      console.log('Saving draft with data:', horseData);
+      console.log('Saving listing with data:', horseData);
 
       if (currentDraftId) {
-        // Update existing draft
+        // Update existing listing (draft or published)
         const { error } = await supabase
           .from('horse_profiles')
           .update(horseData)
@@ -120,7 +123,7 @@ export const useListingDraft = () => {
           .eq('user_id', user.id);
 
         if (error) throw error;
-        if (showToast) toast.success('Draft updated successfully!');
+        if (showToast) toast.success('Listing updated successfully!');
       } else {
         // Create new draft
         const { data, error } = await supabase
@@ -139,7 +142,7 @@ export const useListingDraft = () => {
       setLastSaved(new Date());
       
     } catch (error) {
-      console.error('Error saving draft:', error);
+      console.error('Error saving listing:', error);
       setSaveStatus('error');
       
       // Retry logic for failed saves
@@ -148,7 +151,7 @@ export const useListingDraft = () => {
           saveDraft(listingData, false, retryCount + 1);
         }, 2000 * (retryCount + 1));
       } else {
-        if (showToast) toast.error('Failed to save draft after multiple attempts');
+        if (showToast) toast.error('Failed to save listing after multiple attempts');
       }
     } finally {
       setSaving(false);
