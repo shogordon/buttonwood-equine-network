@@ -37,24 +37,41 @@ export const useListingDraft = () => {
   // Generate a smart draft name based on available data
   const generateDraftName = (listingData: Partial<ListingData>): string => {
     const horseName = listingData.barnName || listingData.horseName;
+    const breed = listingData.breed;
+    const location = listingData.location || listingData.currentLocation;
     
     if (horseName?.trim() && horseName !== 'Draft Horse') {
+      // Build name with additional context
+      let name = horseName.trim();
+      
+      if (breed) {
+        name += ` - ${breed}`;
+      }
+      
+      if (location) {
+        name += ` (${location})`;
+      }
+      
       // Try to generate a tagline if we have enough information
-      if (listingData.description || listingData.breed || listingData.disciplines?.length) {
+      if (listingData.description || listingData.disciplines?.length) {
         try {
           const tagline = generateTagline(listingData);
-          return `${horseName.trim()} - ${tagline}`;
+          if (tagline && tagline !== horseName) {
+            name += ` - ${tagline}`;
+          }
         } catch (error) {
           console.error('Error generating tagline:', error);
-          return horseName.trim();
         }
       }
-      return horseName.trim();
+      
+      return name;
     }
     
-    // Fallback naming strategy
-    const timestamp = new Date().toLocaleString();
-    return `Untitled Draft ${timestamp}`;
+    // Fallback naming strategy with more context
+    const userRole = listingData.userRole || 'owner';
+    const ownerType = listingData.ownerType || 'person';
+    const timestamp = new Date().toLocaleDateString();
+    return `New ${userRole} listing (${ownerType}) - ${timestamp}`;
   };
 
   const loadDraft = useCallback(async (draftId: string) => {

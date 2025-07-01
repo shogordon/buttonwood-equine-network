@@ -5,8 +5,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import AppNavigation from "@/components/navigation/AppNavigation";
-import SellHero from "@/components/sell/SellHero";
+import QuickStatsCards from "@/components/sell/QuickStatsCards";
 import UserListingsGrid from "@/components/sell/UserListingsGrid";
+import { Plus } from "lucide-react";
 
 interface HorseProfile {
   id: string;
@@ -70,6 +71,9 @@ const Sell = () => {
     );
   }
 
+  const publishedHorses = horses?.filter(horse => horse.listing_status === 'published') || [];
+  const draftHorses = horses?.filter(horse => horse.listing_status === 'draft') || [];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 relative overflow-hidden">
       {/* Background Elements */}
@@ -83,7 +87,31 @@ const Sell = () => {
 
       <div className="pt-32 pb-20">
         <div className="container mx-auto px-6">
-          <SellHero />
+          {/* Header Section */}
+          <div className="text-center mb-12">
+            <h1 className="text-5xl font-bold text-white mb-6 text-shadow">
+              My Listings Dashboard
+            </h1>
+            <p className="text-xl text-white/80 mb-8 max-w-3xl mx-auto">
+              Manage all your horse listings, track performance, and create new listings from one central location.
+            </p>
+            <Link to="/sell/new">
+              <Button className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl hover:scale-105 transition-all duration-300 px-8 py-4 text-lg font-semibold">
+                <Plus className="mr-2 h-5 w-5" />
+                Create New Listing
+              </Button>
+            </Link>
+          </div>
+
+          {/* Quick Stats */}
+          <QuickStatsCards 
+            activeListings={publishedHorses.length}
+            totalViews={0} // TODO: Add analytics
+            pendingInquiries={0} // TODO: Add inquiries count
+            saves={0} // TODO: Add saves count
+          />
+
+          {/* Listings Grid */}
           <UserListingsGrid horses={horses} />
         </div>
       </div>
