@@ -53,7 +53,10 @@ export const useStepComponent = ({
     12: PreviewStep,
   }), []);
 
-  const CurrentStepComponent = stepComponents[currentStep as keyof typeof stepComponents];
+  // Add validation to ensure currentStep is valid
+  const validCurrentStep = currentStep >= 1 && currentStep <= LISTING_STEPS.length ? currentStep : 1;
+  
+  const CurrentStepComponent = stepComponents[validCurrentStep as keyof typeof stepComponents];
 
   const stepProps = useMemo(() => {
     const baseProps = {
@@ -61,13 +64,13 @@ export const useStepComponent = ({
       onUpdate: updateListingData,
       onNext: nextStep,
       onPrev: prevStep,
-      isFirst: currentStep === 1,
-      isLast: currentStep === LISTING_STEPS.length,
+      isFirst: validCurrentStep === 1,
+      isLast: validCurrentStep === LISTING_STEPS.length,
       onSaveDraft: saveDraft,
     };
 
     // Add specific props for certain steps
-    if (currentStep === 12) { // PreviewStep
+    if (validCurrentStep === 12) { // PreviewStep
       return {
         ...baseProps,
         onNavigateToStep: setCurrentStep,
@@ -76,7 +79,9 @@ export const useStepComponent = ({
     }
 
     return baseProps;
-  }, [listingData, updateListingData, nextStep, prevStep, currentStep, saveDraft, setCurrentStep, currentDraftId]);
+  }, [listingData, updateListingData, nextStep, prevStep, validCurrentStep, saveDraft, setCurrentStep, currentDraftId]);
+
+  console.log('useStepComponent - Current step:', validCurrentStep, 'Component exists:', !!CurrentStepComponent);
 
   return {
     CurrentStepComponent,

@@ -65,15 +65,21 @@ export const usePreviewPublish = () => {
         show_record: data.showRecord,
         pedigree: data.pedigree,
         health_records: data.healthRecords,
+        // Always set to published when publishing
         listing_status: 'published',
         is_available: true,
         verification_status: data.verificationRequested ? 'pending' : 'none',
+        // Preserve form navigation data
+        user_role: data.userRole || 'owner',
+        owner_type: data.ownerType || 'person',
+        listing_type: data.listingType || ['For sale'],
+        agent_contact_visibility: data.agentContactVisibility || 'visible',
       };
 
       let insertedHorse;
 
       if (currentDraftId) {
-        // Update existing draft
+        // Update existing draft or published listing
         const { data: updatedHorse, error } = await supabase
           .from('horse_profiles')
           .update(horseData)

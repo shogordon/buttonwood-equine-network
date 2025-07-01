@@ -1,4 +1,5 @@
-import { useEffect, useMemo } from "react";
+
+import { useEffect, useMemo, Suspense } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
@@ -15,6 +16,16 @@ import { ListingNavigationFooter } from "@/components/listing/ListingNavigationF
 import { NavigationBlockerDialog } from "@/components/listing/NavigationBlockerDialog";
 import { ListingNavBar } from "@/components/listing/ListingNavBar";
 
+// Loading component for step components
+const StepLoadingFallback = () => (
+  <div className="flex items-center justify-center py-12">
+    <div className="text-white/60 text-center">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white/60 mx-auto mb-4"></div>
+      <p>Loading form step...</p>
+    </div>
+  </div>
+);
+
 const NewListing = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -30,7 +41,8 @@ const NewListing = () => {
     lastSaved,
     loadDraft,
     hasUnsavedChanges,
-    currentDraftId
+    currentDraftId,
+    loading: formLoading
   } = useListingForm(draftId);
 
   // Memoize the unsaved changes value to prevent function calls during render
@@ -39,7 +51,7 @@ const NewListing = () => {
   }, [hasUnsavedChanges]);
 
   const { currentStep, nextStep, prevStep, setCurrentStep } = useListingNavigation({
-    userRole: listingData.userRole || '',
+    userRole: listingData.userRole || 'owner',
     hasUnsavedChanges: hasChanges,
     autoSave,
   });
@@ -89,14 +101,38 @@ const NewListing = () => {
   // Load draft only once when component mounts with draftId
   useEffect(() => {
     if (draftId && loadDraft && user) {
+      console.log('Loading draft with ID:', draftId);
       loadDraft();
     }
   }, [draftId, user]); // Removed loadDraft from dependencies to prevent multiple calls
 
-  if (loading) {
+  if (loading || formLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 flex items-center justify-center">
-        <div className="text-white">Loading...</div>
+        <div className="text-white text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white/60 mx-auto mb-4"></div>
+          <p>Loading listing...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state if we have a draftId but no CurrentStepComponent
+  if (draftId && !CurrentStepComponent) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 flex items-center justify-center">
+        <div className="text-white text-center max-w-md">
+          <h2 className="text-xl font-semibold mb-4">Unable to Load Listing</h2>
+          <p className="text-white/60 mb-6">
+            There was an issue loading this listing. Please try again or return to your listings.
+          </p>
+          <button
+            onClick={() => navigate('/sell')}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors"
+          >
+            Return to Listings
+          </button>
+        </div>
       </div>
     );
   }
@@ -130,9 +166,11 @@ const NewListing = () => {
 
           {/* Step Content */}
           <Card className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8">
-            {CurrentStepComponent && (
-              <CurrentStepComponent {...stepProps} />
-            )}
+            <Suspense fallback={<StepLoadingFallback />}>
+              {CurrentStepComponent && (
+                <CurrentStepComponent {...stepProps} />
+              )}
+            </Suspense>
           </Card>
 
           {/* Navigation Footer */}

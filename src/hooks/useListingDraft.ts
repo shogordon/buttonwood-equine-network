@@ -14,6 +14,7 @@ export const useListingDraft = () => {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [currentDraftId, setCurrentDraftId] = useState<string | null>(null);
+  const [originalListingStatus, setOriginalListingStatus] = useState<string>('draft');
   const { mapDatabaseToFormData, mapFormDataToDatabase } = useListingDataMapping();
 
   // Check if the listing data has meaningful content
@@ -62,6 +63,8 @@ export const useListingDraft = () => {
     setLoading(true);
     
     try {
+      console.log('Loading listing for editing:', draftId);
+      
       // Load any listing status (draft or published) for editing
       const { data, error } = await supabase
         .from('horse_profiles')
@@ -77,6 +80,11 @@ export const useListingDraft = () => {
       }
 
       if (data) {
+        console.log('Loaded listing data:', data);
+        
+        // Store the original listing status to preserve it during saves
+        setOriginalListingStatus(data.listing_status || 'draft');
+        
         const mappedData = mapDatabaseToFormData(data);
         setCurrentDraftId(draftId);
         console.log('Listing loaded successfully:', mappedData);
@@ -107,8 +115,13 @@ export const useListingDraft = () => {
     try {
       const horseData = mapFormDataToDatabase(listingData, user.id);
       
-      // Use the smart naming strategy for drafts only
-      if (!currentDraftId || horseData.listing_status === 'draft') {
+      // Preserve the original listing status when editing existing listings
+      if (currentDraftId && originalListingStatus) {
+        horseData.listing_status = originalListingStatus;
+      }
+      
+      // Use the smart naming strategy for new drafts only
+      if (!currentDraftId && horseData.listing_status === 'draft') {
         horseData.horse_name = generateDraftName(listingData);
       }
 
@@ -123,7 +136,9 @@ export const useListingDraft = () => {
           .eq('user_id', user.id);
 
         if (error) throw error;
-        if (showToast) toast.success('Listing updated successfully!');
+        
+        const statusText = originalListingStatus === 'published' ? 'Published listing' : 'Draft';
+        if (showToast) toast.success(`${statusText} updated successfully!`);
       } else {
         // Create new draft
         const { data, error } = await supabase
@@ -135,6 +150,7 @@ export const useListingDraft = () => {
         if (error) throw error;
         
         setCurrentDraftId(data.id);
+        setOriginalListingStatus('draft');
         if (showToast) toast.success('Draft saved successfully!');
       }
 
