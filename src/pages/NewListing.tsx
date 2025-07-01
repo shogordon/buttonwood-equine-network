@@ -56,7 +56,7 @@ const NewListing = () => {
     enabled: true,
   });
 
-  // Navigation protection
+  // Navigation protection (simplified for now)
   const { blocker, navigateWithSave } = useNavigationProtection({
     hasUnsavedChanges: hasUnsavedChanges(),
     onSave: autoSave,
@@ -95,15 +95,14 @@ const NewListing = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900">
-      {/* Navigation Blocker Dialog */}
+      {/* Navigation Blocker Dialog - temporarily disabled */}
       <NavigationBlockerDialog
-        isOpen={blocker.state === 'blocked'}
+        isOpen={false}
         onSaveAndContinue={async () => {
           await autoSave();
-          blocker.proceed();
         }}
-        onLeaveWithoutSaving={() => blocker.proceed()}
-        onCancel={() => blocker.reset()}
+        onLeaveWithoutSaving={() => {}}
+        onCancel={() => {}}
       />
 
       {/* Navigation */}

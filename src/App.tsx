@@ -2,7 +2,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -25,34 +25,91 @@ import HorseProfile from "./pages/HorseProfile";
 
 const queryClient = new QueryClient();
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Index />,
+  },
+  {
+    path: "/auth",
+    element: <Auth />,
+  },
+  {
+    path: "/onboarding",
+    element: <Onboarding />,
+  },
+  {
+    path: "/browse",
+    element: <Browse />,
+  },
+  {
+    path: "/horse/:id",
+    element: <HorseProfile />,
+  },
+  {
+    path: "/sell",
+    element: <Sell />,
+  },
+  {
+    path: "/sell/new",
+    element: <NewListing />,
+  },
+  {
+    path: "/sell/edit/:draftId",
+    element: <NewListing />,
+  },
+  {
+    path: "/verification",
+    element: <Verification />,
+  },
+  {
+    path: "/settings",
+    element: <Settings />,
+  },
+  {
+    path: "/about",
+    element: <About />,
+  },
+  {
+    path: "/pricing",
+    element: <Pricing />,
+  },
+  {
+    path: "/trust",
+    element: <Trust />,
+  },
+  {
+    path: "/how-it-works",
+    element: <HowItWorks />,
+  },
+  {
+    path: "/blog",
+    element: <Blog />,
+  },
+  {
+    path: "/privacy",
+    element: <Privacy />,
+  },
+  {
+    path: "/terms",
+    element: <Terms />,
+  },
+  {
+    path: "/contact",
+    element: <Contact />,
+  },
+  {
+    path: "*",
+    element: <NotFound />,
+  },
+]);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <AuthProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/browse" element={<Browse />} />
-            <Route path="/horse/:id" element={<HorseProfile />} />
-            <Route path="/sell" element={<Sell />} />
-            <Route path="/sell/new" element={<NewListing />} />
-            <Route path="/sell/edit/:draftId" element={<NewListing />} />
-            <Route path="/verification" element={<Verification />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/trust" element={<Trust />} />
-            <Route path="/how-it-works" element={<HowItWorks />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <RouterProvider router={router} />
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
