@@ -78,7 +78,7 @@ const DocumentationVerificationStep = ({ data, onUpdate, onNext, onPrev }: Docum
         <CardContent>
           <RadioGroup
             value={data.papersStatus || ''}
-            onValueChange={(value) => onUpdate({ papersStatus: value })}
+            onValueChange={(value: "full" | "partial" | "none" | "pending") => onUpdate({ papersStatus: value })}
             className="space-y-4"
           >
             {paperTypes.map((type) => (

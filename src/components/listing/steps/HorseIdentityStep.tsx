@@ -111,7 +111,7 @@ const HorseIdentityStep = ({ data, onUpdate, onNext, onPrev }: HorseIdentityStep
       <Card className="bg-white/5 border-white/10">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Horse className="h-5 w-5" />
+            <Heart className="h-5 w-5" />
             Horse Names
           </CardTitle>
         </CardHeader>

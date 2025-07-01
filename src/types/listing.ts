@@ -46,8 +46,20 @@ export interface ListingData {
   sire: string;
   dam: string;
   damsire: string;
-  papersStatus: 'yes' | 'no' | 'pending' | '';
+  papersStatus: 'full' | 'partial' | 'none' | 'pending' | '';
   
+  // New documentation fields
+  registrationBodies: string[];
+  papersDetails: string;
+  otherRegistration: string;
+  microchipped: boolean;
+  microchipNumber: string;
+  markings: string;
+  earnings: number;
+  
+  // New location fields
+  zipCode: string;
+  facilityName: string;
   // Location & availability
   currentLocation: string;
   facilityType: string[];
@@ -63,6 +75,15 @@ export interface ListingData {
   trialConsidered: boolean;
   depositTerms: string;
   bestFor: string[];
+  
+  // New pricing fields
+  paymentOptions: string[];
+  paymentTerms: string;
+  leasePrice: number;
+  leaseDuration: string;
+  halfLease: boolean;
+  leaseTerms: string;
+  specialTerms: string;
   
   // Commission
   hasCommission: boolean;
