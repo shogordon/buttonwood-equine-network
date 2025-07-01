@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+
+import { useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
@@ -32,9 +33,14 @@ const NewListing = () => {
     hasUnsavedChanges
   } = useListingForm(draftId);
 
+  // Memoize the unsaved changes value to prevent function calls during render
+  const hasChanges = useMemo(() => {
+    return hasUnsavedChanges();
+  }, [hasUnsavedChanges]);
+
   const { currentStep, nextStep, prevStep, setCurrentStep } = useListingNavigation({
     userRole: listingData.userRole || '',
-    hasUnsavedChanges: hasUnsavedChanges(),
+    hasUnsavedChanges: hasChanges,
     autoSave,
   });
 
@@ -58,20 +64,20 @@ const NewListing = () => {
 
   // Navigation protection (simplified for now)
   const { navigateWithSave } = useNavigationProtection({
-    hasUnsavedChanges: hasUnsavedChanges(),
+    hasUnsavedChanges: hasChanges,
     onSave: autoSave,
   });
 
   // Periodic auto-save every 2 minutes
   useEffect(() => {
     const interval = setInterval(() => {
-      if (hasUnsavedChanges()) {
+      if (hasChanges) {
         autoSave();
       }
     }, 120000); // 2 minutes
 
     return () => clearInterval(interval);
-  }, [hasUnsavedChanges, autoSave]);
+  }, [hasChanges, autoSave]);
 
   useEffect(() => {
     if (!loading && !user) {

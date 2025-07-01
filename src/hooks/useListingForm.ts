@@ -63,8 +63,11 @@ export const useListingForm = (draftId?: string) => {
     });
   }, []);
 
+  // Memoize the hasUnsavedChanges function to prevent unnecessary re-renders
   const hasUnsavedChanges = useCallback(() => {
-    const hasChanges = JSON.stringify(listingData) !== JSON.stringify(lastSavedDataRef.current);
+    const currentDataString = JSON.stringify(listingData);
+    const lastSavedDataString = JSON.stringify(lastSavedDataRef.current);
+    const hasChanges = currentDataString !== lastSavedDataString;
     console.log('useListingForm: Has unsaved changes:', hasChanges);
     return hasChanges;
   }, [listingData]);
@@ -112,7 +115,7 @@ export const useListingForm = (draftId?: string) => {
     if (draftId && !draftLoaded && !loading) {
       loadDraftData();
     }
-  }, [draftId, draftLoaded, loading]);
+  }, [draftId, draftLoaded, loading, loadDraftData]);
 
   return {
     listingData,
