@@ -1,8 +1,9 @@
 
+import React from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Calendar, Ruler, Eye, EyeOff } from "lucide-react";
+import { MapPin, Calendar, Eye, EyeOff } from "lucide-react";
 import { useHorsePermissions } from "@/hooks/useHorsePermissions";
 import { useNavigate } from "react-router-dom";
 
@@ -29,7 +30,7 @@ interface HorseCardProps {
   profile: any;
 }
 
-export const HorseCard = ({ horse, profile }: HorseCardProps) => {
+export const HorseCard = React.memo(({ horse, profile }: HorseCardProps) => {
   const { canViewPrice, canViewContact } = useHorsePermissions(profile);
   const navigate = useNavigate();
 
@@ -38,7 +39,7 @@ export const HorseCard = ({ horse, profile }: HorseCardProps) => {
   };
 
   const handleContactClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click when clicking contact button
+    e.stopPropagation();
     if (canViewContact(horse)) {
       navigate(`/horse/${horse.id}#contact`);
     }
@@ -49,13 +50,17 @@ export const HorseCard = ({ horse, profile }: HorseCardProps) => {
       className="group bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 hover:scale-105 cursor-pointer"
       onClick={handleCardClick}
     >
-      {/* Image */}
+      {/* Image with lazy loading */}
       <div className="aspect-video bg-gradient-to-br from-blue-500/20 to-purple-500/20 overflow-hidden">
         {horse.images && horse.images.length > 0 ? (
           <img 
             src={horse.images[0]} 
             alt={horse.horse_name}
+            loading="lazy"
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
@@ -134,6 +139,8 @@ export const HorseCard = ({ horse, profile }: HorseCardProps) => {
       </div>
     </Card>
   );
-};
+});
+
+HorseCard.displayName = 'HorseCard';
 
 export default HorseCard;

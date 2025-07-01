@@ -10,6 +10,7 @@ import { useSearchFilters } from "@/hooks/useSearchFilters";
 const Browse = () => {
   const {
     searchQuery,
+    debouncedSearchQuery,
     filters,
     showFilters,
     handleSearchChange,
@@ -18,7 +19,7 @@ const Browse = () => {
   } = useSearchFilters();
 
   const { user, profile, horses, loading, handleSignOut, handleGetVerified } = useBrowseData({
-    searchQuery,
+    searchQuery: debouncedSearchQuery,
     filters
   });
 
@@ -27,11 +28,11 @@ const Browse = () => {
     profile: !!profile, 
     horses: horses?.length, 
     loading,
-    searchQuery,
+    searchQuery: debouncedSearchQuery,
     activeFilters: Object.keys(filters).length
   });
 
-  if (loading) {
+  if (loading && !horses.length) {
     return <LoadingState />;
   }
 
@@ -59,6 +60,7 @@ const Browse = () => {
       <HorseGrid 
         horses={horses || []}
         profile={profile}
+        loading={loading}
       />
     </div>
   );

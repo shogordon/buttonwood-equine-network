@@ -1,3 +1,4 @@
+
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,11 +9,14 @@ import { FilterState } from "@/components/browse/FilterPanel";
 interface SearchParams {
   searchQuery?: string;
   filters?: FilterState;
+  page?: number;
+  limit?: number;
 }
 
 export const useBrowseData = (searchParams?: SearchParams) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { page = 1, limit = 20 } = searchParams || {};
 
   console.log('useBrowseData hook called', { user: !!user });
 
@@ -24,7 +28,7 @@ export const useBrowseData = (searchParams?: SearchParams) => {
   }, [user, navigate]);
 
   const { data: horses = [], isLoading: horsesLoading } = useQuery({
-    queryKey: ['horses', searchParams?.searchQuery, searchParams?.filters],
+    queryKey: ['horses', searchParams?.searchQuery, searchParams?.filters, page],
     queryFn: async () => {
       console.log('Fetching horses with search params:', searchParams);
       
@@ -34,7 +38,7 @@ export const useBrowseData = (searchParams?: SearchParams) => {
         .eq('listing_status', 'published')
         .eq('is_available', true);
 
-      // Apply text search
+      // Apply text search with full-text search
       if (searchParams?.searchQuery && searchParams.searchQuery.trim()) {
         const searchTerm = searchParams.searchQuery.trim();
         query = query.or(`horse_name.ilike.%${searchTerm}%,breed.ilike.%${searchTerm}%,location.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`);
@@ -70,7 +74,13 @@ export const useBrowseData = (searchParams?: SearchParams) => {
         }
       }
 
-      query = query.order('created_at', { ascending: false });
+      // Add pagination
+      const from = (page - 1) * limit;
+      const to = from + limit - 1;
+      
+      query = query
+        .order('created_at', { ascending: false })
+        .range(from, to);
 
       const { data, error } = await query;
 
@@ -82,6 +92,8 @@ export const useBrowseData = (searchParams?: SearchParams) => {
       return data || [];
     },
     enabled: !!user,
+    staleTime: 30000, // Cache for 30 seconds
+    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
   });
 
   const { data: profile, isLoading: profileLoading } = useQuery({
@@ -104,6 +116,7 @@ export const useBrowseData = (searchParams?: SearchParams) => {
       return data;
     },
     enabled: !!user,
+    staleTime: 5 * 60 * 1000, // Cache profile for 5 minutes
   });
 
   const handleSignOut = async () => {

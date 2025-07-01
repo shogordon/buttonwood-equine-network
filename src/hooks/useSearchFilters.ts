@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { FilterState } from "@/components/browse/FilterPanel";
+import { useDebounce } from "./useDebounce";
 
 export const useSearchFilters = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -19,11 +20,14 @@ export const useSearchFilters = () => {
     sex: searchParams.get("sex") || undefined,
   });
 
-  // Update URL params when search/filters change
+  // Debounce search query to prevent excessive API calls
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+  // Update URL params when debounced search/filters change
   useEffect(() => {
     const params = new URLSearchParams();
     
-    if (searchQuery) params.set("q", searchQuery);
+    if (debouncedSearchQuery) params.set("q", debouncedSearchQuery);
     if (filters.priceMin) params.set("priceMin", filters.priceMin.toString());
     if (filters.priceMax) params.set("priceMax", filters.priceMax.toString());
     if (filters.ageMin) params.set("ageMin", filters.ageMin.toString());
@@ -34,7 +38,7 @@ export const useSearchFilters = () => {
     if (filters.sex) params.set("sex", filters.sex);
     
     setSearchParams(params, { replace: true });
-  }, [searchQuery, filters, setSearchParams]);
+  }, [debouncedSearchQuery, filters, setSearchParams]);
 
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
@@ -50,6 +54,7 @@ export const useSearchFilters = () => {
 
   return {
     searchQuery,
+    debouncedSearchQuery,
     filters,
     showFilters,
     handleSearchChange,
