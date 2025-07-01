@@ -3,9 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Bot, MessageCircle, Sparkles, Lightbulb } from "lucide-react";
+import { Bot, MessageCircle, Sparkles, Lightbulb, Loader2, AlertCircle } from "lucide-react";
 import { ListingData } from "@/types/listing";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { VoiceInput } from "@/components/listing/VoiceInput";
 
 interface HorseProfileStepProps {
   data: Partial<ListingData>;
@@ -22,6 +26,8 @@ const HorseProfileStep = ({ data, onUpdate, onNext, onPrev }: HorseProfileStepPr
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [responses, setResponses] = useState<string[]>([]);
   const [currentResponse, setCurrentResponse] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationError, setGenerationError] = useState<string | null>(null);
 
   const interviewQuestions = [
     `What makes ${data.horseName || 'your horse'} special as a riding horse?`,
@@ -47,43 +53,57 @@ const HorseProfileStep = ({ data, onUpdate, onNext, onPrev }: HorseProfileStepPr
     }
   };
 
-  const generateProfile = (answers: string[]) => {
-    // Simulate AI generation (in real implementation, this would call an AI API)
-    const pros = [
-      'Well-trained and responsive',
-      'Great temperament',
-      'Suitable for multiple disciplines',
-      'Easy to handle',
-    ];
+  const generateProfile = async (answers: string[]) => {
+    setIsGenerating(true);
+    setGenerationError(null);
 
-    const cons = [
-      'Requires experienced rider',
-      'Can be sensitive to weather changes',
-    ];
+    try {
+      const { data: result, error } = await supabase.functions.invoke('generate-horse-profile', {
+        body: {
+          responses: answers,
+          horseName: data.horseName || data.barnName || 'this horse',
+          interviewType: 'full'
+        }
+      });
 
-    const keyStrengths = [
-      'Excellent ground manners',
-      'Loads and travels well',
-      'Good with vet and farrier',
-    ];
+      if (error) {
+        throw error;
+      }
 
-    const bestFor = [
-      'Intermediate to advanced riders',
-      'Competition or pleasure riding',
-    ];
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to generate profile');
+      }
 
-    // Generate description from answers
-    const description = answers.join(' ');
+      const profile = result.profile;
 
-    onUpdate({
-      pros,
-      cons,
-      keyStrengths,
-      bestFor,
-      description,
-    });
+      // Update the form with AI-generated content
+      onUpdate({
+        pros: profile.pros || [],
+        cons: profile.cons || [],
+        keyStrengths: profile.keyStrengths || [],
+        bestFor: profile.bestFor || [],
+        description: profile.description || '',
+        disciplines: profile.disciplines || [],
+        experienceLevel: profile.experienceLevel || '',
+      });
 
-    setInterviewMode(false);
+      toast.success("Profile Generated Successfully", {
+        description: "AI has created a detailed profile based on your responses. You can edit any section."
+      });
+
+      setInterviewMode(false);
+
+    } catch (error) {
+      console.error('Profile generation error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to generate profile';
+      setGenerationError(errorMessage);
+      
+      toast.error("Generation Failed", {
+        description: "There was an issue generating your profile. Please try again or continue manually."
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   if (interviewMode) {
@@ -99,45 +119,87 @@ const HorseProfileStep = ({ data, onUpdate, onNext, onPrev }: HorseProfileStepPr
 
         <Card className="bg-white/5 border-white/10">
           <CardContent className="p-8 text-center">
-            <div className="mb-6">
-              <Bot className="h-12 w-12 mx-auto mb-4 text-blue-400" />
-              <h3 className="text-xl font-semibold text-white mb-4">
-                {interviewQuestions[currentQuestion]}
-              </h3>
-            </div>
+            {isGenerating ? (
+              <div className="space-y-6">
+                <Loader2 className="h-12 w-12 mx-auto mb-4 text-blue-400 animate-spin" />
+                <h3 className="text-xl font-semibold text-white mb-4">
+                  Generating Your Horse's Profile...
+                </h3>
+                <p className="text-white/60">
+                  Our AI is analyzing your responses to create a compelling profile that will attract the right buyers.
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="mb-6">
+                  <Bot className="h-12 w-12 mx-auto mb-4 text-blue-400" />
+                  <h3 className="text-xl font-semibold text-white mb-4">
+                    {interviewQuestions[currentQuestion]}
+                  </h3>
+                </div>
 
-            <Textarea
-              placeholder="Share your thoughts..."
-              value={currentResponse}
-              onChange={(e) => setCurrentResponse(e.target.value)}
-              className="bg-white/5 border-white/20 text-white placeholder-white/40 min-h-[120px]"
-              rows={4}
-            />
+                {generationError && (
+                  <Alert className="mb-4 bg-red-500/10 border-red-500/30">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription className="text-red-400">
+                      {generationError}
+                    </AlertDescription>
+                  </Alert>
+                )}
 
-            <div className="flex justify-between mt-6">
-              <Button
-                onClick={() => {
-                  if (currentQuestion > 0) {
-                    setCurrentQuestion(currentQuestion - 1);
-                    setCurrentResponse(responses[currentQuestion - 1] || '');
-                  } else {
-                    setInterviewMode(false);
-                  }
-                }}
-                variant="outline"
-                className="bg-white/5 border-white/20 text-white hover:bg-white/10"
-              >
-                {currentQuestion === 0 ? 'Back to Manual' : 'Previous Question'}
-              </Button>
+                <div className="space-y-3">
+                  <Textarea
+                    placeholder="Share your thoughts..."
+                    value={currentResponse}
+                    onChange={(e) => setCurrentResponse(e.target.value)}
+                    className="bg-white/5 border-white/20 text-white placeholder-white/40 min-h-[120px]"
+                    rows={4}
+                    disabled={isGenerating}
+                  />
+                  
+                  <div className="flex justify-center">
+                    <VoiceInput
+                      onTranscript={(text) => setCurrentResponse(prev => prev + (prev ? ' ' : '') + text)}
+                      disabled={isGenerating}
+                      className="w-auto"
+                    />
+                  </div>
+                </div>
 
-              <Button
-                onClick={handleNextQuestion}
-                disabled={!currentResponse.trim()}
-                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white"
-              >
-                {currentQuestion === interviewQuestions.length - 1 ? 'Generate Profile' : 'Next Question'}
-              </Button>
-            </div>
+                <div className="flex justify-between mt-6">
+                  <Button
+                    onClick={() => {
+                      if (currentQuestion > 0) {
+                        setCurrentQuestion(currentQuestion - 1);
+                        setCurrentResponse(responses[currentQuestion - 1] || '');
+                      } else {
+                        setInterviewMode(false);
+                      }
+                    }}
+                    variant="outline"
+                    className="bg-white/5 border-white/20 text-white hover:bg-white/10"
+                    disabled={isGenerating}
+                  >
+                    {currentQuestion === 0 ? 'Back to Manual' : 'Previous Question'}
+                  </Button>
+
+                  <Button
+                    onClick={handleNextQuestion}
+                    disabled={!currentResponse.trim() || isGenerating}
+                    className="bg-gradient-to-r from-blue-500 to-purple-600 text-white"
+                  >
+                    {isGenerating ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      currentQuestion === interviewQuestions.length - 1 ? 'Generate Profile' : 'Next Question'
+                    )}
+                  </Button>
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
