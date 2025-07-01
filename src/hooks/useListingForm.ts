@@ -61,9 +61,6 @@ export const useListingForm = (draftId?: string) => {
       console.log('useListingForm: New listing data state:', updated);
       return updated;
     });
-    if (saveStatus === 'saved') {
-      // Reset save status when data changes
-    }
   };
 
   const hasUnsavedChanges = useCallback(() => {
@@ -72,21 +69,21 @@ export const useListingForm = (draftId?: string) => {
 
   const loadDraftData = useCallback(async () => {
     if (!draftId || loading || draftLoaded) {
-      console.log('useListingForm: Skipping draft load - draftId:', draftId, 'loading:', loading, 'draftLoaded:', draftLoaded);
       return;
     }
     
     console.log('useListingForm: Loading draft:', draftId);
-    const mappedData = await loadDraft(draftId);
-    if (mappedData) {
-      console.log('useListingForm: Draft loaded successfully:', mappedData);
-      setListingData(prev => {
-        const updated = { ...prev, ...mappedData };
-        console.log('useListingForm: Updated listing data with draft:', updated);
-        return updated;
-      });
-      lastSavedDataRef.current = { ...getInitialListingData(), ...mappedData };
-      setDraftLoaded(true);
+    try {
+      const mappedData = await loadDraft(draftId);
+      if (mappedData) {
+        console.log('useListingForm: Draft loaded successfully:', mappedData);
+        setListingData(mappedData);
+        lastSavedDataRef.current = mappedData;
+        setDraftLoaded(true);
+      }
+    } catch (error) {
+      console.error('useListingForm: Error loading draft:', error);
+      setDraftLoaded(true); // Set to true even on error to prevent infinite retries
     }
   }, [draftId, loadDraft, loading, draftLoaded]);
 
@@ -105,10 +102,10 @@ export const useListingForm = (draftId?: string) => {
 
   // Load draft data when component mounts and draftId is available
   useEffect(() => {
-    if (draftId && !draftLoaded) {
+    if (draftId && !draftLoaded && !loading) {
       loadDraftData();
     }
-  }, [draftId, draftLoaded, loadDraftData]);
+  }, [draftId, draftLoaded, loading]); // Removed loadDraftData from dependencies
 
   return {
     listingData,

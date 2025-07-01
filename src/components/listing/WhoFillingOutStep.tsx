@@ -20,13 +20,15 @@ const WhoFillingOutStep = ({ data, onUpdate }: StepProps) => {
     listingType: data.listingType || [],
   });
 
-  // Sync local state with incoming data changes (including loaded drafts)
+  // Sync with incoming data changes
   useEffect(() => {
-    console.log('WhoFillingOutStep: Syncing state with data:', data);
-    setFormData({
-      userRole: data.userRole || '',
-      listingType: data.listingType || [],
-    });
+    console.log('WhoFillingOutStep: Syncing with incoming data:', data);
+    if (data.userRole !== formData.userRole || JSON.stringify(data.listingType) !== JSON.stringify(formData.listingType)) {
+      setFormData({
+        userRole: data.userRole || '',
+        listingType: data.listingType || [],
+      });
+    }
   }, [data.userRole, data.listingType]);
 
   const handleRoleChange = (role: string) => {
