@@ -15,7 +15,7 @@ const getInitialListingData = (): Partial<ListingData> => ({
   agentContactVisibility: '',
   papersStatus: '',
   facilityType: [],
-  trialOptions: [],
+  trialOptions: { onSiteTrials: false, offSiteTrials: '', vetCheckWelcome: false },
   workStatus: [],
   priceInquire: false,
   priceNegotiable: false,

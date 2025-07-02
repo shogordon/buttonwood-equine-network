@@ -21,32 +21,88 @@ interface ListingStrategyStepProps {
 
 const ListingStrategyStep = ({ data, onUpdate, onNext, onPrev, isFirst }: ListingStrategyStepProps) => {
   const listingTypes = [
-    { value: 'for_sale', label: 'For Sale', description: 'Permanent ownership transfer' },
-    { value: 'lease', label: 'Lease', description: 'Temporary use agreement' },
-    { value: 'partial_lease', label: 'Partial Lease', description: 'Shared use arrangement' },
-    { value: 'breeding', label: 'Breeding', description: 'Stud services or broodmare' },
+    { key: 'sale', label: 'For Sale', description: 'Permanent ownership transfer' },
+    { key: 'lease', label: 'Full Lease', description: 'Complete care and use agreement' },
+    { key: 'partialLease', label: 'Partial Lease', description: 'On-site shared use arrangement' },
+    { key: 'showLease', label: 'Show Lease', description: 'Weekly show leases for competitions' },
+    { key: 'breeding', label: 'Breeding', description: 'Stud services or broodmare' },
   ];
 
-  const trialOptions = [
-    { value: 'trial_available', label: 'Trial Available', description: 'Allow buyers to try before purchasing' },
-    { value: 'vet_check', label: 'Vet Check Welcome', description: 'Buyer can arrange pre-purchase exam' },
-    { value: 'return_policy', label: 'Return Policy', description: 'Offer return window after sale' },
-  ];
-
-  const handleListingTypeChange = (typeValue: string, checked: boolean) => {
-    const currentTypes = data.listingType || [];
-    const updatedTypes = checked 
-      ? [...currentTypes, typeValue]
-      : currentTypes.filter(t => t !== typeValue);
-    onUpdate({ listingType: updatedTypes });
+  const handleListingTypeChange = (typeKey: string, checked: boolean) => {
+    const currentTypes = data.listingTypes || {
+      sale: false,
+      lease: false,
+      partialLease: false,
+      showLease: false,
+      breeding: false,
+    };
+    onUpdate({ 
+      listingTypes: { ...currentTypes, [typeKey]: checked }
+    });
   };
 
-  const handleTrialOptionChange = (optionValue: string, checked: boolean) => {
-    const currentOptions = data.trialOptions || [];
-    const updatedOptions = checked 
-      ? [...currentOptions, optionValue]
-      : currentOptions.filter(o => o !== optionValue);
-    onUpdate({ trialOptions: updatedOptions });
+  const handleTrialOptionChange = (optionKey: string, value: boolean | string) => {
+    const currentOptions = data.trialOptions || {
+      onSiteTrials: false,
+      offSiteTrials: '',
+      vetCheckWelcome: false,
+    };
+    onUpdate({ 
+      trialOptions: { ...currentOptions, [optionKey]: value }
+    });
+  };
+
+  const handleLocationChange = (field: string, value: string) => {
+    const currentLocations = data.locations || {
+      summerStable: '',
+      winterStable: '',
+      upcomingShows: [],
+    };
+    onUpdate({ 
+      locations: { ...currentLocations, [field]: value }
+    });
+  };
+
+  const handleShowChange = (index: number, field: string, value: string) => {
+    const currentLocations = data.locations || {
+      summerStable: '',
+      winterStable: '',
+      upcomingShows: [],
+    };
+    const updatedShows = [...currentLocations.upcomingShows];
+    if (!updatedShows[index]) {
+      updatedShows[index] = { show: '', dates: '', location: '' };
+    }
+    updatedShows[index] = { ...updatedShows[index], [field]: value };
+    onUpdate({ 
+      locations: { ...currentLocations, upcomingShows: updatedShows }
+    });
+  };
+
+  const addShow = () => {
+    const currentLocations = data.locations || {
+      summerStable: '',
+      winterStable: '',
+      upcomingShows: [],
+    };
+    onUpdate({ 
+      locations: { 
+        ...currentLocations, 
+        upcomingShows: [...currentLocations.upcomingShows, { show: '', dates: '', location: '' }]
+      }
+    });
+  };
+
+  const removeShow = (index: number) => {
+    const currentLocations = data.locations || {
+      summerStable: '',
+      winterStable: '',
+      upcomingShows: [],
+    };
+    const updatedShows = currentLocations.upcomingShows.filter((_, i) => i !== index);
+    onUpdate({ 
+      locations: { ...currentLocations, upcomingShows: updatedShows }
+    });
   };
 
   return (
@@ -81,15 +137,15 @@ const ListingStrategyStep = ({ data, onUpdate, onNext, onPrev, isFirst }: Listin
         </CardHeader>
         <CardContent className="space-y-4">
           {listingTypes.map((type) => (
-            <div key={type.value} className="flex items-start space-x-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
+            <div key={type.key} className="flex items-start space-x-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
               <Checkbox
-                id={type.value}
-                checked={data.listingType?.includes(type.value) || false}
-                onCheckedChange={(checked) => handleListingTypeChange(type.value, checked as boolean)}
+                id={type.key}
+                checked={data.listingTypes?.[type.key as keyof typeof data.listingTypes] || false}
+                onCheckedChange={(checked) => handleListingTypeChange(type.key, checked as boolean)}
                 className="mt-0.5"
               />
               <div className="flex-1">
-                <Label htmlFor={type.value} className="text-white font-medium cursor-pointer">
+                <Label htmlFor={type.key} className="text-white font-medium cursor-pointer">
                   {type.label}
                 </Label>
                 <p className="text-white/60 text-sm mt-1">{type.description}</p>
@@ -99,36 +155,144 @@ const ListingStrategyStep = ({ data, onUpdate, onNext, onPrev, isFirst }: Listin
         </CardContent>
       </Card>
 
-      {/* Trial and Guarantee Options */}
+      {/* Trial Options */}
       <Card className="bg-white/5 border-white/10">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <Clock className="h-5 w-5" />
-            Trial & Guarantee Options
+            Trial Options
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {trialOptions.map((option) => (
-            <div key={option.value} className="flex items-start space-x-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
-              <Checkbox
-                id={option.value}
-                checked={data.trialOptions?.includes(option.value) || false}
-                onCheckedChange={(checked) => handleTrialOptionChange(option.value, checked as boolean)}
-                className="mt-0.5"
-              />
-              <div className="flex-1">
-                <Label htmlFor={option.value} className="text-white font-medium cursor-pointer">
-                  {option.label}
-                </Label>
-                <p className="text-white/60 text-sm mt-1">{option.description}</p>
+          <div className="flex items-center space-x-3">
+            <Checkbox
+              id="onSiteTrials"
+              checked={data.trialOptions?.onSiteTrials || false}
+              onCheckedChange={(checked) => handleTrialOptionChange('onSiteTrials', checked as boolean)}
+            />
+            <Label htmlFor="onSiteTrials" className="text-white cursor-pointer">
+              On-site trials available
+            </Label>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-white">Off-site trials</Label>
+            <RadioGroup
+              value={data.trialOptions?.offSiteTrials || ''}
+              onValueChange={(value) => handleTrialOptionChange('offSiteTrials', value)}
+              className="flex flex-col space-y-2"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="no" id="no-offsite" />
+                <Label htmlFor="no-offsite" className="text-white">No off-site trials</Label>
               </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="yes" id="yes-offsite" />
+                <Label htmlFor="yes-offsite" className="text-white">Yes, off-site trials allowed</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="for_fee" id="fee-offsite" />
+                <Label htmlFor="fee-offsite" className="text-white">For a fee</Label>
+              </div>
+            </RadioGroup>
+          </div>
+
+          <div className="flex items-center space-x-3">
+            <Checkbox
+              id="vetCheckWelcome"
+              checked={data.trialOptions?.vetCheckWelcome || false}
+              onCheckedChange={(checked) => handleTrialOptionChange('vetCheckWelcome', checked as boolean)}
+            />
+            <Label htmlFor="vetCheckWelcome" className="text-white cursor-pointer">
+              Vet check welcome
+            </Label>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Location Information */}
+      <Card className="bg-white/5 border-white/10">
+        <CardHeader>
+          <CardTitle className="text-white">Stable & Show Locations</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="summerStable" className="text-white">
+                Summer Stable ZIP Code <span className="text-red-400">*</span>
+              </Label>
+              <Input
+                id="summerStable"
+                placeholder="e.g., 12345"
+                value={data.locations?.summerStable || ''}
+                onChange={(e) => handleLocationChange('summerStable', e.target.value)}
+                className="mt-2 bg-white/5 border-white/20 text-white placeholder-white/40"
+              />
             </div>
-          ))}
+            <div>
+              <Label htmlFor="winterStable" className="text-white">
+                Winter Stable ZIP Code (Optional)
+              </Label>
+              <Input
+                id="winterStable"
+                placeholder="e.g., 54321"
+                value={data.locations?.winterStable || ''}
+                onChange={(e) => handleLocationChange('winterStable', e.target.value)}
+                className="mt-2 bg-white/5 border-white/20 text-white placeholder-white/40"
+              />
+            </div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <Label className="text-white">Upcoming Shows</Label>
+              <Button
+                type="button"
+                onClick={addShow}
+                variant="outline"
+                size="sm"
+                className="bg-white/5 border-white/20 text-white hover:bg-white/10"
+              >
+                Add Show
+              </Button>
+            </div>
+            {data.locations?.upcomingShows?.map((show, index) => (
+              <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-2 mb-3 p-3 rounded-lg bg-white/5">
+                <Input
+                  placeholder="Show name"
+                  value={show.show}
+                  onChange={(e) => handleShowChange(index, 'show', e.target.value)}
+                  className="bg-white/5 border-white/20 text-white placeholder-white/40"
+                />
+                <Input
+                  placeholder="Dates"
+                  value={show.dates}
+                  onChange={(e) => handleShowChange(index, 'dates', e.target.value)}
+                  className="bg-white/5 border-white/20 text-white placeholder-white/40"
+                />
+                <Input
+                  placeholder="Location"
+                  value={show.location}
+                  onChange={(e) => handleShowChange(index, 'location', e.target.value)}
+                  className="bg-white/5 border-white/20 text-white placeholder-white/40"
+                />
+                <Button
+                  type="button"
+                  onClick={() => removeShow(index)}
+                  variant="outline"
+                  size="sm"
+                  className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20"
+                >
+                  Remove
+                </Button>
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
 
       {/* Special Terms */}
-      {(data.trialOptions?.length > 0 || data.listingType?.includes('lease')) && (
+      {(data.trialOptions?.onSiteTrials || data.trialOptions?.offSiteTrials === 'yes' || data.trialOptions?.offSiteTrials === 'for_fee' || data.listingTypes?.lease || data.listingTypes?.partialLease || data.listingTypes?.showLease) && (
         <Card className="bg-white/5 border-white/10">
           <CardHeader>
             <CardTitle className="text-white">Special Terms & Conditions</CardTitle>

@@ -9,6 +9,27 @@ export interface ListingData {
   userRole: 'owner' | 'agent' | '';
   listingType: string[];
   
+  // Session 2: New listing strategy fields
+  listingTypes: {
+    sale: boolean;
+    lease: boolean;
+    partialLease: boolean;
+    showLease: boolean;
+    breeding: boolean;
+  };
+  
+  trialOptions: {
+    onSiteTrials: boolean;
+    offSiteTrials: 'no' | 'yes' | 'for_fee' | '';
+    vetCheckWelcome: boolean;
+  };
+  
+  locations: {
+    summerStable: string;
+    winterStable?: string;
+    upcomingShows: Array<{show: string, dates: string, location: string}>;
+  };
+  
   // Owner info
   ownerType: 'person' | 'business' | '';
   ownerName: string;
@@ -48,7 +69,40 @@ export interface ListingData {
   damsire: string;
   papersStatus: 'full' | 'partial' | 'none' | 'pending' | '';
   
-  // New documentation fields
+  // Session 2: Restructured documentation fields
+  microchip: {
+    number: string;
+    required: boolean;
+  };
+  
+  sportRegistries: Array<{
+    registry: 'USEF' | 'FEI' | 'Other' | '';
+    number: string;
+    other?: string;
+  }>;
+  
+  breedRegistries: Array<{
+    registry: 'AQHA' | 'Jockey Club' | 'Other' | '';
+    number: string;
+    other?: string;
+  }>;
+  
+  medicalRecords: {
+    surveyRadiographs: {
+      hasRads: boolean;
+      files?: string[];
+      report?: string;
+      date?: string;
+    };
+    medicalHistory: string;
+    currentlyInsured: boolean;
+    insuranceCompany?: string;
+    specialShoeing?: string;
+    dietRestrictions?: string;
+    visibility: 'public' | 'hidden' | 'on_request' | '';
+  };
+  
+  // Legacy documentation fields for compatibility
   registrationBodies: string[];
   papersDetails: string;
   otherRegistration: string;
@@ -63,11 +117,26 @@ export interface ListingData {
   // Location & availability
   currentLocation: string;
   facilityType: string[];
-  trialOptions: string[];
   travelLimits: string;
   workStatus: string[];
   
-  // Price & buyer match
+  // Session 2: Restructured pricing fields
+  askingPrice: number;
+  currency: 'USD' | 'EUR' | 'GBP' | '';
+  priceDisplay: 'show_price' | 'price_range' | 'verified_users_only' | '';
+  
+  paymentMethods: {
+    cash: boolean;
+    cashiersCheck: boolean;
+    wireTransfer: boolean;
+    creditCard: boolean;
+    bitcoin: boolean;
+    ethereum: boolean;
+    ownerFinancing: boolean;
+    tradeConsidered: boolean;
+  };
+  
+  // Legacy price fields for compatibility
   price: number;
   priceInquire: boolean;
   priceNegotiable: boolean;

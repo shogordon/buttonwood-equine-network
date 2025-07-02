@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { DollarSign, CreditCard, Clock, Lightbulb } from "lucide-react";
@@ -20,25 +21,46 @@ interface PricingTermsStepProps {
 }
 
 const PricingTermsStep = ({ data, onUpdate, onNext, onPrev }: PricingTermsStepProps) => {
-  const formatPrice = (value: string) => {
-    const num = parseFloat(value.replace(/[^0-9.]/g, ''));
-    return isNaN(num) ? 0 : num;
-  };
-
-  const paymentOptions = [
-    { value: 'cash', label: 'Cash Only', description: 'Full payment upfront' },
-    { value: 'financing', label: 'Financing Available', description: 'Payment plans accepted' },
-    { value: 'trade', label: 'Trade Considered', description: 'Open to horse/equipment trades' },
-    { value: 'lease_to_own', label: 'Lease-to-Own', description: 'Monthly payments with ownership transfer' },
+  const paymentMethods = [
+    { key: 'cash', label: 'Cash', description: 'Full payment upfront' },
+    { key: 'cashiersCheck', label: 'Cashier\'s Check', description: 'Bank-guaranteed check' },
+    { key: 'wireTransfer', label: 'Wire Transfer', description: 'Electronic bank transfer' },
+    { key: 'creditCard', label: 'Credit Card', description: 'Card payment accepted' },
+    { key: 'bitcoin', label: 'Bitcoin', description: 'Cryptocurrency payment' },
+    { key: 'ethereum', label: 'Ethereum', description: 'Cryptocurrency payment' },
+    { key: 'ownerFinancing', label: 'Owner Financing', description: 'Payment plans available' },
+    { key: 'tradeConsidered', label: 'Trade Considered', description: 'Horse/equipment trades' },
   ];
 
-  const handlePaymentOptionChange = (option: string, checked: boolean) => {
-    const current = data.paymentOptions || [];
-    const updated = checked 
-      ? [...current, option]
-      : current.filter(p => p !== option);
-    onUpdate({ paymentOptions: updated });
+  const currencies = [
+    { value: 'USD', label: 'USD ($)', symbol: '$' },
+    { value: 'EUR', label: 'EUR (€)', symbol: '€' },
+    { value: 'GBP', label: 'GBP (£)', symbol: '£' },
+  ];
+
+  const priceDisplayOptions = [
+    { value: 'show_price', label: 'Show Price', description: 'Price visible to everyone' },
+    { value: 'price_range', label: 'Show Price Range', description: 'Display as a range' },
+    { value: 'verified_users_only', label: 'Verified Users Only', description: 'Price visible to verified buyers' },
+  ];
+
+  const handlePaymentMethodChange = (methodKey: string, checked: boolean) => {
+    const currentMethods = data.paymentMethods || {
+      cash: false,
+      cashiersCheck: false,
+      wireTransfer: false,
+      creditCard: false,
+      bitcoin: false,
+      ethereum: false,
+      ownerFinancing: false,
+      tradeConsidered: false,
+    };
+    onUpdate({ 
+      paymentMethods: { ...currentMethods, [methodKey]: checked }
+    });
   };
+
+  const selectedCurrency = currencies.find(c => c.value === data.currency) || currencies[0];
 
   return (
     <div className="space-y-8">
@@ -55,7 +77,7 @@ const PricingTermsStep = ({ data, onUpdate, onNext, onPrev }: PricingTermsStepPr
             <div>
               <h4 className="text-blue-400 font-semibold mb-1">Pricing Strategy</h4>
               <p className="text-white/80 text-sm">
-                Research comparable horses in your area. Horses priced competitively sell 60% faster. Consider offering payment options to attract more buyers.
+                Research comparable horses in your area. Horses priced competitively sell 60% faster. Multiple payment options increase buyer inquiries by 35%.
               </p>
             </div>
           </div>
@@ -67,97 +89,118 @@ const PricingTermsStep = ({ data, onUpdate, onNext, onPrev }: PricingTermsStepPr
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <DollarSign className="h-5 w-5" />
-            Sale Price
+            Asking Price
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="price" className="text-white">
+              <Label htmlFor="askingPrice" className="text-white">
                 Asking Price <span className="text-red-400">*</span>
               </Label>
               <div className="relative mt-2">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60">$</span>
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60">
+                  {selectedCurrency.symbol}
+                </span>
                 <Input
-                  id="price"
+                  id="askingPrice"
                   type="number"
                   placeholder="0"
-                  value={data.price || ''}
-                  onChange={(e) => onUpdate({ price: parseFloat(e.target.value) || null })}
+                  value={data.askingPrice || ''}
+                  onChange={(e) => onUpdate({ askingPrice: parseFloat(e.target.value) || null })}
                   className="pl-8 bg-white/5 border-white/20 text-white placeholder-white/40"
                 />
               </div>
             </div>
 
-            <div className="space-y-3">
-              <div className="flex items-center space-x-3">
-                <Checkbox
-                  id="priceNegotiable"
-                  checked={data.priceNegotiable || false}
-                  onCheckedChange={(checked) => onUpdate({ priceNegotiable: checked as boolean })}
-                />
-                <Label htmlFor="priceNegotiable" className="text-white cursor-pointer">
-                  Price is negotiable
-                </Label>
-              </div>
-
-              <div className="flex items-center space-x-3">
-                <Checkbox
-                  id="priceInquire"
-                  checked={data.priceInquire || false}
-                  onCheckedChange={(checked) => onUpdate({ priceInquire: checked as boolean })}
-                />
-                <Label htmlFor="priceInquire" className="text-white cursor-pointer">
-                  Price available upon inquiry
-                </Label>
-              </div>
+            <div>
+              <Label htmlFor="currency" className="text-white">Currency</Label>
+              <Select
+                value={data.currency || 'USD'}
+                onValueChange={(value) => onUpdate({ currency: value as 'USD' | 'EUR' | 'GBP' })}
+              >
+                <SelectTrigger className="mt-2 bg-white/5 border-white/20 text-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {currencies.map((currency) => (
+                    <SelectItem key={currency.value} value={currency.value}>
+                      {currency.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
-          {data.priceInquire && (
-            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3">
-              <p className="text-yellow-400 text-sm">
-                Note: Listings without visible prices typically receive 40% fewer inquiries. Consider showing a price range.
+          {/* Price Display Options */}
+          <div>
+            <Label className="text-white">Price Visibility</Label>
+            <RadioGroup
+              value={data.priceDisplay || 'show_price'}
+              onValueChange={(value) => onUpdate({ priceDisplay: value as 'show_price' | 'price_range' | 'verified_users_only' })}
+              className="mt-2 space-y-2"
+            >
+              {priceDisplayOptions.map((option) => (
+                <div key={option.value} className="flex items-start space-x-3 p-3 rounded-lg bg-white/5">
+                  <RadioGroupItem value={option.value} id={option.value} className="mt-0.5" />
+                  <div className="flex-1">
+                    <Label htmlFor={option.value} className="text-white font-medium cursor-pointer">
+                      {option.label}
+                    </Label>
+                    <p className="text-white/60 text-sm mt-1">{option.description}</p>
+                  </div>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+
+          {data.priceDisplay === 'verified_users_only' && (
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
+              <p className="text-blue-400 text-sm">
+                Price will only be visible to verified buyers. This may reduce overall inquiries but increases quality leads.
               </p>
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Payment Options */}
+      {/* Payment Methods */}
       <Card className="bg-white/5 border-white/10">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <CreditCard className="h-5 w-5" />
-            Payment Options
+            Accepted Payment Methods
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {paymentOptions.map((option) => (
-            <div key={option.value} className="flex items-start space-x-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
-              <Checkbox
-                id={option.value}
-                checked={data.paymentOptions?.includes(option.value) || false}
-                onCheckedChange={(checked) => handlePaymentOptionChange(option.value, checked as boolean)}
-                className="mt-0.5"
-              />
-              <div className="flex-1">
-                <Label htmlFor={option.value} className="text-white font-medium cursor-pointer">
-                  {option.label}
-                </Label>
-                <p className="text-white/60 text-sm mt-1">{option.description}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {paymentMethods.map((method) => (
+              <div key={method.key} className="flex items-start space-x-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
+                <Checkbox
+                  id={method.key}
+                  checked={data.paymentMethods?.[method.key as keyof typeof data.paymentMethods] || false}
+                  onCheckedChange={(checked) => handlePaymentMethodChange(method.key, checked as boolean)}
+                  className="mt-0.5"
+                />
+                <div className="flex-1">
+                  <Label htmlFor={method.key} className="text-white font-medium cursor-pointer">
+                    {method.label}
+                  </Label>
+                  <p className="text-white/60 text-sm mt-1">{method.description}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
 
-          {(data.paymentOptions?.includes('financing') || data.paymentOptions?.includes('lease_to_own')) && (
+          {data.paymentMethods?.ownerFinancing && (
             <div>
               <Label htmlFor="paymentTerms" className="text-white">
-                Payment Terms Details
+                Owner Financing Terms
               </Label>
               <Textarea
                 id="paymentTerms"
-                placeholder="Describe your payment plans, financing options, or lease-to-own terms"
+                placeholder="Describe your financing terms, down payment requirements, interest rates, etc."
                 value={data.paymentTerms || ''}
                 onChange={(e) => onUpdate({ paymentTerms: e.target.value })}
                 className="mt-2 bg-white/5 border-white/20 text-white placeholder-white/40"
@@ -262,7 +305,7 @@ const PricingTermsStep = ({ data, onUpdate, onNext, onPrev }: PricingTermsStepPr
         </Button>
         <Button 
           onClick={onNext}
-          disabled={!data.price && !data.priceInquire}
+          disabled={!data.askingPrice && data.priceDisplay !== 'verified_users_only'}
           className="bg-gradient-to-r from-blue-500 to-purple-600 text-white disabled:opacity-50"
         >
           Continue to Horse Profile
