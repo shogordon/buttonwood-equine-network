@@ -1,10 +1,12 @@
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { Upload, X, Plus, Image, Video } from "lucide-react";
+import { Upload, X, Plus, Image, Video, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface StepProps {
   data: any;
@@ -21,6 +23,8 @@ const MediaUploadStep = ({ data, onUpdate }: StepProps) => {
     videos: data.videos || [],
     videoLink: '',
   });
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const addVideoLink = () => {
     if (formData.videoLink.trim()) {
@@ -47,6 +51,96 @@ const MediaUploadStep = ({ data, onUpdate }: StepProps) => {
     setFormData({ ...formData, videoLink: value });
   };
 
+  const handleFileUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+
+    // Check if we're at the 10 image limit
+    if (formData.images.length + files.length > 10) {
+      toast.error('Maximum 10 photos allowed');
+      return;
+    }
+
+    setUploading(true);
+    const newImages: string[] = [];
+
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        // Validate file
+        if (!file.type.startsWith('image/')) {
+          toast.error(`${file.name} is not a valid image file`);
+          continue;
+        }
+        
+        if (file.size > 5 * 1024 * 1024) { // 5MB limit
+          toast.error(`${file.name} is too large. Maximum 5MB per file.`);
+          continue;
+        }
+
+        // Upload to Supabase Storage
+        const fileName = `${Date.now()}-${file.name}`;
+        const filePath = `images/${fileName}`;
+
+        const { data, error } = await supabase.storage
+          .from('horse-media')
+          .upload(filePath, file);
+
+        if (error) {
+          console.error('Upload error:', error);
+          toast.error(`Failed to upload ${file.name}`);
+          continue;
+        }
+
+        // Get public URL
+        const { data: urlData } = supabase.storage
+          .from('horse-media')
+          .getPublicUrl(filePath);
+
+        newImages.push(urlData.publicUrl);
+      }
+
+      if (newImages.length > 0) {
+        const updated = {
+          ...formData,
+          images: [...formData.images, ...newImages],
+        };
+        setFormData(updated);
+        onUpdate(updated);
+        toast.success(`${newImages.length} image(s) uploaded successfully`);
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Failed to upload images');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeImage = async (index: number) => {
+    const imageUrl = formData.images[index];
+    
+    // Extract file path from URL to delete from storage
+    try {
+      const url = new URL(imageUrl);
+      const pathSegments = url.pathname.split('/');
+      const filePath = pathSegments.slice(-2).join('/'); // Get last two segments (folder/filename)
+      
+      await supabase.storage
+        .from('horse-media')
+        .remove([filePath]);
+    } catch (error) {
+      console.error('Error deleting file from storage:', error);
+    }
+
+    const updated = {
+      ...formData,
+      images: formData.images.filter((_, i) => i !== index),
+    };
+    setFormData(updated);
+    onUpdate(updated);
+  };
+
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
@@ -60,20 +154,50 @@ const MediaUploadStep = ({ data, onUpdate }: StepProps) => {
           <h3 className="text-lg font-semibold text-white">Photos</h3>
         </div>
         
-        <div className="border border-dashed border-white/20 rounded-2xl p-8 text-center">
+        <div 
+          className="border border-dashed border-white/20 rounded-2xl p-8 text-center"
+          onDrop={(e) => {
+            e.preventDefault();
+            handleFileUpload(e.dataTransfer.files);
+          }}
+          onDragOver={(e) => e.preventDefault()}
+          onDragEnter={(e) => e.preventDefault()}
+        >
           <Upload className="h-12 w-12 text-white/40 mx-auto mb-4" />
           <p className="text-white/60 mb-4">
             Drag and drop photos here, or click to browse
           </p>
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={(e) => handleFileUpload(e.target.files)}
+            className="hidden"
+          />
           <Button
             variant="outline"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading || formData.images.length >= 10}
             className="bg-white/5 border-white/20 text-white hover:bg-white/10"
           >
-            <Upload className="h-4 w-4 mr-2" />
-            Upload Photos
+            {uploading ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Uploading...
+              </>
+            ) : (
+              <>
+                <Upload className="h-4 w-4 mr-2" />
+                Upload Photos
+              </>
+            )}
           </Button>
           <p className="text-xs text-white/40 mt-2">
             Maximum 10 photos, up to 5MB each. JPG, PNG formats accepted.
+          </p>
+          <p className="text-xs text-white/50 mt-1">
+            {formData.images.length}/10 photos uploaded
           </p>
         </div>
 
@@ -89,6 +213,7 @@ const MediaUploadStep = ({ data, onUpdate }: StepProps) => {
                 <Button
                   size="sm"
                   variant="outline"
+                  onClick={() => removeImage(index)}
                   className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity bg-red-500/80 border-red-500 text-white hover:bg-red-600"
                 >
                   <X className="h-3 w-3" />

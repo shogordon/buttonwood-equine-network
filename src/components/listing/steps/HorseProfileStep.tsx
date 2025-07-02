@@ -85,6 +85,7 @@ const HorseProfileStep = ({ data, onUpdate, onNext, onPrev }: HorseProfileStepPr
         description: profile.description || '',
         disciplines: profile.disciplines || [],
         experienceLevel: profile.experienceLevel || '',
+        headline: profile.tagline || '',
       });
 
       toast.success("Profile Generated Successfully", {
@@ -238,6 +239,26 @@ const HorseProfileStep = ({ data, onUpdate, onNext, onPrev }: HorseProfileStepPr
               </Button>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Tagline Field */}
+      <Card className="bg-white/5 border-white/10">
+        <CardHeader>
+          <CardTitle className="text-white">Tagline</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Textarea
+            placeholder="A compelling 15-word tagline that captures your horse's essence..."
+            value={data.headline || ''}
+            onChange={(e) => onUpdate({ headline: e.target.value })}
+            className="bg-white/5 border-white/20 text-white placeholder-white/40"
+            rows={2}
+            maxLength={100}
+          />
+          <p className="text-xs text-white/40 mt-2">
+            Keep it under 15 words for maximum impact
+          </p>
         </CardContent>
       </Card>
 

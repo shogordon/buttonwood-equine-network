@@ -12,7 +12,10 @@ interface VoiceInputProps {
 export const VoiceInput = ({ onTranscript, disabled, className }: VoiceInputProps) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(30);
   const recognitionRef = useRef<any>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     // Check for Web Speech API support
@@ -69,6 +72,12 @@ export const VoiceInput = ({ onTranscript, disabled, className }: VoiceInputProp
       if (recognitionRef.current) {
         recognitionRef.current.stop();
       }
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
     };
   }, [onTranscript]);
 
@@ -77,6 +86,27 @@ export const VoiceInput = ({ onTranscript, disabled, className }: VoiceInputProp
     
     try {
       recognitionRef.current.start();
+      setTimeRemaining(30);
+      
+      // Start countdown timer
+      intervalRef.current = setInterval(() => {
+        setTimeRemaining(prev => {
+          if (prev <= 1) {
+            stopRecording();
+            return 30;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      
+      // Auto-restart recording every 30 seconds to prevent timeout
+      timeoutRef.current = setTimeout(() => {
+        if (isRecording) {
+          recognitionRef.current.stop();
+          setTimeout(() => startRecording(), 100);
+        }
+      }, 29000);
+      
       toast.success('Listening... Speak now!');
     } catch (error) {
       console.error('Error starting recognition:', error);
@@ -87,8 +117,19 @@ export const VoiceInput = ({ onTranscript, disabled, className }: VoiceInputProp
   const stopRecording = () => {
     if (!recognitionRef.current) return;
     
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    
     recognitionRef.current.stop();
     setIsRecording(false);
+    setTimeRemaining(30);
   };
 
   if (!isSupported) {
@@ -96,30 +137,40 @@ export const VoiceInput = ({ onTranscript, disabled, className }: VoiceInputProp
   }
 
   return (
-    <Button
-      type="button"
-      variant="outline"
-      size="sm"
-      onClick={isRecording ? stopRecording : startRecording}
-      disabled={disabled}
-      className={`${className} ${
-        isRecording 
-          ? 'bg-red-500/20 border-red-500/50 text-red-400 hover:bg-red-500/30' 
-          : 'bg-white/5 border-white/20 text-white hover:bg-white/10'
-      }`}
-    >
-      {isRecording ? (
-        <>
-          <Square className="h-4 w-4 mr-2" />
-          Stop Recording
-        </>
-      ) : (
-        <>
-          <Mic className="h-4 w-4 mr-2" />
-          Voice Input
-        </>
+    <div className="flex flex-col items-center gap-2">
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={isRecording ? stopRecording : startRecording}
+        disabled={disabled}
+        className={`${className} ${
+          isRecording 
+            ? 'bg-red-500/20 border-red-500/50 text-red-400 hover:bg-red-500/30' 
+            : 'bg-white/5 border-white/20 text-white hover:bg-white/10'
+        }`}
+      >
+        {isRecording ? (
+          <>
+            <div className="flex items-center gap-2">
+              <div className="h-2 w-2 bg-red-400 rounded-full animate-pulse" />
+              <Square className="h-4 w-4" />
+              <span>Stop ({timeRemaining}s)</span>
+            </div>
+          </>
+        ) : (
+          <>
+            <Mic className="h-4 w-4 mr-2" />
+            Voice Input
+          </>
+        )}
+      </Button>
+      {isRecording && (
+        <div className="text-xs text-white/60">
+          Recording... {timeRemaining}s remaining
+        </div>
       )}
-    </Button>
+    </div>
   );
 };
 

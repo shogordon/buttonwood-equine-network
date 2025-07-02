@@ -31,16 +31,18 @@ serve(async (req) => {
 The horse's name is: ${horseName || 'the horse'}
 
 Please analyze the interview responses and generate:
-1. A list of 4-6 key strengths/pros
-2. A list of 2-4 honest considerations/cons
-3. A detailed description (2-3 paragraphs)
-4. Best suited for (ideal rider/use)
-5. Suggested disciplines (from: dressage, jumping, eventing, western, racing, trail, other)
-6. Experience level needed (beginner, intermediate, advanced, professional)
+1. A compelling tagline (under 15 words) that captures the horse's essence
+2. A list of 4-6 key strengths/pros
+3. A list of 2-4 honest considerations/cons
+4. A detailed description (2-3 paragraphs)
+5. Best suited for (ideal rider/use)
+6. Suggested disciplines (from: dressage, jumping, eventing, western, racing, trail, other)
+7. Experience level needed (beginner, intermediate, advanced, professional)
 
 Be honest and balanced - include both positives and areas of consideration. Focus on helping buyers understand if this horse is right for them.
 
 Return the response as a JSON object with these exact keys:
+- tagline: string (under 15 words, compelling and memorable)
 - pros: array of strings
 - cons: array of strings  
 - description: string
@@ -80,7 +82,7 @@ Return the response as a JSON object with these exact keys:
       const profileData = JSON.parse(generatedContent);
       
       // Validate required fields
-      const requiredFields = ['pros', 'cons', 'description', 'bestFor', 'disciplines', 'experienceLevel', 'keyStrengths'];
+      const requiredFields = ['tagline', 'pros', 'cons', 'description', 'bestFor', 'disciplines', 'experienceLevel', 'keyStrengths'];
       for (const field of requiredFields) {
         if (!profileData[field]) {
           throw new Error(`Missing required field: ${field}`);
@@ -111,6 +113,7 @@ Return the response as a JSON object with these exact keys:
         JSON.stringify({
           success: true,
           profile: {
+            tagline: 'Exceptional horse ready for the right partner',
             pros: ['Well-trained', 'Good temperament', 'Suitable for various activities'],
             cons: ['Requires experienced handler', 'May need specific care'],
             description: generatedContent.slice(0, 500) + '...',
