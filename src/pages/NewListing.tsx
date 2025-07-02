@@ -16,6 +16,9 @@ import { ListingProgressHeader } from "@/components/listing/ListingProgressHeade
 import { ListingNavigationFooter } from "@/components/listing/ListingNavigationFooter";
 import { NavigationBlockerDialog } from "@/components/listing/NavigationBlockerDialog";
 import { ListingNavBar } from "@/components/listing/ListingNavBar";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { ConnectionStatus } from "@/components/listing/ConnectionStatus";
+import { EnhancedProgressIndicator } from "@/components/listing/EnhancedProgressIndicator";
 
 // Loading component for step components
 const StepLoadingFallback = () => (
@@ -44,7 +47,10 @@ const NewListing = () => {
     loadDraft,
     hasUnsavedChanges,
     currentDraftId,
-    loading: formLoading
+    loading: formLoading,
+    hasBackup,
+    backupTimestamp,
+    isRetrying
   } = useListingForm(draftId);
 
   // Memoize the unsaved changes value to prevent function calls during render
@@ -147,55 +153,96 @@ const NewListing = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900">
-      {/* Navigation Blocker Dialog - temporarily disabled */}
-      <NavigationBlockerDialog
-        isOpen={false}
-        onSaveAndContinue={async () => {
-          await autoSave();
-        }}
-        onLeaveWithoutSaving={() => {}}
-        onCancel={() => {}}
-      />
+    <ErrorBoundary>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900">
+        {/* Navigation Blocker Dialog - temporarily disabled */}
+        <NavigationBlockerDialog
+          isOpen={false}
+          onSaveAndContinue={async () => {
+            await autoSave();
+          }}
+          onLeaveWithoutSaving={() => {}}
+          onCancel={() => {}}
+        />
 
-      {/* Navigation */}
-      <ListingNavBar onBackClick={() => navigateWithSave('/sell')} />
+        {/* Navigation */}
+        <ListingNavBar onBackClick={() => navigateWithSave('/sell')} />
 
-      <div className="pt-32 pb-20">
-        <div className="container mx-auto px-6 max-w-4xl">
-          {/* Progress Header */}
-          <ListingProgressHeader 
-            currentStep={currentStep}
-            steps={NEW_LISTING_STEPS}
-            onSaveDraft={() => saveDraft(true)}
-            saving={saving}
-            saveStatus={saveStatus}
-            lastSaved={lastSaved}
-            onStepClick={setCurrentStep}
-            highestCompletedStep={highestCompletedStep}
-            horseName={listingData.horseName || listingData.barnName}
-          />
+        <div className="pt-32 pb-20">
+          <div className="container mx-auto px-6 max-w-6xl">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+              {/* Enhanced Progress Sidebar */}
+              <div className="lg:col-span-1">
+                <div className="sticky top-32">
+                  <Card className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6">
+                    <EnhancedProgressIndicator
+                      currentStep={currentStep}
+                      listingData={listingData}
+                      onStepClick={setCurrentStep}
+                      highestCompletedStep={highestCompletedStep}
+                    />
+                    
+                    {/* Backup Status */}
+                    {hasBackup && backupTimestamp && (
+                      <div className="mt-6 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                        <div className="text-xs text-blue-400 font-medium">Local Backup Available</div>
+                        <div className="text-xs text-blue-300/80">
+                          {backupTimestamp.toLocaleTimeString()}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {isRetrying && (
+                      <div className="mt-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                        <div className="text-xs text-amber-400 font-medium">Retrying Operation...</div>
+                        <div className="text-xs text-amber-300/80">Please wait</div>
+                      </div>
+                    )}
+                  </Card>
+                </div>
+              </div>
 
-          {/* Step Content */}
-          <Card className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8">
-            <Suspense fallback={<StepLoadingFallback />}>
-              {CurrentStepComponent && (
-                <CurrentStepComponent {...stepProps} />
-              )}
-            </Suspense>
-          </Card>
+              {/* Main Content */}
+              <div className="lg:col-span-3">
+                {/* Connection Status */}
+                <ConnectionStatus />
 
-          {/* Navigation Footer */}
-          <ListingNavigationFooter 
-            currentStep={currentStep}
-            totalSteps={NEW_LISTING_STEPS.length}
-            onPrevStep={prevStep}
-            onNextStep={nextStep}
-            saving={saving}
-          />
+                {/* Progress Header */}
+                <ListingProgressHeader 
+                  currentStep={currentStep}
+                  steps={NEW_LISTING_STEPS}
+                  onSaveDraft={() => saveDraft(true)}
+                  saving={saving}
+                  saveStatus={saveStatus}
+                  lastSaved={lastSaved}
+                  onStepClick={setCurrentStep}
+                  highestCompletedStep={highestCompletedStep}
+                  horseName={listingData.horseName || listingData.barnName}
+                />
+
+                {/* Step Content */}
+                <Card className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8">
+                  <Suspense fallback={<StepLoadingFallback />}>
+                    {CurrentStepComponent && (
+                      <CurrentStepComponent {...stepProps} />
+                    )}
+                  </Suspense>
+                </Card>
+
+                {/* Navigation Footer */}
+                <ListingNavigationFooter 
+                  currentStep={currentStep}
+                  totalSteps={NEW_LISTING_STEPS.length}
+                  onPrevStep={prevStep}
+                  onNextStep={nextStep}
+                  saving={saving}
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </ErrorBoundary>
   );
 };
 

@@ -2,6 +2,9 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { ListingData } from "@/types/listing";
 import { useListingDraft } from "./useListingDraft";
+import { useLocalStorageBackup } from "./useLocalStorageBackup";
+import { useRetry } from "./useRetry";
+import { toast } from "sonner";
 
 const getInitialListingData = (): Partial<ListingData> => ({
   userRole: '',
@@ -54,6 +57,15 @@ export const useListingForm = (draftId?: string) => {
     setCurrentDraftId,
   } = useListingDraft();
 
+  const { withRetry, isRetrying } = useRetry();
+  
+  const {
+    hasBackup,
+    backupTimestamp,
+    loadBackup,
+    clearBackup
+  } = useLocalStorageBackup(listingData, currentDraftId);
+
   const updateListingData = useCallback((stepData: Partial<ListingData>) => {
     console.log('useListingForm: Updating listing data with:', stepData);
     setListingData(prev => {
@@ -78,30 +90,74 @@ export const useListingForm = (draftId?: string) => {
     }
     
     console.log('useListingForm: Loading draft:', draftId);
-    try {
-      const mappedData = await loadDraft(draftId);
-      if (mappedData) {
-        console.log('useListingForm: Draft loaded successfully:', mappedData);
-        setListingData(mappedData);
-        lastSavedDataRef.current = mappedData;
-        setDraftLoaded(true);
+    
+    return withRetry(
+      async () => {
+        const mappedData = await loadDraft(draftId);
+        if (mappedData) {
+          console.log('useListingForm: Draft loaded successfully:', mappedData);
+          setListingData(mappedData);
+          lastSavedDataRef.current = mappedData;
+          setDraftLoaded(true);
+          
+          // Clear local backup since we loaded from server
+          if (hasBackup) {
+            clearBackup();
+          }
+        } else {
+          // Try to load from local backup if server load fails
+          const backupData = loadBackup();
+          if (backupData && Object.keys(backupData).length > 0) {
+            console.log('Loading from local backup');
+            setListingData(backupData);
+            toast.info('Loaded from local backup. Changes will sync when connection is restored.');
+          }
+          setDraftLoaded(true);
+        }
+      },
+      {
+        maxRetries: 2,
+        delay: 1000,
+        onMaxRetriesReached: () => {
+          // Try to load from local backup as fallback
+          const backupData = loadBackup();
+          if (backupData && Object.keys(backupData).length > 0) {
+            console.log('Loading from local backup after server failure');
+            setListingData(backupData);
+            toast.warning('Unable to load from server. Using local backup.');
+          }
+          setDraftLoaded(true);
+        }
       }
-    } catch (error) {
-      console.error('useListingForm: Error loading draft:', error);
-      setDraftLoaded(true);
-    }
-  }, [draftId, loadDraft, loading, draftLoaded]);
+    );
+  }, [draftId, loadDraft, loading, draftLoaded, withRetry, hasBackup, clearBackup, loadBackup]);
 
   const saveDraft = useCallback(async (showToast = true) => {
     console.log('useListingForm: Saving draft with data:', listingData);
-    try {
-      await saveDraftToDb(listingData, showToast);
-      lastSavedDataRef.current = { ...listingData };
-      console.log('useListingForm: Draft saved successfully');
-    } catch (error) {
-      console.error('useListingForm: Error saving draft:', error);
-    }
-  }, [listingData, saveDraftToDb]);
+    
+    return withRetry(
+      async () => {
+        await saveDraftToDb(listingData, showToast);
+        lastSavedDataRef.current = { ...listingData };
+        console.log('useListingForm: Draft saved successfully');
+        
+        // Clear local backup after successful save
+        if (hasBackup) {
+          clearBackup();
+        }
+      },
+      {
+        maxRetries: 3,
+        delay: 2000,
+        onRetry: (attempt) => {
+          console.log(`Retrying save operation: attempt ${attempt}`);
+        },
+        onMaxRetriesReached: () => {
+          toast.error('Unable to save to server. Your changes are backed up locally.');
+        }
+      }
+    );
+  }, [listingData, saveDraftToDb, withRetry, hasBackup, clearBackup]);
 
   const autoSave = useCallback(async () => {
     if (hasUnsavedChanges()) {
@@ -122,12 +178,17 @@ export const useListingForm = (draftId?: string) => {
     updateListingData,
     saveDraft,
     autoSave,
-    saving,
+    saving: saving || isRetrying,
     loading,
     saveStatus,
     lastSaved,
     loadDraft: loadDraftData,
     currentDraftId,
     hasUnsavedChanges,
+    hasBackup,
+    backupTimestamp,
+    loadBackup,
+    clearBackup,
+    isRetrying,
   };
 };
