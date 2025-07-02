@@ -9,6 +9,7 @@ import { useNavigationProtection } from "@/hooks/useNavigationProtection";
 import { useListingNavigation } from "@/hooks/useListingNavigation";
 import { useNewStepComponent } from "@/hooks/useNewStepComponent";
 import { NEW_LISTING_STEPS } from "@/config/newListingSteps";
+import { useState } from "react";
 
 // Import UI components
 import { ListingProgressHeader } from "@/components/listing/ListingProgressHeader";
@@ -30,6 +31,7 @@ const NewListing = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { draftId } = useParams();
+  const [highestCompletedStep, setHighestCompletedStep] = useState(1);
   
   const { 
     listingData, 
@@ -55,6 +57,13 @@ const NewListing = () => {
     hasUnsavedChanges: hasChanges,
     autoSave,
   });
+
+  // Update highest completed step when moving forward
+  useEffect(() => {
+    if (currentStep > highestCompletedStep) {
+      setHighestCompletedStep(currentStep);
+    }
+  }, [currentStep, highestCompletedStep]);
 
   const { CurrentStepComponent, stepProps } = useNewStepComponent({
     currentStep,
@@ -162,6 +171,9 @@ const NewListing = () => {
             saving={saving}
             saveStatus={saveStatus}
             lastSaved={lastSaved}
+            onStepClick={setCurrentStep}
+            highestCompletedStep={highestCompletedStep}
+            horseName={listingData.horseName || listingData.barnName}
           />
 
           {/* Step Content */}

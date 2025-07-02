@@ -11,22 +11,22 @@ export const NEW_LISTING_STEPS: NewListingStep[] = [
     id: 1,
     title: "About You & Goals",
     description: "Tell us about your role and objectives for this listing",
-    sections: ["Who's listing", "Why selling", "Timeline"],
+    sections: ["Who's listing", "Contact info", "Authorization"],
     originalSteps: [1] // Maps to current step 1
   },
   {
-    id: 2, 
-    title: "Listing Strategy",
-    description: "Define how you want to market and sell your horse",
-    sections: ["Listing type", "Trial options", "Special terms"],
-    originalSteps: [1, 5] // Combine listing type + sale info
-  },
-  {
-    id: 3,
+    id: 2,
     title: "Horse Identity", 
     description: "Essential details that identify your horse",
     sections: ["Names", "Breed", "Basic stats", "Location"],
     originalSteps: [4] // Current horse details
+  },
+  {
+    id: 3, 
+    title: "Listing Strategy",
+    description: "Define how you want to market and sell your horse",
+    sections: ["Listing type", "Trial options", "Special terms"],
+    originalSteps: [1, 5] // Combine listing type + sale info
   },
   {
     id: 4,

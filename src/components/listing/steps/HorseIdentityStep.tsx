@@ -313,23 +313,6 @@ const HorseIdentityStep = ({ data, onUpdate, onNext, onPrev }: HorseIdentityStep
         </CardContent>
       </Card>
 
-      {/* Navigation */}
-      <div className="flex justify-between pt-6">
-        <Button 
-          onClick={onPrev}
-          variant="outline"
-          className="bg-white/5 border-white/20 text-white hover:bg-white/10"
-        >
-          Previous
-        </Button>
-        <Button 
-          onClick={onNext}
-          disabled={!data.horseName || !data.breed || !data.age || !zipCode}
-          className="bg-gradient-to-r from-blue-500 to-purple-600 text-white disabled:opacity-50"
-        >
-          Continue to Documentation
-        </Button>
-      </div>
     </div>
   );
 };

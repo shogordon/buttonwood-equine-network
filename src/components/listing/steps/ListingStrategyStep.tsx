@@ -151,23 +151,6 @@ const ListingStrategyStep = ({ data, onUpdate, onNext, onPrev, isFirst }: Listin
         </Card>
       )}
 
-      {/* Navigation */}
-      <div className="flex justify-between pt-6">
-        <Button 
-          onClick={onPrev}
-          disabled={isFirst}
-          variant="outline"
-          className="bg-white/5 border-white/20 text-white hover:bg-white/10"
-        >
-          Previous
-        </Button>
-        <Button 
-          onClick={onNext}
-          className="bg-gradient-to-r from-blue-500 to-purple-600 text-white"
-        >
-          Continue to Horse Identity
-        </Button>
-      </div>
     </div>
   );
 };

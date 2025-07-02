@@ -35,8 +35,8 @@ export const useNewStepComponent = ({
 }: UseNewStepComponentProps) => {
   const stepComponents = useMemo(() => ({
     1: AboutYouGoalsStep,
-    2: ListingStrategyStep,
-    3: HorseIdentityStep,
+    2: HorseIdentityStep,
+    3: ListingStrategyStep,
     4: DocumentationVerificationStep,
     5: PricingTermsStep,
     6: HorseProfileStep,
